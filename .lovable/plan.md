@@ -1,168 +1,116 @@
 
 
-# KCC-EliteDriver -- Plan d'implementation technique (Phase 1)
+# Plan d'implementation : Animations scroll, Page A propos, Logo
 
-Tout est pret. Le site affiche actuellement la page par defaut car aucun code n'a encore ete ecrit. Voici le plan detaille pour construire le site complet Phase 1.
+## 1. Installation de framer-motion et integration du logo
 
----
+### Logo de l'entreprise
+- Copier l'image uploadee (`Logo_Webp_fond_noir.webp`) dans `src/assets/kcc-logo.webp`
+- Remplacer le texte "KCC-EliteDriver" par l'image du logo dans le **Header** (desktop et mobile) et le **Footer**
+- Le logo sera affiche avec une hauteur d'environ 40px dans le header, lien vers la page d'accueil
 
-## Etape 1 : Systeme de design et configuration
-
-**Fichiers concernes :**
-- `src/index.css` -- Palette de couleurs "Luxe Silencieux" (Obsidian Black, Signature Gold, Anthracite Gray)
-- `tailwind.config.ts` -- Polices Playfair Display + Inter, animations personnalisees (fade-in, slide-up)
-- `index.html` -- Import des polices Google Fonts
-
-**Details techniques :**
-- Variables CSS personnalisees pour les couleurs de la marque (gold, obsidian, anthracite)
-- Animations Tailwind pour le fade-in au scroll et les transitions de hover
-- Configuration des polices serif (Playfair Display) et sans-serif (Inter)
+### Dependance
+- Installer `framer-motion` pour les animations au scroll
 
 ---
 
-## Etape 2 : Systeme de traduction (FR / EN / AR)
+## 2. Animations au scroll avec framer-motion
 
-**Nouveaux fichiers :**
-- `src/i18n/translations.ts` -- Toutes les traductions FR, EN, AR dans un seul fichier
-- `src/i18n/LanguageContext.tsx` -- Context React pour gerer la langue active
+### Composant reutilisable `ScrollReveal`
+Creer un composant wrapper `src/components/ScrollReveal.tsx` qui utilise `motion.div` avec `whileInView` pour declencher les animations quand les elements entrent dans le viewport.
 
-**Fonctionnement :**
-- Un React Context fournit la langue courante et une fonction pour la changer
-- Un hook `useTranslation()` permet d'acceder aux traductions depuis n'importe quel composant
-- Langue par defaut : Francais
-- Pas de mirroring RTL pour l'arabe (traduction du texte uniquement)
+Variantes d'animation disponibles :
+- **fade-up** : Apparition avec glissement vers le haut (par defaut)
+- **fade-in** : Simple fondu
+- **scale-in** : Apparition avec leger zoom
+- **slide-left / slide-right** : Glissement lateral
 
----
+### Pages concernees
 
-## Etape 3 : Navigation et Header
+**Page d'accueil (`Index.tsx`)** :
+- HeroSection : Le badge, le titre et le sous-titre apparaissent en fade-up echelonne
+- GlobalAxis : Le titre de section puis chaque carte apparait avec un delai progressif
+- FleetPreview : Le titre puis chaque carte de vehicule glisse vers le haut
+- ValuesSection : Le titre puis chaque valeur apparait avec un delai
 
-**Nouveaux fichiers :**
-- `src/components/Header.tsx` -- Header sticky avec effet glassmorphism
-- `src/components/LanguageSwitcher.tsx` -- Selecteur FR / EN / AR
-- `src/components/MobileMenu.tsx` -- Menu hamburger avec drawer elegant
-- `src/components/Footer.tsx` -- Pied de page avec liens et coordonnees
+**Page Services** :
+- Le titre hero en fade-in
+- Chaque `ServiceCard` apparait en fade-up avec delai progressif (stagger)
 
-**Details :**
-- Header fixe en haut avec fond semi-transparent et blur (glassmorphism)
-- Logo texte "KCC-EliteDriver" avec accent dore
-- Liens de navigation : Accueil, Flotte, Services, Reservation, Contact
-- Bouton CTA "Reserver" en or
-- Menu mobile avec animation slide-in depuis la droite
-- Footer sombre avec colonnes d'informations
+**Page Booking** :
+- Le contenu de chaque etape s'anime en fade lors du changement d'etape
+
+Remplacement des classes CSS `animate-fade-in` et `opacity-0` existantes par les composants `ScrollReveal` pour une animation declenchee au scroll (et non au chargement de page).
 
 ---
 
-## Etape 4 : Page d'accueil (Home)
+## 3. Page "A propos" (`/about`)
 
-**Fichier modifie :**
-- `src/pages/Index.tsx` -- Refonte complete
+### Nouveau fichier : `src/pages/About.tsx`
 
-**Nouveaux composants :**
-- `src/components/home/HeroSection.tsx` -- Hero plein ecran avec headline et widget de reservation
-- `src/components/home/BookingWidget.tsx` -- Widget minimaliste (One-way/Hourly, pickup, dropoff, date, heure)
-- `src/components/home/GlobalAxis.tsx` -- Section Cairo - Paris - International
-- `src/components/home/FleetPreview.tsx` -- 3 cartes de vehicules avec liens vers la page Flotte
-- `src/components/home/ValuesSection.tsx` -- Discretion, Ponctualite, Chauffeurs multilingues
+Structure de la page :
+1. **Hero** : Titre "A propos de KCC-EliteDriver" avec fond gradient
+2. **Section Histoire** : Recit de la creation de l'entreprise, le lien entre Le Caire et Paris, la vision du fondateur
+3. **Section Equipe** : Presentation des valeurs de l'equipe (chauffeurs experimentes, protocole de discretion, formation continue) -- pas de photos individuelles pour respecter l'anonymat de la marque
+4. **Section Certifications** : Badges et certifications (VTC agree, assurance premium, formation securite, standards ISO)
+5. **CTA final** : Bouton vers la page Contact
 
-**Details du Hero :**
-- Fond sombre avec gradient subtil evoquant le luxe
-- Titre "L'excellence a chaque kilometre" en Playfair Display
-- Sous-titre descriptif en Silk Gray
-- Widget de reservation avec toggle One-way / Hourly et champs stylises
+### Traductions
+Ajouter toutes les cles de traduction pour la page A propos dans `src/i18n/translations.ts` (FR, EN, AR) :
+- `about_title`, `about_subtitle`
+- `about_story_title`, `about_story_text`
+- `about_team_title`, `about_team_desc`
+- `about_certifications_title`
+- Cles pour chaque certification
+- `nav_about` pour le lien de navigation
 
----
-
-## Etape 5 : Page Flotte (Fleet)
-
-**Nouveau fichier :**
-- `src/pages/Fleet.tsx` -- Page de la flotte complete
-
-**Nouveau composant :**
-- `src/components/fleet/VehicleCard.tsx` -- Carte detaillee par vehicule
-
-**Vehicules affiches :**
-1. **Business** (Mercedes Classe E ou equivalent) -- 3 passagers, 2 bagages, Wi-Fi, eau, chargeurs
-2. **First Class** (Mercedes Classe S ou equivalent) -- 3 passagers, 3 bagages, Wi-Fi, eau, chargeurs, presse, separation
-3. **Van** (Mercedes Classe V ou equivalent) -- 7 passagers, 7 bagages, Wi-Fi, eau, chargeurs, espace conference
-
-**Chaque carte inclut :**
-- Image placeholder du vehicule
-- Capacite passagers et bagages avec icones
-- Liste d'equipements
-- Bouton "Reserver" en or
+### Routing et navigation
+- Ajouter la route `/about` dans `App.tsx`
+- Ajouter le lien "A propos" dans la navigation du Header (entre "Services" et "Reservation")
+- Ajouter le lien dans le Footer
 
 ---
 
-## Etape 6 : Page Contact
-
-**Nouveau fichier :**
-- `src/pages/Contact.tsx` -- Page contact complete
-
-**Nouveaux composants :**
-- `src/components/contact/ContactForm.tsx` -- Formulaire (nom, email, telephone, message, type de service)
-- `src/components/contact/MapPlaceholder.tsx` -- Zone reservee pour future integration Google Maps
-- `src/components/contact/DirectContact.tsx` -- Boutons WhatsApp et telephone
-
-**Details :**
-- Formulaire valide avec react-hook-form et zod
-- Bouton WhatsApp avec lien direct
-- Bouton telephone avec lien tel:
-- Section carte grise avec texte "Google Maps - Coming Soon"
-- Les soumissions seront stockees dans Supabase (table contact_inquiries)
-
----
-
-## Etape 7 : Routing et mise en page
-
-**Fichier modifie :**
-- `src/App.tsx` -- Ajout des routes /fleet et /contact
-
-**Nouveau fichier :**
-- `src/components/Layout.tsx` -- Layout commun avec Header + Footer
-
-**Structure des routes :**
-- `/` -- Page d'accueil
-- `/fleet` -- Page Flotte
-- `/contact` -- Page Contact
-- `*` -- Page 404
-
----
-
-## Etape 8 : Backend Supabase
-
-**Table a creer :**
-- `contact_inquiries` avec les colonnes : id, name, email, phone, message, service_type, language, created_at
-- Politique RLS pour permettre les insertions publiques (les visiteurs peuvent envoyer des demandes)
-
----
-
-## Resume des fichiers a creer/modifier
+## 4. Resume des fichiers a modifier/creer
 
 | Action | Fichier |
 |--------|---------|
-| Modifier | `index.html`, `src/index.css`, `tailwind.config.ts` |
-| Modifier | `src/App.tsx`, `src/pages/Index.tsx` |
-| Creer | `src/i18n/translations.ts`, `src/i18n/LanguageContext.tsx` |
-| Creer | `src/components/Layout.tsx`, `src/components/Header.tsx` |
-| Creer | `src/components/Footer.tsx`, `src/components/LanguageSwitcher.tsx` |
-| Creer | `src/components/MobileMenu.tsx` |
-| Creer | `src/components/home/HeroSection.tsx`, `src/components/home/BookingWidget.tsx` |
-| Creer | `src/components/home/GlobalAxis.tsx`, `src/components/home/FleetPreview.tsx` |
-| Creer | `src/components/home/ValuesSection.tsx` |
-| Creer | `src/pages/Fleet.tsx`, `src/components/fleet/VehicleCard.tsx` |
-| Creer | `src/pages/Contact.tsx`, `src/components/contact/ContactForm.tsx` |
-| Creer | `src/components/contact/MapPlaceholder.tsx`, `src/components/contact/DirectContact.tsx` |
-| Supabase | Table `contact_inquiries` avec RLS |
+| Copier | `user-uploads://Logo_Webp_fond_noir.webp` vers `src/assets/kcc-logo.webp` |
+| Creer | `src/components/ScrollReveal.tsx` |
+| Creer | `src/pages/About.tsx` |
+| Modifier | `src/i18n/translations.ts` -- Ajouter les types + traductions (about, nav_about) |
+| Modifier | `src/components/Header.tsx` -- Logo image + lien "A propos" |
+| Modifier | `src/components/Footer.tsx` -- Logo image + lien "A propos" |
+| Modifier | `src/App.tsx` -- Route `/about` |
+| Modifier | `src/components/home/HeroSection.tsx` -- ScrollReveal |
+| Modifier | `src/components/home/GlobalAxis.tsx` -- ScrollReveal |
+| Modifier | `src/components/home/FleetPreview.tsx` -- ScrollReveal |
+| Modifier | `src/components/home/ValuesSection.tsx` -- ScrollReveal |
+| Modifier | `src/pages/Services.tsx` -- ScrollReveal |
 
 ---
 
-## Resultat attendu
+## Details techniques
 
-Un site premium 3 pages (Accueil, Flotte, Contact) avec :
-- Design sombre et elegant "Luxe Silencieux"
-- Navigation sticky glassmorphique avec menu mobile
-- Traduction FR / EN / AR fonctionnelle
-- Formulaire de contact connecte a Supabase
-- Animations fluides au scroll et au hover
-- Design responsive mobile-first
+### ScrollReveal.tsx (structure)
+```text
+Props:
+  - variant: "fade-up" | "fade-in" | "scale-in" | "slide-left" | "slide-right"
+  - delay: number (en secondes)
+  - duration: number (defaut 0.6s)
+  - children: ReactNode
+
+Utilise:
+  - motion.div de framer-motion
+  - whileInView pour declencher au scroll
+  - viewport={{ once: true, margin: "-50px" }}
+```
+
+### Logo dans le Header
+```text
+Avant : <span>KCC-EliteDriver</span>
+Apres : <img src={logo} alt="KCC-EliteDriver" className="h-10 w-auto" />
+```
+
+Le logo garde le fond transparent sur le header glassmorphique. L'image WebP sur fond noir s'integre naturellement dans le theme sombre du site.
 
