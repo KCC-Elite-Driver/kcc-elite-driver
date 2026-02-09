@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Users, Briefcase, ArrowRight } from "lucide-react";
+import mercedesEClass from "@/assets/mercedes-e-class.jpg";
+import mercedesSClass from "@/assets/mercedes-s-class.jpg";
+import mercedesVClass from "@/assets/mercedes-v-class.jpg";
 
 const FleetPreview = () => {
   const { t } = useTranslation();
@@ -11,21 +14,21 @@ const FleetPreview = () => {
       desc: t.fleet_business_desc,
       passengers: 3,
       luggage: 2,
-      image: "/placeholder.svg",
+      image: mercedesEClass,
     },
     {
       name: t.fleet_first,
       desc: t.fleet_first_desc,
       passengers: 3,
       luggage: 3,
-      image: "/placeholder.svg",
+      image: mercedesSClass,
     },
     {
       name: t.fleet_van,
       desc: t.fleet_van_desc,
       passengers: 7,
       luggage: 7,
-      image: "/placeholder.svg",
+      image: mercedesVClass,
     },
   ];
 
@@ -55,7 +58,7 @@ const FleetPreview = () => {
                 <img
                   src={vehicle.image}
                   alt={vehicle.name}
-                  className="w-24 h-24 opacity-30 group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
               </div>

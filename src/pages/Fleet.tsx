@@ -1,6 +1,9 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Users, Briefcase, Wifi, Droplets, Plug, Newspaper, DoorOpen, LayoutGrid, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import mercedesEClass from "@/assets/mercedes-e-class.jpg";
+import mercedesSClass from "@/assets/mercedes-s-class.jpg";
+import mercedesVClass from "@/assets/mercedes-v-class.jpg";
 
 interface VehicleCardProps {
   name: string;
@@ -22,11 +25,11 @@ const VehicleCard = ({ name, description, passengers, luggage, amenities, image,
     >
       {/* Image */}
       <div className="relative h-56 bg-secondary flex items-center justify-center overflow-hidden">
-        <img
-          src={image}
-          alt={name}
-          className="w-32 h-32 opacity-30 group-hover:scale-110 transition-transform duration-500"
-        />
+         <img
+           src={image}
+           alt={name}
+           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+         />
         <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
         <div className="absolute top-4 left-4 bg-primary/10 border border-primary/20 rounded-full px-3 py-1">
           <span className="text-xs font-sans font-medium text-primary">{name}</span>
@@ -89,7 +92,7 @@ const Fleet = () => {
       description: t.fleet_business_desc,
       passengers: 3,
       luggage: 2,
-      image: "/placeholder.svg",
+      image: mercedesEClass,
       amenities: [
         { icon: Wifi, label: t.fleet_wifi },
         { icon: Droplets, label: t.fleet_water },
@@ -101,7 +104,7 @@ const Fleet = () => {
       description: t.fleet_first_desc,
       passengers: 3,
       luggage: 3,
-      image: "/placeholder.svg",
+      image: mercedesSClass,
       amenities: [
         { icon: Wifi, label: t.fleet_wifi },
         { icon: Droplets, label: t.fleet_water },
@@ -115,7 +118,7 @@ const Fleet = () => {
       description: t.fleet_van_desc,
       passengers: 7,
       luggage: 7,
-      image: "/placeholder.svg",
+      image: mercedesVClass,
       amenities: [
         { icon: Wifi, label: t.fleet_wifi },
         { icon: Droplets, label: t.fleet_water },
