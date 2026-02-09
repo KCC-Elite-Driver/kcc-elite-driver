@@ -2,12 +2,18 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import ContactForm from "@/components/contact/ContactForm";
 import DirectContact from "@/components/contact/DirectContact";
 import MapPlaceholder from "@/components/contact/MapPlaceholder";
+import PageMeta from "@/components/PageMeta";
 
 const Contact = () => {
   const { t } = useTranslation();
 
   return (
     <div className="pt-16">
+      <PageMeta
+        title="Contact — KCC-EliteDriver"
+        description="Contactez-nous pour un devis personnalisé. Réponse garantie sous 2 heures."
+        path="/contact"
+      />
       {/* Hero */}
       <section className="py-20 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8 text-center">

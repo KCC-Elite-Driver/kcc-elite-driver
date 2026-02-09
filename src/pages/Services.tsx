@@ -2,6 +2,8 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Plane, Clock, Star, Route, Check, ArrowRight } from "lucide-react";
+import PageMeta from "@/components/PageMeta";
+import JsonLd from "@/components/JsonLd";
 
 interface ServiceCardProps {
   icon: React.ElementType;
@@ -53,6 +55,29 @@ const Services = () => {
 
   return (
     <div className="pt-16">
+      <PageMeta
+        title="Nos Services — KCC-EliteDriver"
+        description="Transferts aéroport, mise à disposition, événements VIP et intercités. Services de chauffeur privé sur mesure."
+        path="/services"
+      />
+      <JsonLd
+        data={{
+          "@type": "Service",
+          provider: { "@type": "Organization", name: "KCC-EliteDriver" },
+          serviceType: "Chauffeur privé",
+          areaServed: ["Paris", "Cairo"],
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name: "Services de transport",
+            itemListElement: [
+              { "@type": "Offer", itemOffered: { "@type": "Service", name: "Transfert Aéroport" } },
+              { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mise à disposition" } },
+              { "@type": "Offer", itemOffered: { "@type": "Service", name: "Événements VIP" } },
+              { "@type": "Offer", itemOffered: { "@type": "Service", name: "Intercités" } },
+            ],
+          },
+        }}
+      />
       {/* Hero */}
       <section className="py-20 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8 text-center">

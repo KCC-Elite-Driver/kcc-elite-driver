@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
+import PageMeta from "@/components/PageMeta";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
@@ -106,6 +108,11 @@ const Booking = () => {
 
   return (
     <div className="pt-16">
+      <PageMeta
+        title="Réservation — KCC-EliteDriver"
+        description="Réservez votre chauffeur privé en quelques étapes. Service disponible 24h/24."
+        path="/booking"
+      />
       {/* Hero */}
       <section className="py-16 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8 text-center">
@@ -190,27 +197,19 @@ const Booking = () => {
                 <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_step_details}</h2>
                 <div className="space-y-5">
                   {/* Pickup */}
-                  <div className="relative">
-                    <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
-                    <input
-                      type="text"
-                      placeholder={t.hero_pickup}
-                      value={data.pickup}
-                      onChange={(e) => setData({ ...data, pickup: e.target.value })}
-                      className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                  </div>
+                  <LocationAutocomplete
+                    value={data.pickup}
+                    onChange={(v) => setData({ ...data, pickup: v })}
+                    placeholder={t.hero_pickup}
+                    iconColor="text-primary"
+                  />
                   {/* Dropoff */}
-                  <div className="relative">
-                    <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="text"
-                      placeholder={t.hero_dropoff}
-                      value={data.dropoff}
-                      onChange={(e) => setData({ ...data, dropoff: e.target.value })}
-                      className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                  </div>
+                  <LocationAutocomplete
+                    value={data.dropoff}
+                    onChange={(v) => setData({ ...data, dropoff: v })}
+                    placeholder={t.hero_dropoff}
+                    iconColor="text-muted-foreground"
+                  />
                   {/* Date & Time */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="relative">
