@@ -5,6 +5,7 @@ export type TranslationKeys = {
   nav_home: string;
   nav_fleet: string;
   nav_services: string;
+  nav_about: string;
   nav_booking: string;
   nav_contact: string;
   nav_reserve: string;
@@ -139,6 +140,32 @@ export type TranslationKeys = {
   booking_success: string;
   booking_success_desc: string;
   booking_new: string;
+
+  // About Page
+  about_title: string;
+  about_subtitle: string;
+  about_story_title: string;
+  about_story_p1: string;
+  about_story_p2: string;
+  about_story_p3: string;
+  about_team_title: string;
+  about_team_subtitle: string;
+  about_team_drivers: string;
+  about_team_drivers_desc: string;
+  about_team_discretion: string;
+  about_team_discretion_desc: string;
+  about_team_training: string;
+  about_team_training_desc: string;
+  about_certifications_title: string;
+  about_cert_vtc: string;
+  about_cert_vtc_desc: string;
+  about_cert_insurance: string;
+  about_cert_insurance_desc: string;
+  about_cert_safety: string;
+  about_cert_safety_desc: string;
+  about_cert_iso: string;
+  about_cert_iso_desc: string;
+  about_cta: string;
 };
 
 export const translations: Record<Language, TranslationKeys> = {
@@ -146,6 +173,7 @@ export const translations: Record<Language, TranslationKeys> = {
     nav_home: "Accueil",
     nav_fleet: "Flotte",
     nav_services: "Services",
+    nav_about: "À propos",
     nav_booking: "Réservation",
     nav_contact: "Contact",
     nav_reserve: "Réserver",
@@ -229,7 +257,6 @@ export const translations: Record<Language, TranslationKeys> = {
     footer_contact_title: "Contact",
     footer_rights: "Tous droits réservés.",
 
-    // Services Page
     services_title: "Nos Services",
     services_subtitle: "Des prestations sur mesure pour chaque besoin",
     services_airport_title: "Transfert Aéroport",
@@ -247,7 +274,6 @@ export const translations: Record<Language, TranslationKeys> = {
     services_cta: "Réserver ce service",
     services_learn_more: "En savoir plus",
 
-    // Booking Page
     booking_title: "Réservation",
     booking_subtitle: "Réservez votre chauffeur en quelques étapes",
     booking_step_service: "Service",
@@ -273,12 +299,39 @@ export const translations: Record<Language, TranslationKeys> = {
     booking_success: "Réservation confirmée !",
     booking_success_desc: "Nous vous contacterons sous peu avec les détails de votre chauffeur.",
     booking_new: "Nouvelle réservation",
+
+    // About
+    about_title: "À propos de KCC-EliteDriver",
+    about_subtitle: "L'histoire d'une excellence née entre Le Caire et Paris",
+    about_story_title: "Notre Histoire",
+    about_story_p1: "KCC-EliteDriver est née d'une vision simple mais ambitieuse : créer un pont d'excellence entre Le Caire et Paris. Fondée par un entrepreneur biculturel, notre entreprise incarne le meilleur des deux mondes — l'hospitalité légendaire du Moyen-Orient et l'élégance raffinée de la capitale française.",
+    about_story_p2: "Depuis nos débuts, nous avons bâti notre réputation sur un principe inébranlable : chaque client mérite une expérience de transport qui dépasse ses attentes. Que ce soit un dirigeant d'entreprise en déplacement au Caire, une famille en voyage à Paris, ou un diplomate nécessitant un service discret et sécurisé.",
+    about_story_p3: "Aujourd'hui, KCC-EliteDriver est reconnue comme une référence dans le transport privé haut de gamme, avec un réseau de chauffeurs triés sur le volet et une flotte de véhicules premium entretenus selon les standards les plus exigeants.",
+    about_team_title: "Notre Équipe",
+    about_team_subtitle: "Des professionnels d'exception au service de votre confort",
+    about_team_drivers: "Chauffeurs expérimentés",
+    about_team_drivers_desc: "Chaque chauffeur est sélectionné pour son professionnalisme, sa connaissance approfondie des itinéraires et sa maîtrise du français, de l'anglais et de l'arabe.",
+    about_team_discretion: "Protocole de discrétion",
+    about_team_discretion_desc: "Nos chauffeurs sont formés aux plus hauts standards de confidentialité, garantissant la sérénité totale de nos clients les plus exigeants.",
+    about_team_training: "Formation continue",
+    about_team_training_desc: "Programme de formation régulier incluant conduite sécuritaire, protocole VIP, premiers secours et connaissance des véhicules de dernière génération.",
+    about_certifications_title: "Certifications & Agréments",
+    about_cert_vtc: "VTC Agréé",
+    about_cert_vtc_desc: "Licence professionnelle de transport de personnes délivrée par les autorités compétentes.",
+    about_cert_insurance: "Assurance Premium",
+    about_cert_insurance_desc: "Couverture complète tous risques pour chaque trajet, passagers et bagages inclus.",
+    about_cert_safety: "Formation Sécurité",
+    about_cert_safety_desc: "Chauffeurs certifiés en conduite défensive et protocoles de sécurité avancés.",
+    about_cert_iso: "Standards ISO",
+    about_cert_iso_desc: "Processus qualité alignés sur les normes internationales de service premium.",
+    about_cta: "Prêt à vivre l'excellence ?",
   },
 
   en: {
     nav_home: "Home",
     nav_fleet: "Fleet",
     nav_services: "Services",
+    nav_about: "About",
     nav_booking: "Booking",
     nav_contact: "Contact",
     nav_reserve: "Book Now",
@@ -362,7 +415,6 @@ export const translations: Record<Language, TranslationKeys> = {
     footer_contact_title: "Contact",
     footer_rights: "All rights reserved.",
 
-    // Services Page
     services_title: "Our Services",
     services_subtitle: "Bespoke services tailored to your every need",
     services_airport_title: "Airport Transfer",
@@ -380,7 +432,6 @@ export const translations: Record<Language, TranslationKeys> = {
     services_cta: "Book this service",
     services_learn_more: "Learn more",
 
-    // Booking Page
     booking_title: "Booking",
     booking_subtitle: "Book your chauffeur in a few simple steps",
     booking_step_service: "Service",
@@ -406,12 +457,39 @@ export const translations: Record<Language, TranslationKeys> = {
     booking_success: "Booking confirmed!",
     booking_success_desc: "We will contact you shortly with your chauffeur details.",
     booking_new: "New booking",
+
+    // About
+    about_title: "About KCC-EliteDriver",
+    about_subtitle: "The story of excellence born between Cairo and Paris",
+    about_story_title: "Our Story",
+    about_story_p1: "KCC-EliteDriver was born from a simple yet ambitious vision: to create a bridge of excellence between Cairo and Paris. Founded by a bicultural entrepreneur, our company embodies the best of both worlds — the legendary hospitality of the Middle East and the refined elegance of the French capital.",
+    about_story_p2: "From the very beginning, we built our reputation on an unwavering principle: every client deserves a transport experience that exceeds their expectations. Whether a business executive travelling in Cairo, a family visiting Paris, or a diplomat requiring discreet and secure service.",
+    about_story_p3: "Today, KCC-EliteDriver is recognised as a benchmark in premium private transport, with a network of hand-picked chauffeurs and a fleet of premium vehicles maintained to the highest standards.",
+    about_team_title: "Our Team",
+    about_team_subtitle: "Exceptional professionals dedicated to your comfort",
+    about_team_drivers: "Experienced Chauffeurs",
+    about_team_drivers_desc: "Each chauffeur is selected for their professionalism, thorough knowledge of routes, and fluency in French, English and Arabic.",
+    about_team_discretion: "Discretion Protocol",
+    about_team_discretion_desc: "Our chauffeurs are trained to the highest confidentiality standards, ensuring complete peace of mind for our most discerning clients.",
+    about_team_training: "Continuous Training",
+    about_team_training_desc: "Regular training programme including defensive driving, VIP protocol, first aid and knowledge of the latest generation vehicles.",
+    about_certifications_title: "Certifications & Accreditations",
+    about_cert_vtc: "Licensed VTC",
+    about_cert_vtc_desc: "Professional passenger transport licence issued by the competent authorities.",
+    about_cert_insurance: "Premium Insurance",
+    about_cert_insurance_desc: "Comprehensive all-risk coverage for every journey, passengers and luggage included.",
+    about_cert_safety: "Safety Training",
+    about_cert_safety_desc: "Chauffeurs certified in defensive driving and advanced security protocols.",
+    about_cert_iso: "ISO Standards",
+    about_cert_iso_desc: "Quality processes aligned with international premium service standards.",
+    about_cta: "Ready to experience excellence?",
   },
 
   ar: {
     nav_home: "الرئيسية",
     nav_fleet: "الأسطول",
     nav_services: "الخدمات",
+    nav_about: "من نحن",
     nav_booking: "الحجز",
     nav_contact: "اتصل بنا",
     nav_reserve: "احجز الآن",
@@ -495,7 +573,6 @@ export const translations: Record<Language, TranslationKeys> = {
     footer_contact_title: "اتصل بنا",
     footer_rights: "جميع الحقوق محفوظة.",
 
-    // Services Page
     services_title: "خدماتنا",
     services_subtitle: "خدمات مصممة خصيصاً لكل احتياجاتك",
     services_airport_title: "نقل من المطار",
@@ -513,7 +590,6 @@ export const translations: Record<Language, TranslationKeys> = {
     services_cta: "حجز هذه الخدمة",
     services_learn_more: "اعرف المزيد",
 
-    // Booking Page
     booking_title: "الحجز",
     booking_subtitle: "احجز سائقك في خطوات بسيطة",
     booking_step_service: "الخدمة",
@@ -539,5 +615,31 @@ export const translations: Record<Language, TranslationKeys> = {
     booking_success: "تم تأكيد الحجز!",
     booking_success_desc: "سنتواصل معك قريباً بتفاصيل سائقك.",
     booking_new: "حجز جديد",
+
+    // About
+    about_title: "عن KCC-EliteDriver",
+    about_subtitle: "قصة تميّز وُلدت بين القاهرة وباريس",
+    about_story_title: "قصتنا",
+    about_story_p1: "وُلدت KCC-EliteDriver من رؤية بسيطة لكن طموحة: إنشاء جسر من التميّز بين القاهرة وباريس. أسسها رائد أعمال ثنائي الثقافة، وتجسّد شركتنا أفضل ما في العالمين — الضيافة الأسطورية للشرق الأوسط والأناقة الراقية للعاصمة الفرنسية.",
+    about_story_p2: "منذ بداياتنا، بنينا سمعتنا على مبدأ لا يتزعزع: كل عميل يستحق تجربة نقل تفوق توقعاته. سواء كان مديراً تنفيذياً في رحلة عمل بالقاهرة، أو عائلة في زيارة لباريس، أو دبلوماسياً يحتاج خدمة سرية وآمنة.",
+    about_story_p3: "اليوم، تُعرف KCC-EliteDriver كمرجع في النقل الخاص الفاخر، مع شبكة من السائقين المختارين بعناية وأسطول من المركبات الفاخرة المُصانة وفق أعلى المعايير.",
+    about_team_title: "فريقنا",
+    about_team_subtitle: "محترفون استثنائيون في خدمة راحتك",
+    about_team_drivers: "سائقون متمرسون",
+    about_team_drivers_desc: "يتم اختيار كل سائق لاحترافيته ومعرفته العميقة بالطرق وإتقانه للفرنسية والإنجليزية والعربية.",
+    about_team_discretion: "بروتوكول السرية",
+    about_team_discretion_desc: "سائقونا مدربون على أعلى معايير السرية، مما يضمن الطمأنينة الكاملة لعملائنا الأكثر تطلباً.",
+    about_team_training: "تدريب مستمر",
+    about_team_training_desc: "برنامج تدريب منتظم يشمل القيادة الآمنة وبروتوكول VIP والإسعافات الأولية ومعرفة أحدث المركبات.",
+    about_certifications_title: "الشهادات والاعتمادات",
+    about_cert_vtc: "VTC معتمد",
+    about_cert_vtc_desc: "رخصة نقل ركاب مهنية صادرة عن الجهات المختصة.",
+    about_cert_insurance: "تأمين متميز",
+    about_cert_insurance_desc: "تغطية شاملة لكل رحلة تشمل الركاب والأمتعة.",
+    about_cert_safety: "تدريب أمني",
+    about_cert_safety_desc: "سائقون معتمدون في القيادة الدفاعية وبروتوكولات الأمان المتقدمة.",
+    about_cert_iso: "معايير ISO",
+    about_cert_iso_desc: "عمليات جودة متوافقة مع المعايير الدولية للخدمة الفاخرة.",
+    about_cta: "هل أنت مستعد لتجربة التميّز؟",
   },
 };

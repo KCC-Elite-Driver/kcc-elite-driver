@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
@@ -148,7 +149,14 @@ const Booking = () => {
           </div>
 
           {/* Step content */}
-          <div className="animate-fade-in" key={step}>
+          <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
             {/* Step 0: Service selection */}
             {step === 0 && (
               <div>
@@ -326,7 +334,8 @@ const Booking = () => {
                 </div>
               </div>
             )}
-          </div>
+          </motion.div>
+          </AnimatePresence>
 
           {/* Navigation buttons */}
           <div className="flex justify-between mt-12">

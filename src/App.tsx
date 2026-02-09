@@ -8,6 +8,7 @@ import Layout from "@/components/Layout";
 import Index from "./pages/Index";
 import Fleet from "./pages/Fleet";
 import Services from "./pages/Services";
+import About from "./pages/About";
 import Booking from "./pages/Booking";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/fleet" element={<Fleet />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/about" element={<About />} />
               <Route path="/booking" element={<Booking />} />
               <Route path="/contact" element={<Contact />} />
             </Route>

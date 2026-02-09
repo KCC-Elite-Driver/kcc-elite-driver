@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useTranslation } from "@/i18n/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import logo from "@/assets/kcc-logo.webp";
 
 const Header = () => {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ const Header = () => {
     { label: t.nav_home, path: "/" },
     { label: t.nav_fleet, path: "/fleet" },
     { label: t.nav_services, path: "/services" },
+    { label: t.nav_about, path: "/about" },
     { label: t.nav_booking, path: "/booking" },
     { label: t.nav_contact, path: "/contact" },
   ];
@@ -23,9 +25,7 @@ const Header = () => {
         <div className="container mx-auto flex items-center justify-between h-16 px-4 lg:px-8">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <span className="font-serif text-xl font-bold tracking-wide text-foreground">
-              KCC<span className="text-primary">-</span>EliteDriver
-            </span>
+            <img src={logo} alt="KCC-EliteDriver" className="h-10 w-auto" />
           </Link>
 
           {/* Desktop nav */}
