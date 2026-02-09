@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { MapPin, Calendar, Clock, Search } from "lucide-react";
+import { Calendar, Clock, Search } from "lucide-react";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 
 const BookingWidget = () => {
   const { t } = useTranslation();
   const [mode, setMode] = useState<"oneway" | "hourly">("oneway");
+  const [pickup, setPickup] = useState("");
+  const [dropoff, setDropoff] = useState("");
 
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -35,23 +38,19 @@ const BookingWidget = () => {
 
         {/* Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="relative">
-            <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
-            <input
-              type="text"
-              placeholder={t.hero_pickup}
-              className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
+          <LocationAutocomplete
+            value={pickup}
+            onChange={setPickup}
+            placeholder={t.hero_pickup}
+            iconColor="text-primary"
+          />
           {mode === "oneway" && (
-            <div className="relative">
-              <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder={t.hero_dropoff}
-                className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
+            <LocationAutocomplete
+              value={dropoff}
+              onChange={setDropoff}
+              placeholder={t.hero_dropoff}
+              iconColor="text-muted-foreground"
+            />
           )}
           <div className="relative">
             <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />

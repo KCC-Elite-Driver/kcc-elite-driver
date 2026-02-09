@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ShieldCheck, Award, GraduationCap, FileCheck, ArrowRight, Users, Eye, BookOpen } from "lucide-react";
+import PageMeta from "@/components/PageMeta";
 
 const About = () => {
   const { t } = useTranslation();
@@ -21,6 +22,11 @@ const About = () => {
 
   return (
     <div className="pt-16">
+      <PageMeta
+        title="À propos — KCC-EliteDriver"
+        description="L'histoire d'une excellence née entre Le Caire et Paris. Chauffeurs expérimentés et certifiés."
+        path="/about"
+      />
       {/* Hero */}
       <section className="py-20 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8 text-center">
