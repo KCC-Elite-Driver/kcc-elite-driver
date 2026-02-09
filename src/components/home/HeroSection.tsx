@@ -1,20 +1,25 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import BookingWidget from "./BookingWidget";
+import heroImage from "@/assets/hero-chauffeur-paris.jpg";
 
 const HeroSection = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center gradient-hero pt-16">
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-primary/3 rounded-full blur-3xl" />
+    <section className="relative min-h-screen flex items-center justify-center pt-16">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img
+          src={heroImage}
+          alt="Luxury chauffeur service in Paris"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 lg:px-8 py-20 text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-8 animate-fade-in">
+        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-8 animate-fade-in backdrop-blur-sm">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-xs font-sans font-medium text-primary uppercase tracking-wider">
             Cairo • Paris • International

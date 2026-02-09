@@ -94,6 +94,51 @@ export type TranslationKeys = {
   footer_service_event: string;
   footer_contact_title: string;
   footer_rights: string;
+
+  // Services Page
+  services_title: string;
+  services_subtitle: string;
+  services_airport_title: string;
+  services_airport_desc: string;
+  services_airport_features: string[];
+  services_hourly_title: string;
+  services_hourly_desc: string;
+  services_hourly_features: string[];
+  services_event_title: string;
+  services_event_desc: string;
+  services_event_features: string[];
+  services_city_title: string;
+  services_city_desc: string;
+  services_city_features: string[];
+  services_cta: string;
+  services_learn_more: string;
+
+  // Booking Page
+  booking_title: string;
+  booking_subtitle: string;
+  booking_step_service: string;
+  booking_step_details: string;
+  booking_step_vehicle: string;
+  booking_step_confirm: string;
+  booking_select_service: string;
+  booking_next: string;
+  booking_prev: string;
+  booking_passengers_label: string;
+  booking_luggage_label: string;
+  booking_notes_label: string;
+  booking_notes_placeholder: string;
+  booking_select_vehicle: string;
+  booking_summary: string;
+  booking_service_label: string;
+  booking_date_label: string;
+  booking_time_label: string;
+  booking_pickup_label: string;
+  booking_dropoff_label: string;
+  booking_vehicle_label: string;
+  booking_confirm: string;
+  booking_success: string;
+  booking_success_desc: string;
+  booking_new: string;
 };
 
 export const translations: Record<Language, TranslationKeys> = {
@@ -183,6 +228,51 @@ export const translations: Record<Language, TranslationKeys> = {
     footer_service_event: "Événement VIP",
     footer_contact_title: "Contact",
     footer_rights: "Tous droits réservés.",
+
+    // Services Page
+    services_title: "Nos Services",
+    services_subtitle: "Des prestations sur mesure pour chaque besoin",
+    services_airport_title: "Transfert Aéroport",
+    services_airport_desc: "Accueil personnalisé avec panneau nominatif, suivi des vols en temps réel et assistance bagages. Disponible dans tous les aéroports du Caire et de Paris.",
+    services_airport_features: ["Accueil avec panneau nominatif", "Suivi des vols en temps réel", "Assistance bagages", "Temps d'attente gratuit"],
+    services_hourly_title: "Mise à Disposition",
+    services_hourly_desc: "Votre chauffeur reste à votre entière disposition pendant la durée souhaitée. Idéal pour les journées de rendez-vous ou les visites touristiques.",
+    services_hourly_features: ["Chauffeur dédié", "Itinéraire flexible", "Durée modulable", "Disponible 24h/24"],
+    services_event_title: "Événement VIP",
+    services_event_desc: "Organisation complète du transport pour vos événements d'entreprise, mariages, galas et soirées privées. Coordination multi-véhicules possible.",
+    services_event_features: ["Coordination multi-véhicules", "Planification sur mesure", "Accueil des invités", "Service de conciergerie"],
+    services_city_title: "Intercités & Longue Distance",
+    services_city_desc: "Voyagez confortablement entre les villes avec notre service de transfert longue distance. Le Caire – Alexandrie, Paris – Lyon, et bien plus.",
+    services_city_features: ["Tarification transparente", "Arrêts intermédiaires possibles", "Confort premium garanti", "Chauffeur expérimenté"],
+    services_cta: "Réserver ce service",
+    services_learn_more: "En savoir plus",
+
+    // Booking Page
+    booking_title: "Réservation",
+    booking_subtitle: "Réservez votre chauffeur en quelques étapes",
+    booking_step_service: "Service",
+    booking_step_details: "Détails",
+    booking_step_vehicle: "Véhicule",
+    booking_step_confirm: "Confirmation",
+    booking_select_service: "Choisissez votre service",
+    booking_next: "Suivant",
+    booking_prev: "Précédent",
+    booking_passengers_label: "Nombre de passagers",
+    booking_luggage_label: "Nombre de bagages",
+    booking_notes_label: "Notes spéciales",
+    booking_notes_placeholder: "Numéro de vol, instructions particulières...",
+    booking_select_vehicle: "Choisissez votre véhicule",
+    booking_summary: "Récapitulatif",
+    booking_service_label: "Service",
+    booking_date_label: "Date",
+    booking_time_label: "Heure",
+    booking_pickup_label: "Prise en charge",
+    booking_dropoff_label: "Destination",
+    booking_vehicle_label: "Véhicule",
+    booking_confirm: "Confirmer la réservation",
+    booking_success: "Réservation confirmée !",
+    booking_success_desc: "Nous vous contacterons sous peu avec les détails de votre chauffeur.",
+    booking_new: "Nouvelle réservation",
   },
 
   en: {
@@ -271,6 +361,51 @@ export const translations: Record<Language, TranslationKeys> = {
     footer_service_event: "VIP Event",
     footer_contact_title: "Contact",
     footer_rights: "All rights reserved.",
+
+    // Services Page
+    services_title: "Our Services",
+    services_subtitle: "Bespoke services tailored to your every need",
+    services_airport_title: "Airport Transfer",
+    services_airport_desc: "Personalised meet & greet with name board, real-time flight tracking and luggage assistance. Available at all Cairo and Paris airports.",
+    services_airport_features: ["Meet & greet with name board", "Real-time flight tracking", "Luggage assistance", "Free waiting time"],
+    services_hourly_title: "Hourly Disposal",
+    services_hourly_desc: "Your chauffeur remains at your complete disposal for the desired duration. Ideal for a day of meetings or sightseeing.",
+    services_hourly_features: ["Dedicated chauffeur", "Flexible itinerary", "Adjustable duration", "Available 24/7"],
+    services_event_title: "VIP Events",
+    services_event_desc: "Complete transport organisation for your corporate events, weddings, galas and private parties. Multi-vehicle coordination available.",
+    services_event_features: ["Multi-vehicle coordination", "Bespoke planning", "Guest welcome", "Concierge service"],
+    services_city_title: "Intercity & Long Distance",
+    services_city_desc: "Travel comfortably between cities with our long-distance transfer service. Cairo – Alexandria, Paris – Lyon, and much more.",
+    services_city_features: ["Transparent pricing", "Intermediate stops possible", "Premium comfort guaranteed", "Experienced chauffeur"],
+    services_cta: "Book this service",
+    services_learn_more: "Learn more",
+
+    // Booking Page
+    booking_title: "Booking",
+    booking_subtitle: "Book your chauffeur in a few simple steps",
+    booking_step_service: "Service",
+    booking_step_details: "Details",
+    booking_step_vehicle: "Vehicle",
+    booking_step_confirm: "Confirmation",
+    booking_select_service: "Choose your service",
+    booking_next: "Next",
+    booking_prev: "Back",
+    booking_passengers_label: "Number of passengers",
+    booking_luggage_label: "Number of luggage",
+    booking_notes_label: "Special notes",
+    booking_notes_placeholder: "Flight number, special instructions...",
+    booking_select_vehicle: "Choose your vehicle",
+    booking_summary: "Summary",
+    booking_service_label: "Service",
+    booking_date_label: "Date",
+    booking_time_label: "Time",
+    booking_pickup_label: "Pickup",
+    booking_dropoff_label: "Destination",
+    booking_vehicle_label: "Vehicle",
+    booking_confirm: "Confirm booking",
+    booking_success: "Booking confirmed!",
+    booking_success_desc: "We will contact you shortly with your chauffeur details.",
+    booking_new: "New booking",
   },
 
   ar: {
@@ -359,5 +494,50 @@ export const translations: Record<Language, TranslationKeys> = {
     footer_service_event: "حدث VIP",
     footer_contact_title: "اتصل بنا",
     footer_rights: "جميع الحقوق محفوظة.",
+
+    // Services Page
+    services_title: "خدماتنا",
+    services_subtitle: "خدمات مصممة خصيصاً لكل احتياجاتك",
+    services_airport_title: "نقل من المطار",
+    services_airport_desc: "استقبال شخصي بلوحة اسم، تتبع الرحلات في الوقت الفعلي ومساعدة في الأمتعة. متوفر في جميع مطارات القاهرة وباريس.",
+    services_airport_features: ["استقبال بلوحة اسم", "تتبع الرحلات مباشرة", "مساعدة في الأمتعة", "وقت انتظار مجاني"],
+    services_hourly_title: "حجز بالساعة",
+    services_hourly_desc: "سائقك يبقى تحت تصرفك بالكامل طوال المدة المطلوبة. مثالي ليوم من الاجتماعات أو الجولات السياحية.",
+    services_hourly_features: ["سائق مخصص", "مسار مرن", "مدة قابلة للتعديل", "متوفر 24/7"],
+    services_event_title: "أحداث VIP",
+    services_event_desc: "تنظيم كامل للنقل في مناسباتك الخاصة والمؤسسية، حفلات الزفاف والسهرات الخاصة. تنسيق متعدد المركبات ممكن.",
+    services_event_features: ["تنسيق متعدد المركبات", "تخطيط مخصص", "استقبال الضيوف", "خدمة كونسيرج"],
+    services_city_title: "بين المدن والمسافات الطويلة",
+    services_city_desc: "سافر براحة بين المدن مع خدمة النقل لمسافات طويلة. القاهرة – الإسكندرية، باريس – ليون، وأكثر.",
+    services_city_features: ["تسعير شفاف", "توقفات وسيطة ممكنة", "راحة فاخرة مضمونة", "سائق متمرس"],
+    services_cta: "حجز هذه الخدمة",
+    services_learn_more: "اعرف المزيد",
+
+    // Booking Page
+    booking_title: "الحجز",
+    booking_subtitle: "احجز سائقك في خطوات بسيطة",
+    booking_step_service: "الخدمة",
+    booking_step_details: "التفاصيل",
+    booking_step_vehicle: "المركبة",
+    booking_step_confirm: "التأكيد",
+    booking_select_service: "اختر خدمتك",
+    booking_next: "التالي",
+    booking_prev: "السابق",
+    booking_passengers_label: "عدد الركاب",
+    booking_luggage_label: "عدد الحقائب",
+    booking_notes_label: "ملاحظات خاصة",
+    booking_notes_placeholder: "رقم الرحلة، تعليمات خاصة...",
+    booking_select_vehicle: "اختر مركبتك",
+    booking_summary: "الملخص",
+    booking_service_label: "الخدمة",
+    booking_date_label: "التاريخ",
+    booking_time_label: "الوقت",
+    booking_pickup_label: "نقطة الانطلاق",
+    booking_dropoff_label: "الوجهة",
+    booking_vehicle_label: "المركبة",
+    booking_confirm: "تأكيد الحجز",
+    booking_success: "تم تأكيد الحجز!",
+    booking_success_desc: "سنتواصل معك قريباً بتفاصيل سائقك.",
+    booking_new: "حجز جديد",
   },
 };
