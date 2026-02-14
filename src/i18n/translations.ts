@@ -232,7 +232,7 @@ export type TranslationKeys = {
   about_value_anticipation_desc: string;
 };
 
-export const translations: Record<Language, TranslationKeys> = { // v2
+export const translations: Record<Language, TranslationKeys> = { // v3
   fr: {
     nav_home: "Accueil",
     nav_fleet: "Flotte",
