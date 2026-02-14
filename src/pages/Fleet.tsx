@@ -1,5 +1,5 @@
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Users, Briefcase, Wifi, Droplets, Plug, Newspaper, DoorOpen, LayoutGrid, ArrowRight } from "lucide-react";
+import { Users, Briefcase, Wifi, Droplets, Plug, Newspaper, DoorOpen, LayoutGrid, ArrowRight, Wine, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
@@ -79,11 +79,11 @@ const Fleet = () => {
     },
     {
       name: t.fleet_first, description: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass,
-      amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: Newspaper, label: t.fleet_press }, { icon: DoorOpen, label: t.fleet_partition }],
+      amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: Newspaper, label: t.fleet_press }, { icon: DoorOpen, label: t.fleet_partition }, { icon: Wine, label: t.fleet_refreshments }, { icon: ShieldCheck, label: t.fleet_disinfection }],
     },
     {
       name: t.fleet_van, description: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass,
-      amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: LayoutGrid, label: t.fleet_conference }],
+      amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: LayoutGrid, label: t.fleet_conference }, { icon: Wine, label: t.fleet_refreshments }, { icon: ShieldCheck, label: t.fleet_disinfection }],
     },
   ];
 

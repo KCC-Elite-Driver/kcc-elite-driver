@@ -141,3 +141,25 @@
                 hsl(var(--obsidian));
   }
 }
+
+/* RTL support for Arabic */
+[dir="rtl"] body {
+  font-family: 'Cairo', 'Inter', sans-serif;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6 {
+  font-family: 'Cairo', 'Playfair Display', serif;
+}
+
+[dir="rtl"] .font-serif {
+  font-family: 'Cairo', 'Playfair Display', serif;
+}
+
+[dir="rtl"] .font-sans {
+  font-family: 'Cairo', 'Inter', sans-serif;
+}

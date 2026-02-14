@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
+import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
@@ -16,11 +16,29 @@ interface BookingData {
   dropoff: string;
   date: string;
   time: string;
+  // Passenger info
+  firstname: string;
+  lastname: string;
+  email: string;
+  phoneCode: string;
+  phone: string;
+  companyInvoice: boolean;
   passengers: number;
   luggage: number;
   notes: string;
+  flightNumber: string;
+  meetGreet: boolean;
+  // Vehicle
   vehicle: string | null;
+  paymentMethod: "card" | "cash";
 }
+
+const PHONE_CODES = [
+  { code: "+33", flag: "🇫🇷", label: "FR" },
+  { code: "+20", flag: "🇪🇬", label: "EG" },
+  { code: "+44", flag: "🇬🇧", label: "UK" },
+  { code: "+1", flag: "🇺🇸", label: "US" },
+];
 
 const Booking = () => {
   const { t } = useTranslation();
@@ -32,15 +50,25 @@ const Booking = () => {
     dropoff: "",
     date: "",
     time: "",
+    firstname: "",
+    lastname: "",
+    email: "",
+    phoneCode: "+33",
+    phone: "",
+    companyInvoice: false,
     passengers: 1,
     luggage: 1,
     notes: "",
+    flightNumber: "",
+    meetGreet: true,
     vehicle: null,
+    paymentMethod: "card",
   });
 
   const steps = [
     t.booking_step_service,
     t.booking_step_details,
+    t.booking_step_passenger,
     t.booking_step_vehicle,
     t.booking_step_confirm,
   ];
@@ -58,33 +86,37 @@ const Booking = () => {
     { key: "van", name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
   ];
 
+  const isAirportOrStation = useMemo(() => {
+    const lower = data.pickup.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return lower.includes("aeroport") || lower.includes("airport") || lower.includes("gare") || lower.includes("station") || lower.includes("cdg") || lower.includes("orly") || lower.includes("مطار");
+  }, [data.pickup]);
+
   const canProceed = () => {
     switch (step) {
       case 0: return data.service !== null;
       case 1: return data.pickup.trim() !== "" && data.date !== "" && data.time !== "";
-      case 2: return data.vehicle !== null;
-      case 3: return true;
+      case 2: return data.firstname.trim() !== "" && data.lastname.trim() !== "" && data.email.trim() !== "" && data.phone.trim() !== "";
+      case 3: return data.vehicle !== null;
+      case 4: return true;
       default: return false;
     }
   };
 
-  const handleConfirm = () => {
-    setCompleted(true);
-  };
+  const handleConfirm = () => setCompleted(true);
 
   const handleReset = () => {
-    setData({ service: null, pickup: "", dropoff: "", date: "", time: "", passengers: 1, luggage: 1, notes: "", vehicle: null });
+    setData({
+      service: null, pickup: "", dropoff: "", date: "", time: "",
+      firstname: "", lastname: "", email: "", phoneCode: "+33", phone: "",
+      companyInvoice: false, passengers: 1, luggage: 1, notes: "",
+      flightNumber: "", meetGreet: true, vehicle: null, paymentMethod: "card",
+    });
     setStep(0);
     setCompleted(false);
   };
 
-  const getServiceLabel = (key: ServiceType) => {
-    return services.find(s => s.key === key)?.label || "";
-  };
-
-  const getVehicleName = (key: string) => {
-    return vehicles.find(v => v.key === key)?.name || "";
-  };
+  const getServiceLabel = (key: ServiceType) => services.find(s => s.key === key)?.label || "";
+  const getVehicleName = (key: string) => vehicles.find(v => v.key === key)?.name || "";
 
   if (completed) {
     return (
@@ -95,10 +127,7 @@ const Booking = () => {
           </div>
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{t.booking_success}</h2>
           <p className="font-sans text-muted-foreground text-base max-w-md mx-auto mb-10">{t.booking_success_desc}</p>
-          <button
-            onClick={handleReset}
-            className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200"
-          >
+          <button onClick={handleReset} className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200">
             {t.booking_new}
           </button>
         </div>
@@ -108,24 +137,14 @@ const Booking = () => {
 
   return (
     <div className="pt-16">
-      <PageMeta
-        title="Réservation — KCC-EliteDriver"
-        description="Réservez votre chauffeur privé en quelques étapes. Service disponible 24h/24."
-        path="/booking"
-      />
-      {/* Hero */}
+      <PageMeta title="Réservation — KCC-EliteDriver" description="Réservez votre chauffeur privé en quelques étapes. Service disponible 24h/24." path="/booking" />
       <section className="py-16 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8 text-center">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">
-            {t.booking_title}
-          </h1>
-          <p className="font-sans text-muted-foreground text-base max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            {t.booking_subtitle}
-          </p>
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">{t.booking_title}</h1>
+          <p className="font-sans text-muted-foreground text-base max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.1s" }}>{t.booking_subtitle}</p>
         </div>
       </section>
 
-      {/* Stepper */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-8 max-w-3xl">
           {/* Steps indicator */}
@@ -133,237 +152,246 @@ const Booking = () => {
             {steps.map((label, i) => (
               <div key={label} className="flex items-center flex-1">
                 <div className="flex flex-col items-center gap-2">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-sans font-semibold transition-all duration-300 ${
-                      i < step
-                        ? "bg-primary text-primary-foreground"
-                        : i === step
-                          ? "bg-primary/20 border-2 border-primary text-primary"
-                          : "bg-secondary text-muted-foreground"
-                    }`}
-                  >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-sans font-semibold transition-all duration-300 ${
+                    i < step ? "bg-primary text-primary-foreground" : i === step ? "bg-primary/20 border-2 border-primary text-primary" : "bg-secondary text-muted-foreground"
+                  }`}>
                     {i < step ? <Check size={16} /> : i + 1}
                   </div>
-                  <span className={`font-sans text-xs font-medium hidden sm:block ${i <= step ? "text-foreground" : "text-muted-foreground"}`}>
-                    {label}
-                  </span>
+                  <span className={`font-sans text-xs font-medium hidden sm:block ${i <= step ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
                 </div>
-                {i < steps.length - 1 && (
-                  <div className={`flex-1 h-px mx-3 transition-colors duration-300 ${i < step ? "bg-primary" : "bg-border"}`} />
-                )}
+                {i < steps.length - 1 && <div className={`flex-1 h-px mx-3 transition-colors duration-300 ${i < step ? "bg-primary" : "bg-border"}`} />}
               </div>
             ))}
           </div>
 
-          {/* Step content */}
           <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Step 0: Service selection */}
-            {step === 0 && (
-              <div>
-                <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_select_service}</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {services.map((service) => (
-                    <button
-                      key={service.key}
-                      onClick={() => setData({ ...data, service: service.key })}
-                      className={`flex items-center gap-4 p-5 rounded-lg border transition-all duration-200 text-left ${
-                        data.service === service.key
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-card hover:border-primary/30"
-                      }`}
-                    >
-                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                        data.service === service.key ? "bg-primary/20" : "bg-secondary"
-                      }`}>
-                        <service.icon size={20} className="text-primary" />
-                      </div>
-                      <span className="font-sans text-sm font-medium text-foreground">{service.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
 
-            {/* Step 1: Details */}
-            {step === 1 && (
-              <div>
-                <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_step_details}</h2>
-                <div className="space-y-5">
-                  {/* Pickup */}
-                  <LocationAutocomplete
-                    value={data.pickup}
-                    onChange={(v) => setData({ ...data, pickup: v })}
-                    placeholder={t.hero_pickup}
-                    iconColor="text-primary"
-                  />
-                  {/* Dropoff */}
-                  <LocationAutocomplete
-                    value={data.dropoff}
-                    onChange={(v) => setData({ ...data, dropoff: v })}
-                    placeholder={t.hero_dropoff}
-                    iconColor="text-muted-foreground"
-                  />
-                  {/* Date & Time */}
+              {/* Step 0: Service */}
+              {step === 0 && (
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_select_service}</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="relative">
-                      <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <input
-                        type="date"
-                        value={data.date}
-                        onChange={(e) => setData({ ...data, date: e.target.value })}
-                        className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                      />
-                    </div>
-                    <div className="relative">
-                      <ClockIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <input
-                        type="time"
-                        value={data.time}
-                        onChange={(e) => setData({ ...data, time: e.target.value })}
-                        className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                      />
+                    {services.map((service) => (
+                      <button key={service.key} onClick={() => setData({ ...data, service: service.key })}
+                        className={`flex items-center gap-4 p-5 rounded-lg border transition-all duration-200 text-left ${data.service === service.key ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${data.service === service.key ? "bg-primary/20" : "bg-secondary"}`}>
+                          <service.icon size={20} className="text-primary" />
+                        </div>
+                        <span className="font-sans text-sm font-medium text-foreground">{service.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 1: Route details */}
+              {step === 1 && (
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_step_details}</h2>
+                  <div className="space-y-5">
+                    <LocationAutocomplete value={data.pickup} onChange={(v) => setData({ ...data, pickup: v })} placeholder={t.hero_pickup} iconColor="text-primary" />
+                    <LocationAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="relative">
+                        <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input type="date" value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })}
+                          className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      </div>
+                      <div className="relative">
+                        <ClockIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <input type="time" value={data.time} onChange={(e) => setData({ ...data, time: e.target.value })}
+                          className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      </div>
                     </div>
                   </div>
-                  {/* Passengers & Luggage */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_passengers_label}</label>
-                      <div className="flex items-center gap-3">
-                        <Users size={16} className="text-primary" />
-                        <select
-                          value={data.passengers}
-                          onChange={(e) => setData({ ...data, passengers: Number(e.target.value) })}
-                          className="bg-secondary border border-border rounded-md px-3 py-2 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                        >
-                          {[1, 2, 3, 4, 5, 6, 7].map(n => <option key={n} value={n}>{n}</option>)}
-                        </select>
+                </div>
+              )}
+
+              {/* Step 2: Passenger info */}
+              {step === 2 && (
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_step_passenger}</h2>
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_firstname} *</label>
+                        <input type="text" value={data.firstname} onChange={(e) => setData({ ...data, firstname: e.target.value })}
+                          className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      </div>
+                      <div>
+                        <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_lastname} *</label>
+                        <input type="text" value={data.lastname} onChange={(e) => setData({ ...data, lastname: e.target.value })}
+                          className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                       </div>
                     </div>
                     <div>
-                      <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_luggage_label}</label>
-                      <div className="flex items-center gap-3">
-                        <Briefcase size={16} className="text-primary" />
-                        <select
-                          value={data.luggage}
-                          onChange={(e) => setData({ ...data, luggage: Number(e.target.value) })}
-                          className="bg-secondary border border-border rounded-md px-3 py-2 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                        >
-                          {[0, 1, 2, 3, 4, 5, 6, 7].map(n => <option key={n} value={n}>{n}</option>)}
+                      <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_email} *</label>
+                      <input type="email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })}
+                        className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                    </div>
+                    <div>
+                      <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_phone} *</label>
+                      <div className="flex gap-2">
+                        <select value={data.phoneCode} onChange={(e) => setData({ ...data, phoneCode: e.target.value })}
+                          className="bg-secondary border border-border rounded-md px-2 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary w-28">
+                          {PHONE_CODES.map((p) => (
+                            <option key={p.code} value={p.code}>{p.flag} {p.code}</option>
+                          ))}
                         </select>
+                        <input type="tel" value={data.phone} onChange={(e) => setData({ ...data, phone: e.target.value })}
+                          className="flex-1 bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                       </div>
                     </div>
-                  </div>
-                  {/* Notes */}
-                  <div>
-                    <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_notes_label}</label>
-                    <textarea
-                      placeholder={t.booking_notes_placeholder}
-                      value={data.notes}
-                      onChange={(e) => setData({ ...data, notes: e.target.value })}
-                      rows={3}
-                      className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Vehicle selection */}
-            {step === 2 && (
-              <div>
-                <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_select_vehicle}</h2>
-                <div className="space-y-4">
-                  {vehicles.map((vehicle) => (
-                    <button
-                      key={vehicle.key}
-                      onClick={() => setData({ ...data, vehicle: vehicle.key })}
-                      className={`w-full flex items-center gap-5 p-4 rounded-lg border transition-all duration-200 text-left ${
-                        data.vehicle === vehicle.key
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-card hover:border-primary/30"
-                      }`}
-                    >
-                      <div className="w-24 h-16 rounded-md overflow-hidden shrink-0">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-serif text-lg font-semibold text-foreground">{vehicle.name}</h4>
-                        <p className="font-sans text-xs text-muted-foreground truncate">{vehicle.desc}</p>
-                        <div className="flex items-center gap-4 mt-1.5">
-                          <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans">
-                            <Users size={12} className="text-primary" /> {vehicle.passengers} {t.fleet_passengers}
-                          </span>
-                          <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans">
-                            <Briefcase size={12} className="text-primary" /> {vehicle.luggage} {t.fleet_luggage}
-                          </span>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" checked={data.companyInvoice} onChange={(e) => setData({ ...data, companyInvoice: e.target.checked })}
+                        className="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
+                      <span className="font-sans text-sm text-foreground">{t.booking_company_invoice}</span>
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_passengers_label}</label>
+                        <div className="flex items-center gap-3">
+                          <Users size={16} className="text-primary" />
+                          <select value={data.passengers} onChange={(e) => setData({ ...data, passengers: Number(e.target.value) })}
+                            className="bg-secondary border border-border rounded-md px-3 py-2 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
+                            {[1,2,3,4,5,6,7].map(n => <option key={n} value={n}>{n}</option>)}
+                          </select>
                         </div>
                       </div>
-                      <div className={`w-5 h-5 rounded-full border-2 shrink-0 transition-colors ${
-                        data.vehicle === vehicle.key ? "border-primary bg-primary" : "border-border"
-                      }`}>
-                        {data.vehicle === vehicle.key && <Check size={12} className="text-primary-foreground m-auto mt-0.5" />}
+                      <div>
+                        <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_luggage_label}</label>
+                        <div className="flex items-center gap-3">
+                          <Briefcase size={16} className="text-primary" />
+                          <select value={data.luggage} onChange={(e) => setData({ ...data, luggage: Number(e.target.value) })}
+                            className="bg-secondary border border-border rounded-md px-3 py-2 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
+                            {[0,1,2,3,4,5,6,7].map(n => <option key={n} value={n}>{n}</option>)}
+                          </select>
+                        </div>
                       </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+                    </div>
+                    <div>
+                      <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_notes_label}</label>
+                      <textarea placeholder={t.booking_notes_placeholder} value={data.notes} onChange={(e) => setData({ ...data, notes: e.target.value })} rows={3}
+                        className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
+                    </div>
 
-            {/* Step 3: Confirmation */}
-            {step === 3 && (
-              <div>
-                <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_summary}</h2>
-                <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-                  <SummaryRow label={t.booking_service_label} value={data.service ? getServiceLabel(data.service) : ""} />
-                  <SummaryRow label={t.booking_pickup_label} value={data.pickup} />
-                  {data.dropoff && <SummaryRow label={t.booking_dropoff_label} value={data.dropoff} />}
-                  <SummaryRow label={t.booking_date_label} value={data.date} />
-                  <SummaryRow label={t.booking_time_label} value={data.time} />
-                  <SummaryRow label={t.booking_passengers_label} value={String(data.passengers)} />
-                  <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
-                  <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
-                  {data.notes && <SummaryRow label={t.booking_notes_label} value={data.notes} />}
+                    {/* Conditional airport/station fields */}
+                    {isAirportOrStation && (
+                      <div className="space-y-4 pt-4 border-t border-border">
+                        <div>
+                          <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_flight_number}</label>
+                          <input type="text" value={data.flightNumber} onChange={(e) => setData({ ...data, flightNumber: e.target.value })} placeholder="LH83822"
+                            className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                        </div>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input type="checkbox" checked={data.meetGreet} onChange={(e) => setData({ ...data, meetGreet: e.target.checked })}
+                            className="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
+                          <div>
+                            <span className="font-sans text-sm text-foreground font-medium">{t.booking_meet_greet}</span>
+                            <p className="font-sans text-xs text-muted-foreground">{t.booking_meet_greet_desc}</p>
+                          </div>
+                        </label>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-          </motion.div>
+              )}
+
+              {/* Step 3: Vehicle selection */}
+              {step === 3 && (
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_select_vehicle}</h2>
+                  <div className="space-y-4">
+                    {vehicles.map((vehicle) => (
+                      <button key={vehicle.key} onClick={() => setData({ ...data, vehicle: vehicle.key })}
+                        className={`w-full flex items-center gap-5 p-4 rounded-lg border transition-all duration-200 text-left ${data.vehicle === vehicle.key ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
+                        <div className="w-24 h-16 rounded-md overflow-hidden shrink-0">
+                          <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-serif text-lg font-semibold text-foreground">{vehicle.name}</h4>
+                          <p className="font-sans text-xs text-muted-foreground truncate">{vehicle.desc}</p>
+                          <div className="flex items-center gap-4 mt-1.5">
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans"><Users size={12} className="text-primary" /> {vehicle.passengers} {t.fleet_passengers}</span>
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans"><Briefcase size={12} className="text-primary" /> {vehicle.luggage} {t.fleet_luggage}</span>
+                          </div>
+                        </div>
+                        <div className={`w-5 h-5 rounded-full border-2 shrink-0 transition-colors ${data.vehicle === vehicle.key ? "border-primary bg-primary" : "border-border"}`}>
+                          {data.vehicle === vehicle.key && <Check size={12} className="text-primary-foreground m-auto mt-0.5" />}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Summary + Policy + Payment */}
+              {step === 4 && (
+                <div>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_summary}</h2>
+                  <div className="bg-card border border-border rounded-lg p-6 space-y-4 mb-6">
+                    <SummaryRow label={t.booking_service_label} value={data.service ? getServiceLabel(data.service) : ""} />
+                    <SummaryRow label={t.booking_pickup_label} value={data.pickup} />
+                    {data.dropoff && <SummaryRow label={t.booking_dropoff_label} value={data.dropoff} />}
+                    <SummaryRow label={t.booking_date_label} value={data.date} />
+                    <SummaryRow label={t.booking_time_label} value={data.time} />
+                    <SummaryRow label={t.booking_firstname + " " + t.booking_lastname} value={`${data.firstname} ${data.lastname}`} />
+                    <SummaryRow label={t.booking_email} value={data.email} />
+                    <SummaryRow label={t.booking_phone} value={`${data.phoneCode} ${data.phone}`} />
+                    <SummaryRow label={t.booking_passengers_label} value={String(data.passengers)} />
+                    <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
+                    <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
+                    {data.flightNumber && <SummaryRow label={t.booking_flight_number} value={data.flightNumber} />}
+                    {data.notes && <SummaryRow label={t.booking_notes_label} value={data.notes} />}
+                  </div>
+
+                  {/* Cancellation policy */}
+                  <div className="flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
+                    <AlertTriangle size={18} className="text-primary shrink-0 mt-0.5" />
+                    <p className="font-sans text-sm text-muted-foreground">{t.booking_cancellation_policy}</p>
+                  </div>
+
+                  {/* Payment method */}
+                  <div className="mb-2">
+                    <h3 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">{t.booking_payment_method}</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button onClick={() => setData({ ...data, paymentMethod: "card" })}
+                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "card" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
+                        <CreditCard size={20} className="text-primary" />
+                        <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_card}</span>
+                      </button>
+                      <button onClick={() => setData({ ...data, paymentMethod: "cash" })}
+                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "cash" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
+                        <Banknote size={20} className="text-primary" />
+                        <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_cash}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </motion.div>
           </AnimatePresence>
 
           {/* Navigation buttons */}
           <div className="flex justify-between mt-12">
             {step > 0 ? (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="flex items-center gap-2 border border-border text-foreground font-sans text-sm font-medium px-6 py-3 rounded-md hover:bg-secondary transition-colors duration-200"
-              >
-                <ArrowLeft size={14} />
-                {t.booking_prev}
+              <button onClick={() => setStep(step - 1)}
+                className="flex items-center gap-2 border border-border text-foreground font-sans text-sm font-medium px-6 py-3 rounded-md hover:bg-secondary transition-colors duration-200">
+                <ArrowLeft size={14} /> {t.booking_prev}
               </button>
             ) : <div />}
 
-            {step < 3 ? (
-              <button
-                onClick={() => canProceed() && setStep(step + 1)}
-                disabled={!canProceed()}
-                className="flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {t.booking_next}
-                <ArrowRight size={14} />
+            {step < 4 ? (
+              <button onClick={() => canProceed() && setStep(step + 1)} disabled={!canProceed()}
+                className="flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 disabled:opacity-40 disabled:cursor-not-allowed">
+                {t.booking_next} <ArrowRight size={14} />
               </button>
             ) : (
-              <button
-                onClick={handleConfirm}
-                className="flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200"
-              >
-                <Check size={14} />
-                {t.booking_confirm}
+              <button onClick={handleConfirm}
+                className="flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200">
+                <Check size={14} /> {t.booking_confirm}
               </button>
             )}
           </div>
@@ -375,8 +403,8 @@ const Booking = () => {
 
 const SummaryRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex justify-between items-start py-2 border-b border-border last:border-0">
-    <span className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
-    <span className="font-sans text-sm text-foreground text-right max-w-[60%]">{value}</span>
+    <span className="font-sans text-sm text-muted-foreground">{label}</span>
+    <span className="font-sans text-sm text-foreground font-medium text-end max-w-[60%]">{value}</span>
   </div>
 );
 
