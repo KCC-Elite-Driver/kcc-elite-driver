@@ -141,6 +141,31 @@ export type TranslationKeys = {
   booking_success_desc: string;
   booking_new: string;
 
+  // Booking Passenger step
+  booking_step_passenger: string;
+  booking_firstname: string;
+  booking_lastname: string;
+  booking_email: string;
+  booking_phone: string;
+  booking_company_invoice: string;
+  booking_flight_number: string;
+  booking_meet_greet: string;
+  booking_meet_greet_desc: string;
+  booking_cancellation_policy: string;
+  booking_payment_card: string;
+  booking_payment_cash: string;
+  booking_payment_method: string;
+
+  // Fleet extra amenities
+  fleet_refreshments: string;
+  fleet_disinfection: string;
+
+  // Services dropdown
+  services_dropdown_airport: string;
+  services_dropdown_hourly: string;
+  services_dropdown_event: string;
+  services_dropdown_intercity: string;
+
   // About Page
   about_title: string;
   about_subtitle: string;
@@ -325,6 +350,26 @@ export const translations: Record<Language, TranslationKeys> = {
     about_cert_iso: "Standards ISO",
     about_cert_iso_desc: "Processus qualité alignés sur les normes internationales de service premium.",
     about_cta: "Prêt à vivre l'excellence ?",
+
+    booking_step_passenger: "Passager",
+    booking_firstname: "Prénom",
+    booking_lastname: "Nom",
+    booking_email: "Adresse e-mail",
+    booking_phone: "Téléphone",
+    booking_company_invoice: "Facture entreprise ?",
+    booking_flight_number: "Numéro de vol / train",
+    booking_meet_greet: "Meet & Greet",
+    booking_meet_greet_desc: "Accueil avec panneau nominatif à l'arrivée",
+    booking_cancellation_policy: "Annulation gratuite jusqu'à 24h avant. 50% de frais si annulé dans les 24h.",
+    booking_payment_card: "Carte bancaire",
+    booking_payment_cash: "Espèces au chauffeur",
+    booking_payment_method: "Mode de paiement",
+    fleet_refreshments: "Rafraîchissements premium",
+    fleet_disinfection: "Protocole de désinfection",
+    services_dropdown_airport: "Transfert Aéroport",
+    services_dropdown_hourly: "Mise à disposition",
+    services_dropdown_event: "Événement VIP",
+    services_dropdown_intercity: "Intercités",
   },
 
   en: {
@@ -483,6 +528,26 @@ export const translations: Record<Language, TranslationKeys> = {
     about_cert_iso: "ISO Standards",
     about_cert_iso_desc: "Quality processes aligned with international premium service standards.",
     about_cta: "Ready to experience excellence?",
+
+    booking_step_passenger: "Passenger",
+    booking_firstname: "First name",
+    booking_lastname: "Last name",
+    booking_email: "Email address",
+    booking_phone: "Phone number",
+    booking_company_invoice: "Company invoice?",
+    booking_flight_number: "Flight / train number",
+    booking_meet_greet: "Meet & Greet",
+    booking_meet_greet_desc: "Welcome with name sign at arrival",
+    booking_cancellation_policy: "Free cancellation up to 24h before pickup. 50% fee if cancelled within 24h.",
+    booking_payment_card: "Credit card",
+    booking_payment_cash: "Cash to driver",
+    booking_payment_method: "Payment method",
+    fleet_refreshments: "Premium refreshments",
+    fleet_disinfection: "Disinfection protocol",
+    services_dropdown_airport: "Airport Transfer",
+    services_dropdown_hourly: "Hourly Disposal",
+    services_dropdown_event: "VIP Events",
+    services_dropdown_intercity: "Intercity",
   },
 
   ar: {
@@ -641,5 +706,25 @@ export const translations: Record<Language, TranslationKeys> = {
     about_cert_iso: "معايير ISO",
     about_cert_iso_desc: "عمليات جودة متوافقة مع المعايير الدولية للخدمة الفاخرة.",
     about_cta: "هل أنت مستعد لتجربة التميّز؟",
+
+    booking_step_passenger: "الراكب",
+    booking_firstname: "الاسم الأول",
+    booking_lastname: "اسم العائلة",
+    booking_email: "البريد الإلكتروني",
+    booking_phone: "رقم الهاتف",
+    booking_company_invoice: "فاتورة شركة؟",
+    booking_flight_number: "رقم الرحلة / القطار",
+    booking_meet_greet: "استقبال شخصي",
+    booking_meet_greet_desc: "استقبال بلوحة اسم عند الوصول",
+    booking_cancellation_policy: "إلغاء مجاني حتى 24 ساعة قبل الموعد. رسوم 50% إذا تم الإلغاء خلال 24 ساعة.",
+    booking_payment_card: "بطاقة ائتمان",
+    booking_payment_cash: "نقداً للسائق",
+    booking_payment_method: "طريقة الدفع",
+    fleet_refreshments: "مرطبات فاخرة",
+    fleet_disinfection: "بروتوكول التعقيم",
+    services_dropdown_airport: "نقل من المطار",
+    services_dropdown_hourly: "حجز بالساعة",
+    services_dropdown_event: "أحداث VIP",
+    services_dropdown_intercity: "بين المدن",
   },
 };
