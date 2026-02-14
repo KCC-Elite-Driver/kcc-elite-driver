@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Link } from "react-router-dom";
 import ScrollReveal from "@/components/ScrollReveal";
-import { Plane, Clock, Star, Route, Check, ArrowRight } from "lucide-react";
+import { Plane, Clock, Star, Route, Check, ArrowRight, UserCheck, MapPin, Timer, ShieldCheck, Globe, Award, AlertCircle } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
 import JsonLd from "@/components/JsonLd";
 
@@ -43,6 +43,29 @@ const ServiceCard = ({ icon: Icon, title, description, features, index, ctaLabel
   </ScrollReveal>
 );
 
+interface SimpleCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  extra?: string;
+  index: number;
+}
+
+const SimpleCard = ({ icon: Icon, title, description, extra, index }: SimpleCardProps) => (
+  <ScrollReveal variant="fade-up" delay={index * 0.15}>
+    <div className="group bg-card border border-border rounded-lg p-8 hover:border-primary/30 transition-all duration-300">
+      <div className="w-14 h-14 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+        <Icon size={24} className="text-primary" />
+      </div>
+      <h3 className="font-serif text-xl font-semibold text-foreground mb-3">{title}</h3>
+      <p className="font-sans text-sm text-muted-foreground leading-relaxed">{description}</p>
+      {extra && (
+        <p className="font-sans text-xs text-primary mt-4 font-medium">{extra}</p>
+      )}
+    </div>
+  </ScrollReveal>
+);
+
 const Services = () => {
   const { t } = useTranslation();
 
@@ -52,6 +75,21 @@ const Services = () => {
     { icon: Star, title: t.services_event_title, description: t.services_event_desc, features: t.services_event_features },
     { icon: Route, title: t.services_city_title, description: t.services_city_desc, features: t.services_city_features },
   ];
+
+  const additionalServices = [
+    { icon: UserCheck, title: t.services_meetgreet_title, description: t.services_meetgreet_desc },
+    { icon: MapPin, title: t.services_cultural_title, description: t.services_cultural_desc, extra: t.services_cultural_pricing },
+    { icon: Timer, title: t.services_standby_title, description: t.services_standby_desc, extra: t.services_standby_format },
+    { icon: AlertCircle, title: t.services_cancellation_title, description: t.services_cancellation_desc },
+  ];
+
+  const whyUs = [
+    { icon: ShieldCheck, title: t.services_why_discretion, desc: t.services_why_discretion_desc },
+    { icon: Globe, title: t.services_why_expertise, desc: t.services_why_expertise_desc },
+    { icon: Award, title: t.services_why_excellence, desc: t.services_why_excellence_desc },
+  ];
+
+  const airports = [t.services_airports_cai, t.services_airports_cdg, t.services_airports_ory];
 
   return (
     <div className="pt-16">
@@ -78,6 +116,7 @@ const Services = () => {
           },
         }}
       />
+
       {/* Hero */}
       <section className="py-20 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8 text-center">
@@ -94,12 +133,84 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Services grid */}
+      {/* Main services grid */}
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {services.map((service, i) => (
               <ServiceCard key={service.title} {...service} index={i} ctaLabel={t.services_cta} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Additional services */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {additionalServices.map((s, i) => (
+              <SimpleCard key={s.title} {...s} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Airport Transfers */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <ScrollReveal variant="fade-up">
+            <div className="text-center mb-12">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {t.services_airports_title}
+              </h2>
+              <p className="font-sans text-muted-foreground text-sm max-w-xl mx-auto">
+                {t.services_airports_desc}
+              </p>
+            </div>
+          </ScrollReveal>
+          <div className="max-w-2xl mx-auto space-y-4">
+            {airports.map((airport, i) => (
+              <ScrollReveal key={airport} variant="fade-up" delay={i * 0.1}>
+                <div className="flex items-center gap-4 bg-card border border-border rounded-lg p-5 hover:border-primary/30 transition-colors duration-300">
+                  <Plane size={20} className="text-primary shrink-0" />
+                  <span className="font-sans text-sm text-foreground">{airport}</span>
+                </div>
+              </ScrollReveal>
+            ))}
+            <ScrollReveal variant="fade-up" delay={0.4}>
+              <p className="text-center font-sans text-xs text-muted-foreground mt-6">
+                {t.services_airports_includes}
+              </p>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
+      {/* Why KCC-EliteDriver */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-4 lg:px-8">
+          <ScrollReveal variant="fade-up">
+            <div className="text-center mb-16">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {t.services_why_title}
+              </h2>
+            </div>
+          </ScrollReveal>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {whyUs.map((item, i) => (
+              <ScrollReveal key={item.title} variant="fade-up" delay={i * 0.15}>
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                    <item.icon size={28} className="text-primary" />
+                  </div>
+                  <h3 className="font-serif text-xl font-semibold text-foreground mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                    {item.desc}
+                  </p>
+                </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
