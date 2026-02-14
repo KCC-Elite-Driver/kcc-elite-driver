@@ -218,7 +218,7 @@ export type TranslationKeys = {
   about_cta: string;
 };
 
-export const translations: Record<Language, TranslationKeys> = {
+export const translations: Record<Language, TranslationKeys> = { // v2
   fr: {
     nav_home: "Accueil",
     nav_fleet: "Flotte",
