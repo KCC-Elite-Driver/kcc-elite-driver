@@ -1,100 +1,122 @@
 
 
-# Plan : Alignement avec le Master Prompt
+# Plan : Mise a jour des textes optimises KCC-EliteDriver
 
-Ce plan couvre les modifications qui peuvent etre implementees immediatement, sans integration d'API externes (Google Maps, Stripe). Les integrations API seront traitees dans une etape ulterieure.
-
----
-
-## 1. Support RTL pour l'arabe
-
-### Modifications
-- **`src/i18n/LanguageContext.tsx`** : Ajouter un effet qui applique `dir="rtl"` et `lang="ar"` sur le `<html>` quand la langue arabe est selectionnee, et `dir="ltr"` sinon.
-- **`index.html`** : Ajouter la police arabe Cairo (Google Fonts) pour une meilleure lisibilite.
-- **`src/index.css`** : Ajouter une regle `[dir="rtl"]` pour swapper la police body vers Cairo et ajuster les espacements logiques (margin-inline, padding-inline) la ou necessaire.
+Ce plan met a jour l'ensemble des textes du site avec le contenu optimise fourni, en francais et en anglais (British English), et ajoute les traductions arabes correspondantes.
 
 ---
 
-## 2. Navigation Services en dropdown
+## 1. Mise a jour des traductions existantes
 
-### Modifications
-- **`src/components/Header.tsx`** : Remplacer le lien direct "Services" par un dropdown au hover (desktop) contenant :
-  - Transfert Aeroport
-  - Mise a disposition
-  - Evenement VIP
-  - Intercites
-  - *(Le lien "Circuits Touristiques" sera cache dans ce sous-menu si ajoute plus tard)*
-- Chaque item du dropdown redirige vers `/services` (ou vers une ancre specifique)
-- Sur mobile : le dropdown devient un sous-menu accordeon
+**Fichier : `src/i18n/translations.ts`**
 
----
+Toutes les modifications de texte ci-dessous seront appliquees aux 3 langues (FR, EN, AR).
 
-## 3. Fleet : ajout d'equipements manquants
+### Hero Section
+| Cle | Ancienne valeur (FR) | Nouvelle valeur (FR) |
+|-----|---------------------|---------------------|
+| `hero_subtitle` | "Service de chauffeur prive haut de gamme..." | "Une continuite de service sans compromis. Discretion absolue, ponctualite garantie, serenite a chaque deplacement important." |
+| `hero_oneway` | "Transfert" | "Transfert" (inchange) |
+| `hero_hourly` | "Mise a disposition" | "Mise a disposition" (inchange) |
 
-### Modifications
-- **`src/i18n/translations.ts`** : Ajouter les cles `fleet_refreshments` ("Rafraichissements Premium"), `fleet_disinfection` ("Protocole de desinfection")
-- **`src/pages/Fleet.tsx`** : Ajouter ces amenites aux vehicules concernes (First Class et Van notamment)
+EN: subtitle devient "Seamless service across continents. Complete discretion, punctuality guaranteed, peace of mind with every journey."
+EN: title devient "Excellence at every milestone" (au lieu de "Excellence at every mile")
 
----
+### Global Axis (Section geographique)
+| Cle | Nouvelle valeur FR |
+|-----|-------------------|
+| `axis_title` | "De part et d'autre du monde" |
+| `axis_subtitle` | "Une presence locale, une excellence internationale" |
+| `axis_cairo_desc` | "Transferts aeroport, circuits culturels prives et deplacements d'affaires. Maitrise eprouvee de la capitale egyptienne et de ses enjeux specifiques." |
+| `axis_paris_desc` | "Transferts aeroport, mise a disposition horaire, evenements prives. Expertise affirmee de la Ville de Lumiere et de ses codes internationaux." |
+| `axis_international_desc` | "Trajets longue distance coordonnes, connexions aeriennes et services sur mesure. A l'ecoute de vos besoins ou que vous soyez." |
 
-## 4. Booking Stage 3 : Informations passager detaillees
+EN equivalents mis a jour egalement ("Across the globe", "Local presence, international excellence", etc.)
 
-C'est le changement le plus important. Le flux de reservation passe de 4 a 5 etapes.
+### Fleet (Descriptions vehicules)
+| Cle | Nouvelle valeur FR |
+|-----|-------------------|
+| `fleet_subtitle` | "Selectionnes avec soin pour chaque contexte" |
+| `fleet_business_desc` | "Mercedes Classe E ou equivalent. Confort discret et connectivite complete pour vos deplacements professionnels. Equipee de WiFi tres haut debit, climatisation intelligente, rafraichissements premium et presse francaise et internationale a bord." |
+| `fleet_first_desc` | "Mercedes Classe S ou equivalent. L'excellence absolue pour vos moments les plus sensibles. Votre bureau mobile prive : WiFi tres haut debit, climatisation zoning, espaces de travail integres, rafraichissements haut de gamme, lecture selectionnee." |
+| `fleet_van` | "Van Prestige" (etait "Van VIP") |
+| `fleet_van_desc` | "Mercedes Classe V ou equivalent. Espace sans compromis pour delegations officielles et evenements prives. Equipee de WiFi tres haut debit, climatisation zoning, bar integre, divertissement discret et configuration modulable selon vos besoins." |
+| `fleet_book` | "Reserver" avec fleche (inchange) |
 
-### Nouvelle structure du tunnel :
-1. **Service** (inchange)
-2. **Itineraire** (pickup, dropoff, date, heure -- inchange)
-3. **Passager** (NOUVEAU) -- informations personnelles
-4. **Vehicule** (inchange)
-5. **Recapitulatif + Politique d'annulation** (modifie)
+EN: descriptions mises a jour ("Discreet comfort and complete connectivity...", "Absolute excellence for your most important moments...", "Van Prestige", "Uncompromised space for official delegations...")
 
-### Champs de l'etape 3 "Passager" :
-- Prenom (obligatoire)
-- Nom (obligatoire)
-- Email (obligatoire)
-- Telephone avec selecteur indicatif pays (+33, +20, +44, +1) (obligatoire)
-- Checkbox "Facture entreprise ?"
-- Selecteur nombre de passagers (deplace depuis etape 2)
-- Selecteur nombre de bagages (deplace depuis etape 2)
-- Textarea "Notes au chauffeur"
-- **Conditionnel** : Si le lieu de prise en charge contient "aeroport" ou "gare" :
-  - Champ "Numero de vol / train" (ex: LH83822)
-  - Checkbox "Meet & Greet" (coche par defaut pour les aeroports)
+### Values (Engagements)
+| Cle | Nouvelle valeur FR |
+|-----|-------------------|
+| `values_subtitle` | "Ce qui nous definit" |
+| `values_discretion_desc` | "Confidentialite absolue. Vos trajets, vos horaires, vos conversations restent strictement prives. C'est notre priorite premiere." |
+| `values_punctuality_desc` | "Anticipation constante. Suivi des vols en temps reel, gestion des aleas, arrivee toujours en avance. Jamais d'attente, jamais de retard." |
+| `values_multilingual_desc` | "Chauffeurs francophones, anglophones et arabophones. Fluidite totale dans chaque echange, comprehension des nuances culturelles de chaque marche." |
 
-### Etape 5 "Recapitulatif" modifiee :
-- Afficher la politique d'annulation : "Annulation gratuite jusqu'a 24h avant. 50% de frais si annule dans les 24h."
-- Options de paiement (affichage seulement pour l'instant) :
-  - Carte bancaire (a integrer avec Stripe plus tard)
-  - Especes au chauffeur
+EN: "What defines us", descriptions mises a jour avec le texte British English fourni.
 
-### Traductions a ajouter (FR, EN, AR) :
-- `booking_step_passenger`, `booking_firstname`, `booking_lastname`, `booking_email`, `booking_phone`
-- `booking_company_invoice`, `booking_flight_number`, `booking_meet_greet`
-- `booking_cancellation_policy`, `booking_payment_card`, `booking_payment_cash`
+### Booking (micro-copie)
+| Cle | Nouvelle valeur FR |
+|-----|-------------------|
+| `booking_notes_placeholder` | "Notes au chauffeur - Demandes particulieres" |
+| `booking_meet_greet_desc` | "Accueil personnalise a l'arrivee" |
+| `booking_cancellation_policy` | "Annulation flexible sans frais jusqu'a 24h avant le depart. Au-dela, des frais de 50% s'appliquent." |
+| `booking_success` | "Reservation confirmee !" (inchange) |
+| `booking_success_desc` | "Votre reservation est confirmee. Un email de recapitulatif a ete envoye. Nous vous remercions de votre confiance." |
 
----
+EN: equivalents mis a jour ("Your booking is confirmed. A summary email has been sent. Thank you for your trust.", etc.)
 
-## 5. Resume des fichiers
-
-| Action | Fichier |
-|--------|---------|
-| Modifier | `src/i18n/LanguageContext.tsx` -- RTL dir attribute |
-| Modifier | `src/i18n/translations.ts` -- Nouvelles cles (booking passager, fleet, cancellation) |
-| Modifier | `index.html` -- Police Cairo pour l'arabe |
-| Modifier | `src/index.css` -- Styles RTL |
-| Modifier | `src/components/Header.tsx` -- Dropdown Services |
-| Modifier | `src/pages/Fleet.tsx` -- Amenites supplementaires |
-| Modifier | `src/pages/Booking.tsx` -- Etape passager + politique annulation + paiement |
+### Footer
+| Cle | Nouvelle valeur FR |
+|-----|-------------------|
+| `fleet_page_subtitle` | "Selectionnes avec soin pour chaque contexte" |
 
 ---
 
-## 6. Ce qui reste pour plus tard (necessite des cles API)
+## 2. Nouvelles cles de traduction a ajouter
 
-Ces elements du master prompt ne sont pas implementes dans ce plan car ils necessitent des integrations externes :
-- **Google Places Autocomplete** : Remplacer la liste statique (necessite cle API Google Maps)
-- **Google Distance Matrix API** : Calcul de prix en temps reel (necessite cle API Google Maps)
-- **Stripe** : Paiement par carte (necessite activation Stripe)
-- **Supabase** : Stockage des reservations (necessite connexion Cloud)
+Pour les sections additionnelles du master prompt (Meet & Greet, Circuits Culturels, Mise a disposition, Pourquoi nous), de nouvelles cles seront ajoutees au type `TranslationKeys` et aux 3 langues :
 
-Ces integrations pourront etre ajoutees etape par etape une fois les cles configurees.
+```
+// Services page - additional cards
+services_meetgreet_title / _desc
+services_cultural_title / _desc
+services_standby_title / _desc / _format
+services_cancellation_title / _desc
+services_airports_title / _desc / _includes
+services_why_title
+services_why_discretion / _desc
+services_why_expertise / _desc  
+services_why_excellence / _desc
+```
+
+---
+
+## 3. Page Services enrichie
+
+**Fichier : `src/pages/Services.tsx`**
+
+Ajouter les nouvelles cartes de service apres les 4 existantes :
+- **Meet & Greet** : "Accueil Personnalise aux Aeroports" avec description
+- **Circuits Culturels** : "Circuits Touristiques Prives" (place discretement comme demande dans le master prompt)
+- **Mise a Disposition Horaire** : avec les formats (4h / 8h / Sur mesure)
+
+Ajouter une section "Pourquoi KCC-EliteDriver ?" en bas de page avec les 3 piliers (Discretion & Securite, Expertise Internationale, Excellence Operationnelle).
+
+Ajouter une section "Transferts Aeroports" listant CAI, CDG, ORY avec les inclusions.
+
+---
+
+## 4. Traductions arabes
+
+Toutes les nouvelles cles et modifications seront egalement traduites en arabe pour maintenir la parite trilingue.
+
+---
+
+## Resume des fichiers a modifier
+
+| Fichier | Modification |
+|---------|-------------|
+| `src/i18n/translations.ts` | Mise a jour de ~30 cles existantes + ajout de ~15 nouvelles cles (FR, EN, AR) |
+| `src/pages/Services.tsx` | Ajout des sections Meet & Greet, Circuits, Mise a disposition, Pourquoi nous, Transferts aeroports |
 
