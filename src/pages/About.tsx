@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
-import { ShieldCheck, Award, GraduationCap, FileCheck, ArrowRight, Users, Eye, BookOpen } from "lucide-react";
+import { ShieldCheck, Award, GraduationCap, FileCheck, ArrowRight, Users, Eye, BookOpen, Lock, Star, Scale, Lightbulb } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
 
 const About = () => {
@@ -18,6 +18,13 @@ const About = () => {
     { icon: ShieldCheck, title: t.about_cert_insurance, desc: t.about_cert_insurance_desc },
     { icon: GraduationCap, title: t.about_cert_safety, desc: t.about_cert_safety_desc },
     { icon: Award, title: t.about_cert_iso, desc: t.about_cert_iso_desc },
+  ];
+
+  const coreValues = [
+    { icon: Lock, title: t.about_value_discretion, desc: t.about_value_discretion_desc },
+    { icon: Star, title: t.about_value_excellence, desc: t.about_value_excellence_desc },
+    { icon: Scale, title: t.about_value_integrity, desc: t.about_value_integrity_desc },
+    { icon: Lightbulb, title: t.about_value_anticipation, desc: t.about_value_anticipation_desc },
   ];
 
   return (
@@ -132,13 +139,47 @@ const About = () => {
         </div>
       </section>
 
+      {/* Core Values */}
+      <section className="py-24 bg-card/50">
+        <div className="container mx-auto px-4 lg:px-8">
+          <ScrollReveal variant="fade-up">
+            <div className="text-center mb-16">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {t.about_values_title}
+              </h2>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {coreValues.map((value, i) => (
+              <ScrollReveal key={value.title} variant="scale-in" delay={i * 0.1}>
+                <div className="bg-card border border-border rounded-lg p-6 text-center hover:border-primary/30 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <value.icon size={22} className="text-primary" />
+                  </div>
+                  <h4 className="font-serif text-base font-semibold text-foreground mb-2">
+                    {value.title}
+                  </h4>
+                  <p className="font-sans text-xs text-muted-foreground leading-relaxed">
+                    {value.desc}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 gradient-hero">
         <div className="container mx-auto px-4 lg:px-8 text-center">
           <ScrollReveal variant="fade-up">
-            <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-6">
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-4">
               {t.about_cta}
             </h2>
+            <p className="font-sans text-muted-foreground text-base max-w-xl mx-auto mb-6">
+              {t.about_cta_desc}
+            </p>
             <Link
               to="/contact"
               className="inline-flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200"
