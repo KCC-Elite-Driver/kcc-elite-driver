@@ -117,14 +117,18 @@ export type TranslationKeys = {
   // Services - additional sections
   services_meetgreet_title: string;
   services_meetgreet_desc: string;
+  services_meetgreet_features: string[];
   services_cultural_title: string;
   services_cultural_desc: string;
   services_cultural_pricing: string;
   services_standby_title: string;
   services_standby_desc: string;
   services_standby_format: string;
+  services_standby_features: string[];
   services_cancellation_title: string;
   services_cancellation_desc: string;
+  services_cancellation_standard: string;
+  services_cancellation_meetgreet: string;
   services_airports_title: string;
   services_airports_desc: string;
   services_airports_includes: string;
@@ -308,18 +312,18 @@ export const translations: Record<Language, TranslationKeys> = { // v2
     footer_rights: "Tous droits réservés.",
 
     services_title: "Nos Services",
-    services_subtitle: "Des prestations sur mesure pour chaque besoin",
+    services_subtitle: "Services adaptés à chaque situation, chaque moment",
     services_airport_title: "Transfert Aéroport",
-    services_airport_desc: "Accueil personnalisé avec panneau nominatif, suivi des vols en temps réel et assistance bagages. Disponible dans tous les aéroports du Caire et de Paris.",
+    services_airport_desc: "Accueil discret avec panneau nominatif, suivi en temps réel de votre vol, assistance bagages jusqu'à votre véhicule. Temps d'attente gratuit, services complets inclus.",
     services_airport_features: ["Accueil avec panneau nominatif", "Suivi des vols en temps réel", "Assistance bagages", "Temps d'attente gratuit"],
-    services_hourly_title: "Mise à Disposition",
-    services_hourly_desc: "Votre chauffeur reste à votre entière disposition pendant la durée souhaitée. Idéal pour les journées de rendez-vous ou les visites touristiques.",
+    services_hourly_title: "Mise à Disposition Horaire",
+    services_hourly_desc: "Réservez votre véhicule et chauffeur pour la journée, la demi-journée ou pour une durée spécifique. Flexibilité totale : arrêts multiples, changement de programme, disponibilité garantie. Idéal pour vos tournées d'affaires ou événements.",
     services_hourly_features: ["Chauffeur dédié", "Itinéraire flexible", "Durée modulable", "Disponible 24h/24"],
     services_event_title: "Événement VIP",
-    services_event_desc: "Organisation complète du transport pour vos événements d'entreprise, mariages, galas et soirées privées. Coordination multi-véhicules possible.",
+    services_event_desc: "Organisation complète du transport pour vos événements d'entreprise, mariages, galas et soirées privées. Coordination multi-véhicules, planification discrète, service de conciergerie intégré.",
     services_event_features: ["Coordination multi-véhicules", "Planification sur mesure", "Accueil des invités", "Service de conciergerie"],
     services_city_title: "Intercités & Longue Distance",
-    services_city_desc: "Voyagez confortablement entre les villes avec notre service de transfert longue distance. Le Caire – Alexandrie, Paris – Lyon, et bien plus.",
+    services_city_desc: "Trajets longue distance coordonnés en tout confort : Le Caire – Alexandrie, Paris – Lyon et au-delà. Tarification transparente, arrêts intermédiaires possibles, chauffeur expérimenté, confort premium garanti.",
     services_city_features: ["Tarification transparente", "Arrêts intermédiaires possibles", "Confort premium garanti", "Chauffeur expérimenté"],
     services_cta: "Réserver ce service",
     services_learn_more: "En savoir plus",
@@ -327,14 +331,18 @@ export const translations: Record<Language, TranslationKeys> = { // v2
     // Services - additional sections
     services_meetgreet_title: "Accueil Personnalisé aux Aéroports",
     services_meetgreet_desc: "Nos équipes vous accueillent à votre arrivée avec discrétion. Détection de votre vol, assistance avec vos bagages, chemin clair jusqu'à votre véhicule. Un service qui commence avant même votre départ de l'aéroport.",
+    services_meetgreet_features: ["Détection automatique de votre arrivée", "Assistance complète avec bagages", "Chemin dédié jusqu'au véhicule", "Support pour vos besoins spéciaux"],
     services_cultural_title: "Circuits Touristiques Privés",
     services_cultural_desc: "Au-delà du transport, nous proposons une découverte culturelle et patrimoine sur mesure : visite privée des sites historiques du Caire, musées avec accès privilégié, balades dans le Paris historique. Disponible pour une demi-journée ou journée complète.",
     services_cultural_pricing: "Sur demande",
     services_standby_title: "Mise à Disposition Horaire",
     services_standby_desc: "Réservez votre véhicule et chauffeur pour la journée, la demi-journée ou pour une durée spécifique. Flexibilité totale : arrêts multiples, changement de programme, disponibilité garantie. Idéal pour vos tournées d'affaires ou événements.",
     services_standby_format: "Demi-journée (4h) | Journée (8h) | Sur mesure",
+    services_standby_features: ["Chauffeur dédié et attentif", "Itinéraire flexible et adaptable", "Durée modulable selon vos besoins", "Disponible 24h/24"],
     services_cancellation_title: "Politique d'Annulation Flexible",
     services_cancellation_desc: "Annulation gratuite jusqu'à 24 heures avant votre départ. Au-delà, une participation de 50% au montant total s'applique. Pour les réservations avec Meet & Greet à l'aéroport, délai d'annulation : 48 heures. Nous comprenons que vos plans peuvent changer ; nous restons justes dans nos conditions.",
+    services_cancellation_standard: "Standard : Gratuit jusqu'à 24h avant | 50% au-delà",
+    services_cancellation_meetgreet: "Avec Meet & Greet : Gratuit jusqu'à 48h avant | 50% au-delà",
     services_airports_title: "Transferts Aéroports",
     services_airports_desc: "Tous les transferts incluent : suivi de vol, assistance bagages, tarif fixe sans surprise, véhicule climatisé.",
     services_airports_includes: "Suivi de vol • Assistance bagages • Tarif fixe • Véhicule climatisé",
@@ -511,33 +519,37 @@ export const translations: Record<Language, TranslationKeys> = { // v2
     footer_rights: "All rights reserved.",
 
     services_title: "Our Services",
-    services_subtitle: "Bespoke services tailored to your every need",
+    services_subtitle: "Services tailored to every situation, every moment",
     services_airport_title: "Airport Transfer",
-    services_airport_desc: "Personalised meet & greet with name board, real-time flight tracking and luggage assistance. Available at all Cairo and Paris airports.",
-    services_airport_features: ["Meet & greet with name board", "Real-time flight tracking", "Luggage assistance", "Free waiting time"],
-    services_hourly_title: "Hourly Standby",
-    services_hourly_desc: "Your chauffeur remains at your complete disposal for the desired duration. Ideal for a day of meetings or sightseeing.",
-    services_hourly_features: ["Dedicated chauffeur", "Flexible itinerary", "Adjustable duration", "Available 24/7"],
+    services_airport_desc: "Discreet welcome with name placard, real-time flight tracking, luggage assistance to your vehicle. Complimentary waiting time, full services included.",
+    services_airport_features: ["Name placard welcome", "Real-time flight tracking", "Luggage assistance", "Complimentary waiting time"],
+    services_hourly_title: "Hourly Standby Service",
+    services_hourly_desc: "Reserve your vehicle and driver for the day, half-day, or custom duration. Total flexibility: multiple stops, programme changes, guaranteed availability. Perfect for business rounds and events.",
+    services_hourly_features: ["Dedicated driver", "Flexible routing", "Customisable duration", "Available 24/7"],
     services_event_title: "VIP Events",
-    services_event_desc: "Complete transport organisation for your corporate events, weddings, galas and private parties. Multi-vehicle coordination available.",
-    services_event_features: ["Multi-vehicle coordination", "Bespoke planning", "Guest welcome", "Concierge service"],
-    services_city_title: "Intercity & Long Distance",
-    services_city_desc: "Travel comfortably between cities with our long-distance transfer service. Cairo – Alexandria, Paris – Lyon, and much more.",
-    services_city_features: ["Transparent pricing", "Intermediate stops possible", "Premium comfort guaranteed", "Experienced chauffeur"],
+    services_event_desc: "Complete transport coordination for your corporate events, weddings, galas and private celebrations. Multi-vehicle coordination, discreet planning, integrated concierge service.",
+    services_event_features: ["Multi-vehicle coordination", "Bespoke planning", "Guest welcome services", "Concierge support"],
+    services_city_title: "Inter-City & Long-Distance",
+    services_city_desc: "Long-distance journeys in complete comfort: Cairo – Alexandria, Paris – Lyon and beyond. Transparent pricing, intermediate stops available, experienced driver, premium comfort guaranteed.",
+    services_city_features: ["Transparent pricing", "Intermediate stops available", "Premium comfort guaranteed", "Experienced driver"],
     services_cta: "Book this service",
     services_learn_more: "Learn more",
 
     // Services - additional sections
     services_meetgreet_title: "Personalised Airport Welcome",
-    services_meetgreet_desc: "Our teams welcome you on arrival with discreet professionalism. Flight tracking, luggage assistance, seamless direction to your vehicle. A service that begins the moment you land.",
+    services_meetgreet_desc: "Our teams welcome you on arrival with discreet professionalism. Flight detection, complete luggage assistance, clear direction to your vehicle. A service that begins the moment you land.",
+    services_meetgreet_features: ["Automatic flight arrival detection", "Complete luggage assistance", "Dedicated path to vehicle", "Support for special requests"],
     services_cultural_title: "Private Cultural Tours",
     services_cultural_desc: "Beyond transportation, we offer bespoke cultural and heritage experiences: private tours of Cairo's historical sites, museums with privileged access, guided discoveries of historic Paris. Available for half-day or full-day arrangements.",
     services_cultural_pricing: "Upon request",
     services_standby_title: "Hourly Standby Service",
     services_standby_desc: "Reserve your vehicle and driver for the day, half-day or custom duration. Total flexibility: multiple stops, programme changes, guaranteed availability. Perfect for business rounds and events.",
-    services_standby_format: "Half-day (4 hours) | Full day (8 hours) | Bespoke arrangements",
+    services_standby_format: "Half-day (4 hours) | Full day (8 hours) | Bespoke arrangement",
+    services_standby_features: ["Dedicated and attentive driver", "Flexible and adaptable routing", "Customisable duration", "Available 24/7"],
     services_cancellation_title: "Flexible Cancellation Policy",
     services_cancellation_desc: "Free cancellation up to 24 hours before departure. Beyond this, a 50% charge applies to the total booking. For airport Meet & Greet services, cancellation notice must be given 48 hours in advance. We understand that plans change; our terms remain fair.",
+    services_cancellation_standard: "Standard: Free up to 24 hours before | 50% thereafter",
+    services_cancellation_meetgreet: "With Meet & Greet: Free up to 48 hours before | 50% thereafter",
     services_airports_title: "Airport Transfers",
     services_airports_desc: "All transfers include: flight tracking, luggage assistance, fixed transparent pricing, climate-controlled vehicle.",
     services_airports_includes: "Flight tracking • Luggage assistance • Fixed pricing • Climate-controlled vehicle",
@@ -714,18 +726,18 @@ export const translations: Record<Language, TranslationKeys> = { // v2
     footer_rights: "جميع الحقوق محفوظة.",
 
     services_title: "خدماتنا",
-    services_subtitle: "خدمات مصممة خصيصاً لكل احتياجاتك",
+    services_subtitle: "خدمات مُصممة لكل موقف، كل لحظة",
     services_airport_title: "نقل من المطار",
-    services_airport_desc: "استقبال شخصي بلوحة اسم، تتبع الرحلات في الوقت الفعلي ومساعدة في الأمتعة. متوفر في جميع مطارات القاهرة وباريس.",
+    services_airport_desc: "استقبال راقٍ بلوحة اسم، تتبع رحلتك في الوقت الفعلي، مساعدة في الأمتعة حتى مركبتك. وقت انتظار مجاني، خدمات شاملة.",
     services_airport_features: ["استقبال بلوحة اسم", "تتبع الرحلات مباشرة", "مساعدة في الأمتعة", "وقت انتظار مجاني"],
     services_hourly_title: "حجز بالساعة",
-    services_hourly_desc: "سائقك يبقى تحت تصرفك بالكامل طوال المدة المطلوبة. مثالي ليوم من الاجتماعات أو الجولات السياحية.",
+    services_hourly_desc: "احجز مركبتك وسائقك ليوم كامل أو نصف يوم أو مدة محددة. مرونة تامة: توقفات متعددة، تغيير البرنامج، توفر مضمون. مثالي لجولات الأعمال والمناسبات.",
     services_hourly_features: ["سائق مخصص", "مسار مرن", "مدة قابلة للتعديل", "متوفر 24/7"],
     services_event_title: "أحداث VIP",
-    services_event_desc: "تنظيم كامل للنقل في مناسباتك الخاصة والمؤسسية، حفلات الزفاف والسهرات الخاصة. تنسيق متعدد المركبات ممكن.",
+    services_event_desc: "تنظيم كامل للنقل في مناسباتك المؤسسية، حفلات الزفاف، الحفلات الراقية والسهرات الخاصة. تنسيق متعدد المركبات، تخطيط متحفظ، خدمة كونسيرج مدمجة.",
     services_event_features: ["تنسيق متعدد المركبات", "تخطيط مخصص", "استقبال الضيوف", "خدمة كونسيرج"],
     services_city_title: "بين المدن والمسافات الطويلة",
-    services_city_desc: "سافر براحة بين المدن مع خدمة النقل لمسافات طويلة. القاهرة – الإسكندرية، باريس – ليون، وأكثر.",
+    services_city_desc: "رحلات طويلة المسافة بكل راحة: القاهرة – الإسكندرية، باريس – ليون وما بعدها. تسعير شفاف، توقفات وسيطة ممكنة، سائق متمرس، راحة فاخرة مضمونة.",
     services_city_features: ["تسعير شفاف", "توقفات وسيطة ممكنة", "راحة فاخرة مضمونة", "سائق متمرس"],
     services_cta: "حجز هذه الخدمة",
     services_learn_more: "اعرف المزيد",
@@ -733,14 +745,18 @@ export const translations: Record<Language, TranslationKeys> = { // v2
     // Services - additional sections
     services_meetgreet_title: "استقبال شخصي في المطارات",
     services_meetgreet_desc: "فرقنا تستقبلك عند وصولك بتحفظ مهني. تتبع رحلتك، مساعدة في الأمتعة، توجيه سلس إلى مركبتك. خدمة تبدأ لحظة هبوطك.",
+    services_meetgreet_features: ["كشف تلقائي لوصولك", "مساعدة كاملة في الأمتعة", "مسار مخصص إلى المركبة", "دعم لاحتياجاتك الخاصة"],
     services_cultural_title: "جولات ثقافية خاصة",
     services_cultural_desc: "أبعد من النقل، نقدم تجارب ثقافية وتراثية مخصصة: جولات خاصة في المواقع التاريخية بالقاهرة، متاحف بدخول مميز، اكتشافات في باريس التاريخية. متوفرة لنصف يوم أو يوم كامل.",
     services_cultural_pricing: "عند الطلب",
     services_standby_title: "حجز بالساعة",
     services_standby_desc: "احجز مركبتك وسائقك ليوم كامل أو نصف يوم أو مدة محددة. مرونة تامة: توقفات متعددة، تغيير البرنامج، توفر مضمون. مثالي لجولات الأعمال والمناسبات.",
     services_standby_format: "نصف يوم (٤ ساعات) | يوم كامل (٨ ساعات) | حسب الطلب",
+    services_standby_features: ["سائق مخصص ومنتبه", "مسار مرن وقابل للتعديل", "مدة قابلة للتعديل حسب احتياجاتك", "متوفر 24/7"],
     services_cancellation_title: "سياسة إلغاء مرنة",
     services_cancellation_desc: "إلغاء مجاني حتى 24 ساعة قبل الموعد. بعد ذلك، تُطبق رسوم 50% من المبلغ الإجمالي. لحجوزات الاستقبال الشخصي في المطار، مهلة الإلغاء 48 ساعة. نتفهم أن خططك قد تتغير؛ شروطنا تبقى عادلة.",
+    services_cancellation_standard: "قياسي: مجاني حتى 24 ساعة قبل | 50% بعد ذلك",
+    services_cancellation_meetgreet: "مع الاستقبال الشخصي: مجاني حتى 48 ساعة قبل | 50% بعد ذلك",
     services_airports_title: "نقل المطارات",
     services_airports_desc: "جميع التنقلات تشمل: تتبع الرحلة، مساعدة في الأمتعة، تسعير ثابت بلا مفاجآت، مركبة مكيفة.",
     services_airports_includes: "تتبع الرحلة • مساعدة الأمتعة • تسعير ثابت • مركبة مكيفة",
