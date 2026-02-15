@@ -123,13 +123,69 @@ export type TranslationKeys = {
 
   // Footer
   footer_tagline: string;
+  footer_description: string;
   footer_navigation: string;
   footer_services_title: string;
   footer_service_airport: string;
   footer_service_hourly: string;
   footer_service_event: string;
+  footer_service_city: string;
+  footer_service_cultural: string;
   footer_contact_title: string;
+  footer_whatsapp: string;
+  footer_address: string;
+  footer_hours: string;
   footer_rights: string;
+  footer_privacy_link: string;
+  footer_terms_link: string;
+  footer_cancellation_link: string;
+  footer_legal_link: string;
+
+  // Header - services dropdown enriched
+  services_dropdown_city: string;
+  services_dropdown_cultural: string;
+  services_dropdown_view_all: string;
+
+  // Legal pages
+  privacy_title: string;
+  privacy_intro: string;
+  privacy_data_collected_title: string;
+  privacy_data_collected: string;
+  privacy_usage_title: string;
+  privacy_usage: string;
+  privacy_sharing_title: string;
+  privacy_sharing: string;
+  privacy_rights_title: string;
+  privacy_rights: string;
+  privacy_security_title: string;
+  privacy_security: string;
+  privacy_contact: string;
+
+  terms_title: string;
+  terms_acceptance: string;
+  terms_eligibility: string;
+  terms_booking: string;
+  terms_behaviour: string;
+  terms_liability: string;
+  terms_ip: string;
+  terms_modification: string;
+
+  cancellation_title: string;
+  cancellation_standard_title: string;
+  cancellation_standard: string;
+  cancellation_meetgreet_title: string;
+  cancellation_meetgreet: string;
+  cancellation_vip_title: string;
+  cancellation_vip: string;
+  cancellation_how_title: string;
+  cancellation_how: string;
+  cancellation_refund_title: string;
+  cancellation_refund: string;
+
+  legal_title: string;
+  legal_company: string;
+  legal_hosting: string;
+  legal_ip: string;
 
   // Services Page
   services_title: string;
@@ -629,6 +685,60 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     services_dropdown_hourly: "Mise à disposition",
     services_dropdown_event: "Événement VIP",
     services_dropdown_intercity: "Intercités",
+    services_dropdown_city: "Intercités & Longue Distance",
+    services_dropdown_cultural: "Circuits Touristiques Privés",
+    services_dropdown_view_all: "Voir tous les services",
+
+    footer_description: "Service de chauffeur privé haut de gamme entre Le Caire et Paris. Discrétion, ponctualité, excellence.",
+    footer_service_city: "Intercités & Longue Distance",
+    footer_service_cultural: "Circuits Touristiques Privés",
+    footer_whatsapp: "Chat WhatsApp",
+    footer_address: "Paris, France | Cairo, Egypt",
+    footer_hours: "Lun-Ven 08:00-20:00 / Sam-Dim 09:00-18:00 (CET)",
+    footer_privacy_link: "Politique de confidentialité",
+    footer_terms_link: "Conditions d'utilisation",
+    footer_cancellation_link: "Politique d'annulation",
+    footer_legal_link: "Mentions légales",
+
+    privacy_title: "Politique de Confidentialité",
+    privacy_intro: "Chez KCC-EliteDriver, votre vie privée est notre priorité absolue. Cette politique décrit comment nous collectons, utilisons et protégeons vos données personnelles.",
+    privacy_data_collected_title: "Données collectées",
+    privacy_data_collected: "Informations personnelles (nom, email, téléphone), données de réservation (date, horaires, lieux), données de paiement (traitées par processeur sécurisé), données de localisation (GPS en temps réel, avec consentement).",
+    privacy_usage_title: "Utilisation des données",
+    privacy_usage: "Traitement de votre réservation, communication avec vous (confirmations, mises à jour), amélioration de nos services, respect des obligations légales.",
+    privacy_sharing_title: "Partage des données",
+    privacy_sharing: "Partagées UNIQUEMENT avec le chauffeur assigné (pour localisation en temps réel). Jamais vendues à des tiers. Conformité RGPD stricte.",
+    privacy_rights_title: "Droits de l'utilisateur",
+    privacy_rights: "Droit d'accès à vos données, droit de rectification, droit à l'oubli, droit à la portabilité.",
+    privacy_security_title: "Sécurité",
+    privacy_security: "Encryptage SSL 256-bit, serveurs sécurisés (compliance RGPD), politique d'accès restreint.",
+    privacy_contact: "Questions sur nos pratiques de confidentialité ? contact@kcc-elitedriver.com",
+
+    terms_title: "Conditions d'Utilisation",
+    terms_acceptance: "L'utilisation du site et services implique acceptation de ces conditions.",
+    terms_eligibility: "Vous devez être majeur (18+), responsable de vos comptes/paiements, et respecter toutes les lois applicables.",
+    terms_booking: "Tarifs fixes, pas de surprise. Paiement avant ou après la course (selon option). Carte bancaire ou espèces acceptés.",
+    terms_behaviour: "Vous acceptez de traiter nos chauffeurs avec respect et dignité, de ne pas utiliser le service de manière abusive, et de ne pas divulguer les coordonnées du chauffeur.",
+    terms_liability: "KCC-EliteDriver n'est pas responsable des retards dus au trafic ou conditions météo, incidents causés par le passager, perte ou dommage de bagages (sauf négligence).",
+    terms_ip: "Contenu du site : © KCC-EliteDriver. Pas de reproduction sans permission.",
+    terms_modification: "Nous pouvons modifier ces conditions à tout moment. Notification via email.",
+
+    cancellation_title: "Politique d'Annulation Flexible",
+    cancellation_standard_title: "Services Standard",
+    cancellation_standard: "Annulation gratuite jusqu'à 24h avant le départ. Au-delà : frais de 50% sur le montant total. Modification gratuite jusqu'à 24h avant.",
+    cancellation_meetgreet_title: "Avec Meet & Greet Aéroport",
+    cancellation_meetgreet: "Annulation gratuite jusqu'à 48h avant. Entre 24h et 48h : frais de 50%. Moins de 24h : frais de 100% (absence sans notification).",
+    cancellation_vip_title: "Événements VIP",
+    cancellation_vip: "Annulation gratuite jusqu'à 7 jours avant. Entre 3 et 7 jours : frais de 25%. Entre 1 et 3 jours : frais de 50%. Moins de 24h : frais de 100%.",
+    cancellation_how_title: "Comment annuler",
+    cancellation_how: "Connectez-vous à votre compte, allez à « Mes réservations », cliquez « Annuler » sur la réservation. Confirmation immédiate ou contactez le support.",
+    cancellation_refund_title: "Remboursement",
+    cancellation_refund: "Traité sous 5-7 jours ouvrables, vers le mode de paiement original.",
+
+    legal_title: "Mentions Légales",
+    legal_company: "KCC-EliteDriver — Service de chauffeur privé haut de gamme. Siège social : Paris, France. Email : contact@kcc-elitedriver.com. Téléphone : +33 1 23 45 67 89.",
+    legal_hosting: "Site hébergé par Lovable (lovable.dev). Hébergement sécurisé conforme aux normes européennes.",
+    legal_ip: "L'ensemble du contenu de ce site (textes, images, logos, design) est la propriété exclusive de KCC-EliteDriver. Toute reproduction sans autorisation est interdite.",
   },
 
   en: {
@@ -937,6 +1047,60 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     services_dropdown_hourly: "Hourly Standby",
     services_dropdown_event: "VIP Events",
     services_dropdown_intercity: "Intercity",
+    services_dropdown_city: "Inter-City & Long-Distance",
+    services_dropdown_cultural: "Private Cultural Tours",
+    services_dropdown_view_all: "View All Services",
+
+    footer_description: "Premium private driver service between Cairo and Paris. Discretion, punctuality, excellence.",
+    footer_service_city: "Inter-City & Long-Distance",
+    footer_service_cultural: "Private Cultural Tours",
+    footer_whatsapp: "Chat on WhatsApp",
+    footer_address: "Paris, France | Cairo, Egypt",
+    footer_hours: "Mon-Fri 08:00-20:00 / Sat-Sun 09:00-18:00 (CET)",
+    footer_privacy_link: "Privacy Policy",
+    footer_terms_link: "Terms of Use",
+    footer_cancellation_link: "Cancellation Policy",
+    footer_legal_link: "Legal Notice",
+
+    privacy_title: "Privacy Policy",
+    privacy_intro: "At KCC-EliteDriver, your privacy is our absolute priority. This policy describes how we collect, use and protect your personal data.",
+    privacy_data_collected_title: "Data Collected",
+    privacy_data_collected: "Personal information (name, email, phone), booking data (date, time, locations), payment data (processed by secure processor), location data (GPS real-time, with consent).",
+    privacy_usage_title: "Data Usage",
+    privacy_usage: "Processing your booking, communication with you (confirmations, updates), service improvement, legal compliance.",
+    privacy_sharing_title: "Data Sharing",
+    privacy_sharing: "Shared ONLY with assigned driver (for real-time tracking). Never sold to third parties. Strict GDPR compliance.",
+    privacy_rights_title: "User Rights",
+    privacy_rights: "Right to access your data, right to rectification, right to be forgotten, right to data portability.",
+    privacy_security_title: "Security",
+    privacy_security: "256-bit SSL encryption, secure servers (GDPR compliance), restricted access policy.",
+    privacy_contact: "Questions about our privacy practices? contact@kcc-elitedriver.com",
+
+    terms_title: "Terms of Use",
+    terms_acceptance: "Use of the website and services implies acceptance of these terms.",
+    terms_eligibility: "You must be of legal age (18+), responsible for your accounts/payments, and comply with all applicable laws.",
+    terms_booking: "Fixed pricing, no surprises. Payment before or after journey (depending on option). Credit card or cash accepted.",
+    terms_behaviour: "You agree to treat our drivers with respect and dignity, not abuse the service, and not divulge driver contact details.",
+    terms_liability: "KCC-EliteDriver is not responsible for delays due to traffic or weather, incidents caused by passenger, loss or damage to luggage (except negligence).",
+    terms_ip: "Website content: © KCC-EliteDriver. No reproduction without permission.",
+    terms_modification: "We may modify these terms at any time. Notification via email.",
+
+    cancellation_title: "Flexible Cancellation Policy",
+    cancellation_standard_title: "Standard Services",
+    cancellation_standard: "Free cancellation up to 24 hours before departure. Beyond 24h: 50% charge applies. Free modification up to 24 hours before.",
+    cancellation_meetgreet_title: "With Airport Meet & Greet",
+    cancellation_meetgreet: "Free cancellation up to 48 hours before. Between 24h and 48h: 50% charge. Less than 24h: 100% charge (no-show without notice).",
+    cancellation_vip_title: "VIP Events",
+    cancellation_vip: "Free cancellation up to 7 days before. Between 3 and 7 days: 25% charge. Between 1 and 3 days: 50% charge. Less than 24h: 100% charge.",
+    cancellation_how_title: "How to Cancel",
+    cancellation_how: "Log in to your account, go to 'My Bookings', click 'Cancel' on the booking. Immediate confirmation or contact support.",
+    cancellation_refund_title: "Refunds",
+    cancellation_refund: "Processed within 5-7 business days, to original payment method.",
+
+    legal_title: "Legal Notice",
+    legal_company: "KCC-EliteDriver — Premium private driver service. Registered office: Paris, France. Email: contact@kcc-elitedriver.com. Phone: +33 1 23 45 67 89.",
+    legal_hosting: "Website hosted by Lovable (lovable.dev). Secure hosting compliant with European standards.",
+    legal_ip: "All content on this website (texts, images, logos, design) is the exclusive property of KCC-EliteDriver. Reproduction without authorisation is prohibited.",
   },
 
   ar: {
@@ -1245,5 +1409,59 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     services_dropdown_hourly: "حجز بالساعة",
     services_dropdown_event: "أحداث VIP",
     services_dropdown_intercity: "بين المدن",
+    services_dropdown_city: "بين المدن والمسافات الطويلة",
+    services_dropdown_cultural: "جولات ثقافية خاصة",
+    services_dropdown_view_all: "عرض جميع الخدمات",
+
+    footer_description: "خدمة سائق خاص فاخرة بين القاهرة وباريس. سرية، دقة، تميّز.",
+    footer_service_city: "بين المدن والمسافات الطويلة",
+    footer_service_cultural: "جولات ثقافية خاصة",
+    footer_whatsapp: "دردشة واتساب",
+    footer_address: "باريس، فرنسا | القاهرة، مصر",
+    footer_hours: "الإثنين-الجمعة 08:00-20:00 / السبت-الأحد 09:00-18:00 (CET)",
+    footer_privacy_link: "سياسة الخصوصية",
+    footer_terms_link: "شروط الاستخدام",
+    footer_cancellation_link: "سياسة الإلغاء",
+    footer_legal_link: "الإشعار القانوني",
+
+    privacy_title: "سياسة الخصوصية",
+    privacy_intro: "في KCC-EliteDriver، خصوصيتك هي أولويتنا المطلقة. تصف هذه السياسة كيف نجمع ونستخدم ونحمي بياناتك الشخصية.",
+    privacy_data_collected_title: "البيانات المجمعة",
+    privacy_data_collected: "معلومات شخصية (الاسم، البريد الإلكتروني، الهاتف)، بيانات الحجز (التاريخ، الأوقات، الأماكن)، بيانات الدفع (تُعالج بمعالج آمن)، بيانات الموقع (GPS في الوقت الفعلي، بموافقة).",
+    privacy_usage_title: "استخدام البيانات",
+    privacy_usage: "معالجة حجزك، التواصل معك (تأكيدات، تحديثات)، تحسين خدماتنا، الامتثال القانوني.",
+    privacy_sharing_title: "مشاركة البيانات",
+    privacy_sharing: "تُشارك فقط مع السائق المعيّن (للتتبع في الوقت الفعلي). لا تُباع أبداً لأطراف ثالثة. امتثال صارم لـ GDPR.",
+    privacy_rights_title: "حقوق المستخدم",
+    privacy_rights: "حق الوصول إلى بياناتك، حق التصحيح، حق النسيان، حق نقل البيانات.",
+    privacy_security_title: "الأمان",
+    privacy_security: "تشفير SSL 256-bit، خوادم آمنة (امتثال GDPR)، سياسة وصول مقيدة.",
+    privacy_contact: "أسئلة حول ممارسات الخصوصية لدينا؟ contact@kcc-elitedriver.com",
+
+    terms_title: "شروط الاستخدام",
+    terms_acceptance: "استخدام الموقع والخدمات يعني قبول هذه الشروط.",
+    terms_eligibility: "يجب أن تكون بالغاً (18+)، مسؤولاً عن حساباتك/مدفوعاتك، وملتزماً بجميع القوانين المعمول بها.",
+    terms_booking: "تسعير ثابت بلا مفاجآت. الدفع قبل أو بعد الرحلة (حسب الخيار). بطاقة ائتمان أو نقداً مقبولة.",
+    terms_behaviour: "توافق على معاملة سائقينا باحترام وكرامة، وعدم إساءة استخدام الخدمة، وعدم إفشاء بيانات اتصال السائق.",
+    terms_liability: "KCC-EliteDriver ليست مسؤولة عن التأخيرات بسبب حركة المرور أو الطقس، الحوادث التي يسببها الراكب، فقدان أو تلف الأمتعة (باستثناء الإهمال).",
+    terms_ip: "محتوى الموقع: © KCC-EliteDriver. لا يُسمح بالاستنساخ بدون إذن.",
+    terms_modification: "يمكننا تعديل هذه الشروط في أي وقت. الإشعار عبر البريد الإلكتروني.",
+
+    cancellation_title: "سياسة إلغاء مرنة",
+    cancellation_standard_title: "الخدمات القياسية",
+    cancellation_standard: "إلغاء مجاني حتى 24 ساعة قبل المغادرة. بعد 24 ساعة: رسوم 50%. تعديل مجاني حتى 24 ساعة قبل.",
+    cancellation_meetgreet_title: "مع الاستقبال الشخصي في المطار",
+    cancellation_meetgreet: "إلغاء مجاني حتى 48 ساعة قبل. بين 24 و48 ساعة: رسوم 50%. أقل من 24 ساعة: رسوم 100% (عدم حضور بدون إشعار).",
+    cancellation_vip_title: "أحداث VIP",
+    cancellation_vip: "إلغاء مجاني حتى 7 أيام قبل. بين 3 و7 أيام: رسوم 25%. بين 1 و3 أيام: رسوم 50%. أقل من 24 ساعة: رسوم 100%.",
+    cancellation_how_title: "كيفية الإلغاء",
+    cancellation_how: "سجّل الدخول إلى حسابك، اذهب إلى «حجوزاتي»، انقر «إلغاء» على الحجز. تأكيد فوري أو اتصل بالدعم.",
+    cancellation_refund_title: "الاسترداد",
+    cancellation_refund: "يُعالج خلال 5-7 أيام عمل، إلى طريقة الدفع الأصلية.",
+
+    legal_title: "الإشعار القانوني",
+    legal_company: "KCC-EliteDriver — خدمة سائق خاص فاخرة. المقر الرئيسي: باريس، فرنسا. البريد الإلكتروني: contact@kcc-elitedriver.com. الهاتف: +33 1 23 45 67 89.",
+    legal_hosting: "الموقع مستضاف بواسطة Lovable (lovable.dev). استضافة آمنة متوافقة مع المعايير الأوروبية.",
+    legal_ip: "جميع محتويات هذا الموقع (نصوص، صور، شعارات، تصميم) هي ملكية حصرية لـ KCC-EliteDriver. يُحظر الاستنساخ بدون إذن.",
   },
 };
