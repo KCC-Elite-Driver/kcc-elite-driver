@@ -14,6 +14,9 @@ const HeroSection = () => {
           src={heroImage}
           alt="Luxury chauffeur service in Paris"
           className="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
       </div>

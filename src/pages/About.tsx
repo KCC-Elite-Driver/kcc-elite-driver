@@ -38,7 +38,7 @@ const About = () => {
       {/* Hero */}
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="Chauffeur adjusting cufflink near luxury vehicle" className="w-full h-full object-cover" />
+          <img src={heroImage} alt="Chauffeur adjusting cufflink near luxury vehicle" className="w-full h-full object-cover" loading="eager" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
         </div>
         <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
