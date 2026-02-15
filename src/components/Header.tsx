@@ -18,7 +18,6 @@ const Header = () => {
     { label: t.services_dropdown_airport, anchor: "#airport" },
     { label: t.services_dropdown_hourly, anchor: "#hourly" },
     { label: t.services_dropdown_event, anchor: "#event" },
-    { label: t.services_dropdown_intercity, anchor: "#intercity" },
     { label: t.services_dropdown_city, anchor: "#intercity" },
     { label: t.services_dropdown_cultural, anchor: "#cultural" },
   ];
