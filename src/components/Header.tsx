@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, User } from "lucide-react";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 import LanguageSwitcher from "./LanguageSwitcher";
 import logo from "@/assets/kcc-logo.webp";
 
 const Header = () => {
   const { t } = useTranslation();
+  const { user, isAdmin } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
@@ -114,8 +116,15 @@ const Header = () => {
           </nav>
 
           {/* Desktop right side */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
+            <Link
+              to={user ? (isAdmin ? "/admin" : "/client/bookings") : "/client/login"}
+              className="flex items-center gap-1.5 text-sm font-sans font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <User size={16} />
+              {user ? "Mon espace" : "Connexion"}
+            </Link>
             <Link
               to="/booking"
               className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-5 py-2 rounded-md hover:opacity-90 transition-opacity duration-200"
