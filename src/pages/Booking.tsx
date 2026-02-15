@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle } from "lucide-react";
+import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
@@ -16,7 +17,6 @@ interface BookingData {
   dropoff: string;
   date: string;
   time: string;
-  // Passenger info
   firstname: string;
   lastname: string;
   email: string;
@@ -28,7 +28,6 @@ interface BookingData {
   notes: string;
   flightNumber: string;
   meetGreet: boolean;
-  // Vehicle
   vehicle: string | null;
   paymentMethod: "card" | "cash";
 }
@@ -40,8 +39,13 @@ const PHONE_CODES = [
   { code: "+1", flag: "🇺🇸", label: "US" },
 ];
 
+const HelperText = ({ children }: { children: React.ReactNode }) => (
+  <p className="font-sans text-xs text-muted-foreground mt-1.5">{children}</p>
+);
+
 const Booking = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [data, setData] = useState<BookingData>({
@@ -72,6 +76,13 @@ const Booking = () => {
     t.booking_step_vehicle,
     t.booking_step_confirm,
   ];
+
+  const serviceDescriptions: Record<ServiceType, string> = {
+    airport: t.booking_service_airport_desc,
+    hourly: t.booking_service_hourly_desc,
+    event: t.booking_service_event_desc,
+    city: t.booking_service_city_desc,
+  };
 
   const services: { key: ServiceType; icon: React.ElementType; label: string }[] = [
     { key: "airport", icon: Plane, label: t.services_airport_title },
@@ -127,9 +138,14 @@ const Booking = () => {
           </div>
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{t.booking_success}</h2>
           <p className="font-sans text-muted-foreground text-base max-w-md mx-auto mb-10">{t.booking_success_desc}</p>
-          <button onClick={handleReset} className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200">
-            {t.booking_new}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onClick={() => navigate("/")} className="flex items-center justify-center gap-2 border border-border text-foreground font-sans text-sm font-medium px-8 py-3 rounded-md hover:bg-secondary transition-colors duration-200">
+              <Home size={14} /> {t.booking_back_home}
+            </button>
+            <button onClick={handleReset} className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200">
+              {t.booking_new}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -170,15 +186,19 @@ const Booking = () => {
               {/* Step 0: Service */}
               {step === 0 && (
                 <div>
-                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_select_service}</h2>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_select_service}</h2>
+                  <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_select_service_desc}</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {services.map((service) => (
                       <button key={service.key} onClick={() => setData({ ...data, service: service.key })}
-                        className={`flex items-center gap-4 p-5 rounded-lg border transition-all duration-200 text-left ${data.service === service.key ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${data.service === service.key ? "bg-primary/20" : "bg-secondary"}`}>
+                        className={`flex items-start gap-4 p-5 rounded-lg border transition-all duration-200 text-left ${data.service === service.key ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${data.service === service.key ? "bg-primary/20" : "bg-secondary"}`}>
                           <service.icon size={20} className="text-primary" />
                         </div>
-                        <span className="font-sans text-sm font-medium text-foreground">{service.label}</span>
+                        <div>
+                          <span className="font-sans text-sm font-medium text-foreground block">{service.label}</span>
+                          <span className="font-sans text-xs text-muted-foreground mt-1 block">{serviceDescriptions[service.key]}</span>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -188,20 +208,35 @@ const Booking = () => {
               {/* Step 1: Route details */}
               {step === 1 && (
                 <div>
-                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_step_details}</h2>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_details_title}</h2>
+                  <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_details_desc}</p>
                   <div className="space-y-5">
-                    <LocationAutocomplete value={data.pickup} onChange={(v) => setData({ ...data, pickup: v })} placeholder={t.hero_pickup} iconColor="text-primary" />
-                    <LocationAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
+                    <div>
+                      <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_pickup_field}</label>
+                      <LocationAutocomplete value={data.pickup} onChange={(v) => setData({ ...data, pickup: v })} placeholder={t.hero_pickup} iconColor="text-primary" />
+                    </div>
+                    <div>
+                      <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_destination_field}</label>
+                      <LocationAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="relative">
-                        <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                        <input type="date" value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })}
-                          className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <div>
+                        <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_date_field}</label>
+                        <div className="relative">
+                          <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <input type="date" value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })}
+                            className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                        </div>
+                        <HelperText>{t.booking_date_helper}</HelperText>
                       </div>
-                      <div className="relative">
-                        <ClockIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                        <input type="time" value={data.time} onChange={(e) => setData({ ...data, time: e.target.value })}
-                          className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <div>
+                        <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_time_field}</label>
+                        <div className="relative">
+                          <ClockIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <input type="time" value={data.time} onChange={(e) => setData({ ...data, time: e.target.value })}
+                            className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                        </div>
+                        <HelperText>{t.booking_time_helper}</HelperText>
                       </div>
                     </div>
                   </div>
@@ -211,7 +246,8 @@ const Booking = () => {
               {/* Step 2: Passenger info */}
               {step === 2 && (
                 <div>
-                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_step_passenger}</h2>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_passenger_title}</h2>
+                  <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_passenger_desc}</p>
                   <div className="space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -229,6 +265,7 @@ const Booking = () => {
                       <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_email} *</label>
                       <input type="email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })}
                         className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <HelperText>{t.booking_email_helper}</HelperText>
                     </div>
                     <div>
                       <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_phone} *</label>
@@ -242,6 +279,7 @@ const Booking = () => {
                         <input type="tel" value={data.phone} onChange={(e) => setData({ ...data, phone: e.target.value })}
                           className="flex-1 bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                       </div>
+                      <HelperText>{t.booking_phone_helper}</HelperText>
                     </div>
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input type="checkbox" checked={data.companyInvoice} onChange={(e) => setData({ ...data, companyInvoice: e.target.checked })}
@@ -274,6 +312,7 @@ const Booking = () => {
                       <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_notes_label}</label>
                       <textarea placeholder={t.booking_notes_placeholder} value={data.notes} onChange={(e) => setData({ ...data, notes: e.target.value })} rows={3}
                         className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none" />
+                      <HelperText>{t.booking_notes_helper}</HelperText>
                     </div>
 
                     {/* Conditional airport/station fields */}
@@ -283,13 +322,15 @@ const Booking = () => {
                           <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_flight_number}</label>
                           <input type="text" value={data.flightNumber} onChange={(e) => setData({ ...data, flightNumber: e.target.value })} placeholder="LH83822"
                             className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                          <HelperText>{t.booking_flight_helper}</HelperText>
                         </div>
-                        <label className="flex items-center gap-3 cursor-pointer">
+                        <label className="flex items-start gap-3 cursor-pointer">
                           <input type="checkbox" checked={data.meetGreet} onChange={(e) => setData({ ...data, meetGreet: e.target.checked })}
-                            className="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
+                            className="w-4 h-4 rounded border-border text-primary focus:ring-primary mt-0.5" />
                           <div>
                             <span className="font-sans text-sm text-foreground font-medium">{t.booking_meet_greet}</span>
                             <p className="font-sans text-xs text-muted-foreground">{t.booking_meet_greet_desc}</p>
+                            <HelperText>{t.booking_meet_greet_helper}</HelperText>
                           </div>
                         </label>
                       </div>
@@ -301,7 +342,8 @@ const Booking = () => {
               {/* Step 3: Vehicle selection */}
               {step === 3 && (
                 <div>
-                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_select_vehicle}</h2>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_vehicle_title}</h2>
+                  <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_vehicle_desc}</p>
                   <div className="space-y-4">
                     {vehicles.map((vehicle) => (
                       <button key={vehicle.key} onClick={() => setData({ ...data, vehicle: vehicle.key })}
@@ -323,13 +365,15 @@ const Booking = () => {
                       </button>
                     ))}
                   </div>
+                  <HelperText>{t.booking_vehicle_helper}</HelperText>
                 </div>
               )}
 
               {/* Step 4: Summary + Policy + Payment */}
               {step === 4 && (
                 <div>
-                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">{t.booking_summary}</h2>
+                  <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_summary}</h2>
+                  <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_summary_desc}</p>
                   <div className="bg-card border border-border rounded-lg p-6 space-y-4 mb-6">
                     <SummaryRow label={t.booking_service_label} value={data.service ? getServiceLabel(data.service) : ""} />
                     <SummaryRow label={t.booking_pickup_label} value={data.pickup} />
@@ -353,21 +397,32 @@ const Booking = () => {
                   </div>
 
                   {/* Payment method */}
-                  <div className="mb-2">
+                  <div className="mb-6">
                     <h3 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">{t.booking_payment_method}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button onClick={() => setData({ ...data, paymentMethod: "card" })}
-                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "card" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
-                        <CreditCard size={20} className="text-primary" />
-                        <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_card}</span>
+                        className={`flex flex-col gap-2 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "card" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
+                        <div className="flex items-center gap-3">
+                          <CreditCard size={20} className="text-primary" />
+                          <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_card}</span>
+                        </div>
+                        <p className="font-sans text-xs text-muted-foreground">{t.booking_payment_card_desc}</p>
+                        {data.paymentMethod === "card" && <HelperText>{t.booking_payment_card_helper}</HelperText>}
                       </button>
                       <button onClick={() => setData({ ...data, paymentMethod: "cash" })}
-                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "cash" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
-                        <Banknote size={20} className="text-primary" />
-                        <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_cash}</span>
+                        className={`flex flex-col gap-2 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "cash" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
+                        <div className="flex items-center gap-3">
+                          <Banknote size={20} className="text-primary" />
+                          <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_cash}</span>
+                        </div>
+                        <p className="font-sans text-xs text-muted-foreground">{t.booking_payment_cash_desc}</p>
+                        {data.paymentMethod === "cash" && <HelperText>{t.booking_payment_cash_helper}</HelperText>}
                       </button>
                     </div>
                   </div>
+
+                  {/* Payment reassurance */}
+                  <p className="font-sans text-xs text-muted-foreground text-center italic">{t.booking_payment_reassurance}</p>
                 </div>
               )}
 

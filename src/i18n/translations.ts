@@ -185,6 +185,46 @@ export type TranslationKeys = {
   booking_payment_cash: string;
   booking_payment_method: string;
 
+  // Booking - service descriptions (step 1)
+  booking_service_airport_desc: string;
+  booking_service_hourly_desc: string;
+  booking_service_event_desc: string;
+  booking_service_city_desc: string;
+
+  // Booking - step subtitles
+  booking_select_service_desc: string;
+  booking_details_title: string;
+  booking_details_desc: string;
+  booking_passenger_title: string;
+  booking_passenger_desc: string;
+  booking_vehicle_title: string;
+  booking_vehicle_desc: string;
+  booking_summary_desc: string;
+
+  // Booking - field labels & helpers
+  booking_pickup_field: string;
+  booking_destination_field: string;
+  booking_date_field: string;
+  booking_date_helper: string;
+  booking_time_field: string;
+  booking_time_helper: string;
+  booking_email_helper: string;
+  booking_phone_helper: string;
+  booking_notes_helper: string;
+  booking_flight_helper: string;
+  booking_meet_greet_helper: string;
+  booking_vehicle_helper: string;
+
+  // Booking - payment helpers
+  booking_payment_card_desc: string;
+  booking_payment_cash_desc: string;
+  booking_payment_card_helper: string;
+  booking_payment_cash_helper: string;
+  booking_payment_reassurance: string;
+
+  // Booking - confirmation screen extras
+  booking_back_home: string;
+
   // Fleet extra amenities
   fleet_refreshments: string;
   fleet_disinfection: string;
@@ -373,15 +413,15 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_step_details: "Détails",
     booking_step_vehicle: "Véhicule",
     booking_step_confirm: "Confirmation",
-    booking_select_service: "Choisissez votre service",
-    booking_next: "Suivant",
+    booking_select_service: "Sélectionnez votre type de service",
+    booking_next: "Continuer",
     booking_prev: "Précédent",
     booking_passengers_label: "Nombre de passagers",
     booking_luggage_label: "Nombre de bagages",
-    booking_notes_label: "Notes spéciales",
-    booking_notes_placeholder: "Notes au chauffeur – Demandes particulières",
+    booking_notes_label: "Demandes particulières",
+    booking_notes_placeholder: "À l'attention de votre chauffeur : siège enfant requis, accès handicapé, musique douce, silence, etc.",
     booking_select_vehicle: "Choisissez votre véhicule",
-    booking_summary: "Récapitulatif",
+    booking_summary: "Récapitulatif de votre réservation",
     booking_service_label: "Service",
     booking_date_label: "Date",
     booking_time_label: "Heure",
@@ -390,8 +430,62 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_vehicle_label: "Véhicule",
     booking_confirm: "Confirmer la réservation",
     booking_success: "Réservation confirmée !",
-    booking_success_desc: "Votre réservation est confirmée. Un email de récapitulatif a été envoyé. Nous vous remercions de votre confiance.",
+    booking_success_desc: "Merci ! Votre réservation est confirmée. Un email de confirmation contenant tous les détails de votre réservation a été envoyé. Nous vous remercions de votre confiance.",
     booking_new: "Nouvelle réservation",
+
+    booking_step_passenger: "Passager",
+    booking_firstname: "Prénom",
+    booking_lastname: "Nom",
+    booking_email: "Adresse e-mail",
+    booking_phone: "Téléphone",
+    booking_company_invoice: "Facturation à titre professionnel",
+    booking_flight_number: "Numéro de vol / train",
+    booking_meet_greet: "Meet & Greet",
+    booking_meet_greet_desc: "Accueil personnalisé à votre arrivée avec détection de votre vol.",
+    booking_cancellation_policy: "Annulation flexible sans frais jusqu'à 24 heures avant votre départ. Au-delà, des frais de 50% s'appliquent. Pour les services avec Meet & Greet à l'aéroport, délai d'annulation : 48 heures. Nous comprenons que vos plans peuvent changer ; nous restons justes dans nos conditions.",
+    booking_payment_card: "Carte bancaire",
+    booking_payment_cash: "Paiement en espèces",
+    booking_payment_method: "Mode de paiement",
+
+    // Booking - service descriptions
+    booking_service_airport_desc: "Transferts entre les aéroports et vos destinations.",
+    booking_service_hourly_desc: "Réservez votre chauffeur pour une durée flexible.",
+    booking_service_event_desc: "Transport pour vos événements privés ou professionnels.",
+    booking_service_city_desc: "Trajets longue distance avec confort premium.",
+
+    // Booking - step subtitles
+    booking_select_service_desc: "Choisissez le service qui correspond à votre besoin.",
+    booking_details_title: "Détails de votre trajet",
+    booking_details_desc: "Précisez votre itinéraire et vos horaires.",
+    booking_passenger_title: "Vos informations",
+    booking_passenger_desc: "Complétez vos coordonnées. Vos données restent confidentielles.",
+    booking_vehicle_title: "Choisissez votre véhicule",
+    booking_vehicle_desc: "Sélectionnez le véhicule adapté à votre profil et besoins.",
+    booking_summary_desc: "Vérifiez tous les détails avant de confirmer.",
+
+    // Booking - field labels & helpers
+    booking_pickup_field: "Lieu de prise en charge",
+    booking_destination_field: "Destination",
+    booking_date_field: "Date de départ",
+    booking_date_helper: "Sélectionnez la date de votre départ.",
+    booking_time_field: "Heure de départ",
+    booking_time_helper: "Indiquez l'heure exacte de votre prise en charge.",
+    booking_email_helper: "Nous vous enverrons une confirmation et les détails de votre réservation.",
+    booking_phone_helper: "Numéro utilisé pour le suivi de votre vol.",
+    booking_notes_helper: "Décrivez vos demandes spéciales. Nos chauffeurs les honorent avec discrétion.",
+    booking_flight_helper: "Nous suivrons votre arrivée en temps réel pour une prise en charge optimale.",
+    booking_meet_greet_helper: "Nos équipes vous accueilleront discrètement et vous accompagneront jusqu'à votre véhicule.",
+    booking_vehicle_helper: "Tous nos véhicules sont entretenus à des standards premium et confiés à des chauffeurs rigoureusement sélectionnés.",
+
+    // Booking - payment helpers
+    booking_payment_card_desc: "Paiement sécurisé avec SSL. Visa, Mastercard, American Express acceptées.",
+    booking_payment_cash_desc: "Réglez directement auprès de votre chauffeur en devises locales.",
+    booking_payment_card_helper: "Votre paiement est sécurisé par encryptage SSL 256-bit.",
+    booking_payment_cash_helper: "Pratique et discret. Tarif fixe sans surprise. Reçu fourni.",
+    booking_payment_reassurance: "Tous les paiements sont traités de manière confidentielle et conforme aux standards internationaux de sécurité. Votre vie privée est protégée.",
+
+    // Booking - confirmation extras
+    booking_back_home: "Retour à l'accueil",
 
     // About
     about_title: "À propos de KCC-EliteDriver",
@@ -429,19 +523,6 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     about_value_anticipation: "Anticipation",
     about_value_anticipation_desc: "Nous prévoyons vos besoins avant que vous les exprimiez.",
 
-    booking_step_passenger: "Passager",
-    booking_firstname: "Prénom",
-    booking_lastname: "Nom",
-    booking_email: "Adresse e-mail",
-    booking_phone: "Téléphone",
-    booking_company_invoice: "Facture entreprise ?",
-    booking_flight_number: "Numéro de vol / train",
-    booking_meet_greet: "Meet & Greet",
-    booking_meet_greet_desc: "Accueil personnalisé à l'arrivée",
-    booking_cancellation_policy: "Annulation flexible sans frais jusqu'à 24h avant le départ. Au-delà, des frais de 50% s'appliquent.",
-    booking_payment_card: "Carte bancaire",
-    booking_payment_cash: "Espèces au chauffeur",
-    booking_payment_method: "Mode de paiement",
     fleet_refreshments: "Rafraîchissements premium",
     fleet_disinfection: "Protocole de désinfection",
     services_dropdown_airport: "Transfert Aéroport",
@@ -585,30 +666,84 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     services_why_excellence_desc: "Modern fleet (under 3 years old), multilingual and carefully vetted drivers, guaranteed punctuality, 24/7 service, real-time tracking.",
 
     booking_title: "Booking",
-    booking_subtitle: "Book your chauffeur in a few simple steps",
+    booking_subtitle: "Reserve your driver in just a few steps",
     booking_step_service: "Service",
     booking_step_details: "Details",
     booking_step_vehicle: "Vehicle",
     booking_step_confirm: "Confirmation",
-    booking_select_service: "Choose your service",
-    booking_next: "Next",
-    booking_prev: "Back",
+    booking_select_service: "Select your service type",
+    booking_next: "Continue",
+    booking_prev: "Previous",
     booking_passengers_label: "Number of passengers",
     booking_luggage_label: "Number of luggage",
-    booking_notes_label: "Special notes",
-    booking_notes_placeholder: "Notes for driver – Special requests",
-    booking_select_vehicle: "Choose your vehicle",
-    booking_summary: "Summary",
+    booking_notes_label: "Special requests",
+    booking_notes_placeholder: "For your driver: child seat required, wheelchair access, soft music, silence, etc.",
+    booking_select_vehicle: "Select Your Vehicle",
+    booking_summary: "Booking Summary",
     booking_service_label: "Service",
     booking_date_label: "Date",
     booking_time_label: "Time",
-    booking_pickup_label: "Pickup",
+    booking_pickup_label: "Pick-up",
     booking_dropoff_label: "Destination",
     booking_vehicle_label: "Vehicle",
-    booking_confirm: "Confirm booking",
-    booking_success: "Booking confirmed!",
-    booking_success_desc: "Your booking is confirmed. A summary email has been sent. Thank you for your trust.",
+    booking_confirm: "Confirm Booking",
+    booking_success: "Booking Confirmed!",
+    booking_success_desc: "Thank you! Your booking is confirmed. A confirmation email containing all your booking details has been sent. We appreciate your trust.",
     booking_new: "New booking",
+
+    booking_step_passenger: "Passenger",
+    booking_firstname: "First name",
+    booking_lastname: "Last name",
+    booking_email: "Email address",
+    booking_phone: "Phone number",
+    booking_company_invoice: "Professional billing",
+    booking_flight_number: "Flight / train number",
+    booking_meet_greet: "Meet & Greet",
+    booking_meet_greet_desc: "Personalised welcome upon arrival with flight tracking.",
+    booking_cancellation_policy: "Free cancellation up to 24 hours before departure. Beyond this, a 50% charge applies. For airport Meet & Greet services, 48 hours' notice required. We understand plans change; our terms remain fair.",
+    booking_payment_card: "Credit Card",
+    booking_payment_cash: "Cash Payment",
+    booking_payment_method: "Payment Method",
+
+    // Booking - service descriptions
+    booking_service_airport_desc: "Transfers between airports and your destinations.",
+    booking_service_hourly_desc: "Reserve your driver for flexible duration.",
+    booking_service_event_desc: "Transportation for your private or corporate events.",
+    booking_service_city_desc: "Long-distance journeys with premium comfort.",
+
+    // Booking - step subtitles
+    booking_select_service_desc: "Choose the service that best suits your needs.",
+    booking_details_title: "Journey Details",
+    booking_details_desc: "Specify your itinerary and schedule.",
+    booking_passenger_title: "Your Information",
+    booking_passenger_desc: "Complete your details. Your information remains confidential.",
+    booking_vehicle_title: "Select Your Vehicle",
+    booking_vehicle_desc: "Choose the vehicle best suited to your needs.",
+    booking_summary_desc: "Verify all details before confirming your reservation.",
+
+    // Booking - field labels & helpers
+    booking_pickup_field: "Pick-up location",
+    booking_destination_field: "Destination",
+    booking_date_field: "Departure date",
+    booking_date_helper: "Select your departure date.",
+    booking_time_field: "Departure time",
+    booking_time_helper: "Indicate your exact pick-up time.",
+    booking_email_helper: "We'll send you a confirmation and booking details.",
+    booking_phone_helper: "Number used for flight tracking and driver contact.",
+    booking_notes_helper: "Describe any special requirements. Our drivers honour them with complete discretion.",
+    booking_flight_helper: "We'll track your arrival in real-time for seamless pick-up.",
+    booking_meet_greet_helper: "Our team will welcome you discreetly and guide you to your vehicle.",
+    booking_vehicle_helper: "All our vehicles are maintained to premium standards and entrusted to rigorously vetted drivers.",
+
+    // Booking - payment helpers
+    booking_payment_card_desc: "Secure payment with SSL. Visa, Mastercard, American Express accepted.",
+    booking_payment_cash_desc: "Pay your driver directly in local currency.",
+    booking_payment_card_helper: "Your payment is protected by 256-bit SSL encryption.",
+    booking_payment_cash_helper: "Convenient and discreet. Fixed transparent pricing. Receipt provided.",
+    booking_payment_reassurance: "All payments are processed confidentially and comply with international security standards. Your privacy is protected.",
+
+    // Booking - confirmation extras
+    booking_back_home: "Back to home",
 
     // About
     about_title: "About KCC-EliteDriver",
@@ -646,19 +781,6 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     about_value_anticipation: "Anticipation",
     about_value_anticipation_desc: "We anticipate your needs before you express them.",
 
-    booking_step_passenger: "Passenger",
-    booking_firstname: "First name",
-    booking_lastname: "Last name",
-    booking_email: "Email address",
-    booking_phone: "Phone number",
-    booking_company_invoice: "Company invoice?",
-    booking_flight_number: "Flight / train number",
-    booking_meet_greet: "Meet & Greet",
-    booking_meet_greet_desc: "Personalised airport welcome on arrival",
-    booking_cancellation_policy: "Free cancellation up to 24 hours before departure. Beyond this, a 50% charge applies.",
-    booking_payment_card: "Credit card",
-    booking_payment_cash: "Cash to driver",
-    booking_payment_method: "Payment method",
     fleet_refreshments: "Premium refreshments",
     fleet_disinfection: "Disinfection protocol",
     services_dropdown_airport: "Airport Transfer",
@@ -802,20 +924,20 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     services_why_excellence_desc: "أسطول حديث (أقل من 3 سنوات)، سائقون متعددو اللغات ومختارون بعناية، دقة مضمونة، خدمة 24/7، تتبع في الوقت الفعلي.",
 
     booking_title: "الحجز",
-    booking_subtitle: "احجز سائقك في خطوات بسيطة",
+    booking_subtitle: "احجز سائقك الخاص في بضع خطوات",
     booking_step_service: "الخدمة",
     booking_step_details: "التفاصيل",
     booking_step_vehicle: "المركبة",
     booking_step_confirm: "التأكيد",
-    booking_select_service: "اختر خدمتك",
-    booking_next: "التالي",
+    booking_select_service: "اختر نوع الخدمة",
+    booking_next: "متابعة",
     booking_prev: "السابق",
     booking_passengers_label: "عدد الركاب",
     booking_luggage_label: "عدد الحقائب",
-    booking_notes_label: "ملاحظات خاصة",
-    booking_notes_placeholder: "ملاحظات للسائق – طلبات خاصة",
+    booking_notes_label: "طلبات خاصة",
+    booking_notes_placeholder: "لسائقك: مقعد أطفال مطلوب، وصول لذوي الاحتياجات الخاصة، موسيقى هادئة، صمت، إلخ.",
     booking_select_vehicle: "اختر مركبتك",
-    booking_summary: "الملخص",
+    booking_summary: "ملخص حجزك",
     booking_service_label: "الخدمة",
     booking_date_label: "التاريخ",
     booking_time_label: "الوقت",
@@ -824,8 +946,62 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_vehicle_label: "المركبة",
     booking_confirm: "تأكيد الحجز",
     booking_success: "تم تأكيد الحجز!",
-    booking_success_desc: "حجزك مؤكد. تم إرسال بريد إلكتروني بالملخص. نشكرك على ثقتك.",
+    booking_success_desc: "شكراً لك! حجزك مؤكد. تم إرسال بريد إلكتروني بالتأكيد يحتوي على جميع تفاصيل حجزك. نشكرك على ثقتك.",
     booking_new: "حجز جديد",
+
+    booking_step_passenger: "الراكب",
+    booking_firstname: "الاسم الأول",
+    booking_lastname: "اسم العائلة",
+    booking_email: "البريد الإلكتروني",
+    booking_phone: "رقم الهاتف",
+    booking_company_invoice: "فوترة مهنية",
+    booking_flight_number: "رقم الرحلة / القطار",
+    booking_meet_greet: "استقبال شخصي",
+    booking_meet_greet_desc: "استقبال شخصي عند وصولك مع تتبع رحلتك.",
+    booking_cancellation_policy: "إلغاء مجاني حتى 24 ساعة قبل موعد المغادرة. بعد ذلك، تُطبق رسوم 50%. لخدمات الاستقبال الشخصي في المطار، مهلة الإلغاء 48 ساعة. نتفهم أن خططك قد تتغير؛ شروطنا تبقى عادلة.",
+    booking_payment_card: "بطاقة ائتمان",
+    booking_payment_cash: "الدفع نقداً",
+    booking_payment_method: "طريقة الدفع",
+
+    // Booking - service descriptions
+    booking_service_airport_desc: "تنقلات بين المطارات ووجهاتك.",
+    booking_service_hourly_desc: "احجز سائقك لمدة مرنة.",
+    booking_service_event_desc: "نقل لمناسباتك الخاصة أو المهنية.",
+    booking_service_city_desc: "رحلات طويلة المسافة براحة فاخرة.",
+
+    // Booking - step subtitles
+    booking_select_service_desc: "اختر الخدمة التي تناسب احتياجاتك.",
+    booking_details_title: "تفاصيل رحلتك",
+    booking_details_desc: "حدد مسارك ومواعيدك.",
+    booking_passenger_title: "معلوماتك",
+    booking_passenger_desc: "أكمل بياناتك. معلوماتك تبقى سرية.",
+    booking_vehicle_title: "اختر مركبتك",
+    booking_vehicle_desc: "اختر المركبة المناسبة لاحتياجاتك.",
+    booking_summary_desc: "تحقق من جميع التفاصيل قبل التأكيد.",
+
+    // Booking - field labels & helpers
+    booking_pickup_field: "مكان الانطلاق",
+    booking_destination_field: "الوجهة",
+    booking_date_field: "تاريخ المغادرة",
+    booking_date_helper: "اختر تاريخ مغادرتك.",
+    booking_time_field: "وقت المغادرة",
+    booking_time_helper: "حدد الوقت الدقيق لاستلامك.",
+    booking_email_helper: "سنرسل لك تأكيداً وتفاصيل حجزك.",
+    booking_phone_helper: "رقم يُستخدم لتتبع رحلتك والتواصل مع السائق.",
+    booking_notes_helper: "صف طلباتك الخاصة. سائقونا يلبونها بسرية تامة.",
+    booking_flight_helper: "سنتتبع وصولك في الوقت الفعلي لاستقبال سلس.",
+    booking_meet_greet_helper: "فريقنا سيستقبلك بتحفظ ويرافقك إلى مركبتك.",
+    booking_vehicle_helper: "جميع مركباتنا مُصانة بمعايير فاخرة ومُوكلة لسائقين مختارين بصرامة.",
+
+    // Booking - payment helpers
+    booking_payment_card_desc: "دفع آمن بتشفير SSL. فيزا، ماستركارد، أمريكان إكسبريس مقبولة.",
+    booking_payment_cash_desc: "ادفع لسائقك مباشرة بالعملة المحلية.",
+    booking_payment_card_helper: "دفعتك محمية بتشفير SSL 256-bit.",
+    booking_payment_cash_helper: "عملي وسري. تسعير ثابت بلا مفاجآت. إيصال مقدم.",
+    booking_payment_reassurance: "جميع المدفوعات تتم بسرية تامة وفقاً للمعايير الدولية للأمان. خصوصيتك محمية.",
+
+    // Booking - confirmation extras
+    booking_back_home: "العودة للرئيسية",
 
     // About
     about_title: "عن KCC-EliteDriver",
@@ -863,19 +1039,6 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     about_value_anticipation: "الاستباق",
     about_value_anticipation_desc: "نتوقع احتياجاتك قبل أن تعبّر عنها.",
 
-    booking_step_passenger: "الراكب",
-    booking_firstname: "الاسم الأول",
-    booking_lastname: "اسم العائلة",
-    booking_email: "البريد الإلكتروني",
-    booking_phone: "رقم الهاتف",
-    booking_company_invoice: "فاتورة شركة؟",
-    booking_flight_number: "رقم الرحلة / القطار",
-    booking_meet_greet: "استقبال شخصي",
-    booking_meet_greet_desc: "استقبال شخصي عند الوصول",
-    booking_cancellation_policy: "إلغاء مجاني حتى 24 ساعة قبل الموعد. بعد ذلك، تُطبق رسوم 50%.",
-    booking_payment_card: "بطاقة ائتمان",
-    booking_payment_cash: "نقداً للسائق",
-    booking_payment_method: "طريقة الدفع",
     fleet_refreshments: "مرطبات فاخرة",
     fleet_disinfection: "بروتوكول التعقيم",
     services_dropdown_airport: "نقل من المطار",
