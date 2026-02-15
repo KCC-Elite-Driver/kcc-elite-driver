@@ -1,44 +1,54 @@
 
 
-# Plan : Generation de photos "Quiet Luxury" — Le Caire
+# Plan : Images Paris & International pour GlobalAxis + Fond monuments au Footer
 
-Ce plan genere 3 images cinematiques haute qualite avec des decors egyptiens (Pyramides de Gizeh et Bibliotheque d'Alexandrie), en respectant l'esthetique "Quiet Luxury" du site : pas de visage, ambiance nocturne, chauffeur anonyme, focus sur les details.
+## 1. Generer 2 nouvelles images "Quiet Luxury"
 
----
+### Image Paris — Mercedes devant un decor parisien (nuit)
+**Prompt :** Cinematic 4K nighttime photograph of a black Mercedes S-Class parked on a cobblestone street near the Eiffel Tower in Paris. Tower illuminated with warm golden light in the background. Chauffeur silhouette in dark suit seen from behind. No face visible. Moody lighting, quiet luxury aesthetic. Professional automotive photography.
 
-## Images a generer
+**Fichier :** `src/assets/paris-eiffel-night.jpg`
 
-### Image 1 — Mercedes devant les Pyramides (nuit)
+### Image International — Mercedes dans un decor cosmopolite (nuit)
+**Prompt :** Cinematic 4K nighttime photograph of a black luxury Mercedes sedan parked at an elegant international airport terminal or grand hotel entrance with a modern glass and steel facade. Warm ambient lighting reflecting on polished car. Chauffeur silhouette in dark suit standing beside car, back to camera, white gloves visible. No face shown. Cosmopolitan, global luxury atmosphere. Professional editorial photography.
 
-**Prompt :** Cinematic 4K nighttime photograph of a black Mercedes S-Class luxury sedan parked elegantly in front of the Great Pyramids of Giza, Egypt. Pyramids illuminated with warm golden light against deep navy blue night sky with stars. A chauffeur in a dark suit stands beside the car with his back to the camera, only silhouette visible. White-gloved hand resting on the car door handle. No face visible. Ultra high contrast, moody lighting, quiet luxury aesthetic. Professional automotive photography.
-
-**Usage prevu :** Section hero alternative / page Services / page About
-
----
-
-### Image 2 — Mercedes devant la Bibliotheque d'Alexandrie (crepuscule)
-
-**Prompt :** Cinematic 4K photograph at dusk of a sleek black luxury Mercedes sedan parked in front of the Bibliotheca Alexandrina in Egypt. The modern circular building illuminated with soft warm light. Chauffeur silhouette in dark suit seen from behind, opening the rear door. White gloves visible, no face shown. Dramatic lighting with golden hour reflections on polished car surface. Quiet luxury, secretive, elegant atmosphere. Professional editorial photography.
-
-**Usage prevu :** Section GlobalAxis (axe Le Caire) / page About
+**Fichier :** `src/assets/international-luxury-night.jpg`
 
 ---
 
-### Image 3 — Detail main gantee + Pyramides en arriere-plan (nuit)
+## 2. Integrer les images dans GlobalAxis
 
-**Prompt :** Ultra cinematic 4K close-up at night. Focus on a chauffeur's white-gloved hand holding open the rear door of a black Mercedes. Through the car window, illuminated Pyramids of Giza visible in soft bokeh background. Interior ambient lighting in warm gold tones. No face visible. Mysterious, elegant, quiet luxury aesthetic. Shallow depth of field, medium format camera look.
+Modifier `src/components/home/GlobalAxis.tsx` pour ajouter des images de header aux 3 cartes (pas seulement Cairo) :
+- Carte Cairo (i===0) : `cairo-library-dusk.jpg` (deja en place)
+- Carte Paris (i===1) : `paris-eiffel-night.jpg` (nouvelle image)
+- Carte International (i===2) : `international-luxury-night.jpg` (nouvelle image)
 
-**Usage prevu :** Section ValuesSection / detail service / banniere
+Refactorer le rendu conditionnel `{i === 0 && ...}` en un tableau d'images applique a chaque carte.
 
 ---
 
-## Fichiers a creer/modifier
+## 3. Generer l'image de fond "skyline monuments" pour le Footer
+
+### Image skyline silhouette
+**Prompt :** Minimalist grey silhouette skyline illustration on transparent/white background featuring iconic world monuments side by side: Egyptian Pyramids of Giza, Eiffel Tower Paris, Statue of Liberty New York, Big Ben London, Taj Mahal. Simple flat vector style silhouettes, subtle and elegant, light grey color (#d1d5db). Wide panoramic format 1920x300. Clean minimal design suitable as decorative footer background.
+
+**Fichier :** `src/assets/skyline-monuments.png`
+
+---
+
+## 4. Integrer le skyline dans le Footer
+
+Modifier `src/components/Footer.tsx` pour ajouter l'image de skyline en fond decoratif entre le contenu du footer et la section legale/copyright, comme dans la reference fournie. L'image sera positionnee en bas du footer avec une opacite reduite pour rester subtile.
+
+---
+
+## Resume des fichiers
 
 | Fichier | Action |
 |---------|--------|
-| `src/assets/cairo-pyramids-night.jpg` | Nouvelle image generee (Image 1) |
-| `src/assets/cairo-library-dusk.jpg` | Nouvelle image generee (Image 2) |
-| `src/assets/cairo-detail-glove.jpg` | Nouvelle image generee (Image 3) |
-
-Les images seront generees via le modele Nano banana pro (`google/gemini-3-pro-image-preview`) pour une qualite maximale, puis sauvegardees dans le dossier assets du projet.
+| `src/assets/paris-eiffel-night.jpg` | Nouvelle image generee |
+| `src/assets/international-luxury-night.jpg` | Nouvelle image generee |
+| `src/assets/skyline-monuments.png` | Nouvelle image generee (silhouette monuments) |
+| `src/components/home/GlobalAxis.tsx` | Ajout images Paris + International aux cartes |
+| `src/components/Footer.tsx` | Ajout fond skyline decoratif |
 
