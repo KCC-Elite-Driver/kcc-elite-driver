@@ -2,20 +2,12 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
 import logo from "@/assets/kcc-logo.webp";
-import skylineMonuments from "@/assets/skyline-monuments.png";
 
 const Footer = () => {
   const { t } = useTranslation();
 
   return (
     <footer className="bg-card border-t border-border relative overflow-hidden">
-      {/* Skyline monuments background */}
-      <img
-        src={skylineMonuments}
-        alt=""
-        className="absolute -bottom-8 left-0 w-full max-h-24 object-cover object-top opacity-[0.04] select-none pointer-events-none"
-        aria-hidden="true"
-      />
       <div className="container mx-auto px-4 lg:px-8 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
