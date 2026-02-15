@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home } from "lucide-react";
+import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home, Info, Mail, Phone, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PageMeta from "@/components/PageMeta";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
@@ -129,15 +129,72 @@ const Booking = () => {
   const getServiceLabel = (key: ServiceType) => services.find(s => s.key === key)?.label || "";
   const getVehicleName = (key: string) => vehicles.find(v => v.key === key)?.name || "";
 
+  const reservationNumber = useMemo(() => {
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+    const rand = String(Math.floor(Math.random() * 900) + 100);
+    return `RES-${dateStr}-${rand}`;
+  }, [completed]);
+
   if (completed) {
     return (
-      <div className="pt-16 min-h-screen gradient-hero flex items-center justify-center">
-        <div className="container mx-auto px-4 text-center animate-fade-in">
-          <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
-            <CheckCircle size={40} className="text-primary" />
+      <div className="pt-16 min-h-screen gradient-hero">
+        <div className="container mx-auto px-4 py-16 max-w-2xl animate-fade-in">
+          {/* Icon + Title + Message */}
+          <div className="text-center mb-10">
+            <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <CheckCircle size={40} className="text-primary" />
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{t.booking_success}</h2>
+            <p className="font-sans text-muted-foreground text-base max-w-md mx-auto">{t.booking_success_desc}</p>
           </div>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{t.booking_success}</h2>
-          <p className="font-sans text-muted-foreground text-base max-w-md mx-auto mb-10">{t.booking_success_desc}</p>
+
+          {/* Booking details card */}
+          <div className="rounded-lg border border-border bg-card p-6 mb-6">
+            <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t.booking_confirmation_details_title}</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2 border-b border-border/50">
+                <span className="font-sans text-sm text-muted-foreground">{t.booking_confirmation_number}</span>
+                <span className="font-sans text-sm font-semibold text-foreground tracking-wide">{reservationNumber}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-border/50">
+                <span className="font-sans text-sm text-muted-foreground">{t.booking_confirmation_email_label}</span>
+                <span className="font-sans text-sm text-foreground">{data.email || "—"}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-border/50">
+                <span className="font-sans text-sm text-muted-foreground">{t.booking_confirmation_support}</span>
+                <span className="font-sans text-sm text-foreground">+33 1 23 45 67 89</span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="font-sans text-sm text-muted-foreground">{t.booking_confirmation_status}</span>
+                <span className="flex items-center gap-1.5 font-sans text-sm font-semibold text-green-500">
+                  <Check size={14} /> {t.booking_confirmation_status_confirmed}
+                </span>
+              </div>
+            </div>
+            <p className="font-sans text-xs text-muted-foreground mt-4">{t.booking_confirmation_details_helper}</p>
+          </div>
+
+          {/* Next steps */}
+          <div className="rounded-lg border border-border bg-card p-6 mb-6">
+            <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t.booking_next_steps_title}</h3>
+            <ul className="space-y-3">
+              {[t.booking_next_step_1, t.booking_next_step_2, t.booking_next_step_3, t.booking_next_step_4].map((step, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <Check size={16} className="text-primary mt-0.5 shrink-0" />
+                  <span className="font-sans text-sm text-muted-foreground">{step}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Cancellation reminder */}
+          <div className="rounded-lg border border-border/50 bg-secondary/50 p-4 mb-10 flex items-start gap-3">
+            <Info size={16} className="text-muted-foreground mt-0.5 shrink-0" />
+            <p className="font-sans text-xs text-muted-foreground leading-relaxed">{t.booking_cancellation_reminder}</p>
+          </div>
+
+          {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={() => navigate("/")} className="flex items-center justify-center gap-2 border border-border text-foreground font-sans text-sm font-medium px-8 py-3 rounded-md hover:bg-secondary transition-colors duration-200">
               <Home size={14} /> {t.booking_back_home}

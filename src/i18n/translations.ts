@@ -225,6 +225,21 @@ export type TranslationKeys = {
   // Booking - confirmation screen extras
   booking_back_home: string;
 
+  // Booking - confirmation page details
+  booking_confirmation_details_title: string;
+  booking_confirmation_number: string;
+  booking_confirmation_email_label: string;
+  booking_confirmation_support: string;
+  booking_confirmation_status: string;
+  booking_confirmation_status_confirmed: string;
+  booking_confirmation_details_helper: string;
+  booking_next_steps_title: string;
+  booking_next_step_1: string;
+  booking_next_step_2: string;
+  booking_next_step_3: string;
+  booking_next_step_4: string;
+  booking_cancellation_reminder: string;
+
   // Fleet extra amenities
   fleet_refreshments: string;
   fleet_disinfection: string;
@@ -487,6 +502,21 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     // Booking - confirmation extras
     booking_back_home: "Retour à l'accueil",
 
+    // Booking - confirmation page details
+    booking_confirmation_details_title: "Vos informations de réservation",
+    booking_confirmation_number: "Numéro de réservation",
+    booking_confirmation_email_label: "Email de confirmation",
+    booking_confirmation_support: "Support 24/7",
+    booking_confirmation_status: "Statut",
+    booking_confirmation_status_confirmed: "Confirmée",
+    booking_confirmation_details_helper: "Conservez ce numéro pour toute modification ou question concernant votre réservation.",
+    booking_next_steps_title: "Ce qui se passe ensuite",
+    booking_next_step_1: "Un email de confirmation contenant tous les détails a été envoyé.",
+    booking_next_step_2: "Votre chauffeur vous sera assigné 24 heures avant votre départ.",
+    booking_next_step_3: "Vous recevrez ses coordonnées et une photo professionnelle.",
+    booking_next_step_4: "Notre équipe est disponible 24h/24 pour toute question.",
+    booking_cancellation_reminder: "Rappel : Annulation gratuite jusqu'à 24h avant le départ. Au-delà, des frais de 50% s'appliquent. Pour les services avec Meet & Greet à l'aéroport, délai d'annulation : 48h.",
+
     // About
     about_title: "À propos de KCC-EliteDriver",
     about_subtitle: "L'histoire d'une excellence née entre Le Caire et Paris",
@@ -745,6 +775,21 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     // Booking - confirmation extras
     booking_back_home: "Back to home",
 
+    // Booking - confirmation page details
+    booking_confirmation_details_title: "Your booking information",
+    booking_confirmation_number: "Booking number",
+    booking_confirmation_email_label: "Confirmation email",
+    booking_confirmation_support: "24/7 Support",
+    booking_confirmation_status: "Status",
+    booking_confirmation_status_confirmed: "Confirmed",
+    booking_confirmation_details_helper: "Keep this number for any modifications or questions about your booking.",
+    booking_next_steps_title: "What happens next",
+    booking_next_step_1: "Confirmation email with all details has been sent.",
+    booking_next_step_2: "Your driver will be assigned 24 hours before departure.",
+    booking_next_step_3: "You'll receive their contact details and professional photo.",
+    booking_next_step_4: "Our team is available 24/7 for any questions.",
+    booking_cancellation_reminder: "Reminder: Free cancellation up to 24 hours before departure. Beyond this, a 50% charge applies. For airport Meet & Greet services, 48 hours' notice required.",
+
     // About
     about_title: "About KCC-EliteDriver",
     about_subtitle: "The story of excellence born between Cairo and Paris",
@@ -1002,6 +1047,21 @@ export const translations: Record<Language, TranslationKeys> = { // v3
 
     // Booking - confirmation extras
     booking_back_home: "العودة للرئيسية",
+
+    // Booking - confirmation page details
+    booking_confirmation_details_title: "معلومات حجزك",
+    booking_confirmation_number: "رقم الحجز",
+    booking_confirmation_email_label: "بريد التأكيد",
+    booking_confirmation_support: "دعم 24/7",
+    booking_confirmation_status: "الحالة",
+    booking_confirmation_status_confirmed: "مؤكد",
+    booking_confirmation_details_helper: "احتفظ بهذا الرقم لأي تعديل أو استفسار بخصوص حجزك.",
+    booking_next_steps_title: "ما الذي يحدث بعد ذلك",
+    booking_next_step_1: "تم إرسال بريد تأكيد يحتوي على جميع التفاصيل.",
+    booking_next_step_2: "سيتم تعيين سائقك قبل 24 ساعة من موعد المغادرة.",
+    booking_next_step_3: "ستتلقى بيانات الاتصال به وصورته المهنية.",
+    booking_next_step_4: "فريقنا متاح على مدار الساعة لأي استفسار.",
+    booking_cancellation_reminder: "تذكير: إلغاء مجاني حتى 24 ساعة قبل المغادرة. بعد ذلك، تُطبق رسوم 50%. لخدمات الاستقبال الشخصي في المطار، مهلة الإلغاء 48 ساعة.",
 
     // About
     about_title: "عن KCC-EliteDriver",
