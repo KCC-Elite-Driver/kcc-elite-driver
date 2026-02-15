@@ -1,44 +1,26 @@
 
 
-# Plan : Images Paris & International pour GlobalAxis + Fond monuments au Footer
+# Corrections : Image International + Footer Skyline
 
-## 1. Generer 2 nouvelles images "Quiet Luxury"
+## 1. Regenerer l'image International
 
-### Image Paris — Mercedes devant un decor parisien (nuit)
-**Prompt :** Cinematic 4K nighttime photograph of a black Mercedes S-Class parked on a cobblestone street near the Eiffel Tower in Paris. Tower illuminated with warm golden light in the background. Chauffeur silhouette in dark suit seen from behind. No face visible. Moody lighting, quiet luxury aesthetic. Professional automotive photography.
+L'image actuelle a un defaut (Mercedes avec deux faces avant). Nouvelle generation avec un prompt plus precis specifiant clairement l'orientation laterale du vehicule.
 
-**Fichier :** `src/assets/paris-eiffel-night.jpg`
-
-### Image International — Mercedes dans un decor cosmopolite (nuit)
-**Prompt :** Cinematic 4K nighttime photograph of a black luxury Mercedes sedan parked at an elegant international airport terminal or grand hotel entrance with a modern glass and steel facade. Warm ambient lighting reflecting on polished car. Chauffeur silhouette in dark suit standing beside car, back to camera, white gloves visible. No face shown. Cosmopolitan, global luxury atmosphere. Professional editorial photography.
+**Prompt ameliore :** "Cinematic 4K nighttime photograph of a single black luxury Mercedes sedan viewed from the side, parked at an elegant international airport terminal with modern glass facade. Only one car, seen in full side profile. Warm ambient lighting reflecting on polished car body. A chauffeur silhouette in dark suit standing beside the rear door, back to camera, white gloves visible. No face shown. Professional editorial automotive photography, quiet luxury aesthetic."
 
 **Fichier :** `src/assets/international-luxury-night.jpg`
 
 ---
 
-## 2. Integrer les images dans GlobalAxis
+## 2. Repositionner le skyline dans le Footer
 
-Modifier `src/components/home/GlobalAxis.tsx` pour ajouter des images de header aux 3 cartes (pas seulement Cairo) :
-- Carte Cairo (i===0) : `cairo-library-dusk.jpg` (deja en place)
-- Carte Paris (i===1) : `paris-eiffel-night.jpg` (nouvelle image)
-- Carte International (i===2) : `international-luxury-night.jpg` (nouvelle image)
+Actuellement, le skyline est place comme une bande separee entre le contenu et le copyright. D'apres la reference, les monuments doivent etre en arriere-plan, **derriere les colonnes de texte du footer**, avec une opacite subtile.
 
-Refactorer le rendu conditionnel `{i === 0 && ...}` en un tableau d'images applique a chaque carte.
-
----
-
-## 3. Generer l'image de fond "skyline monuments" pour le Footer
-
-### Image skyline silhouette
-**Prompt :** Minimalist grey silhouette skyline illustration on transparent/white background featuring iconic world monuments side by side: Egyptian Pyramids of Giza, Eiffel Tower Paris, Statue of Liberty New York, Big Ben London, Taj Mahal. Simple flat vector style silhouettes, subtle and elegant, light grey color (#d1d5db). Wide panoramic format 1920x300. Clean minimal design suitable as decorative footer background.
-
-**Fichier :** `src/assets/skyline-monuments.png`
-
----
-
-## 4. Integrer le skyline dans le Footer
-
-Modifier `src/components/Footer.tsx` pour ajouter l'image de skyline en fond decoratif entre le contenu du footer et la section legale/copyright, comme dans la reference fournie. L'image sera positionnee en bas du footer avec une opacite reduite pour rester subtile.
+### Changement dans `src/components/Footer.tsx` :
+- Rendre le conteneur principal du footer `relative`
+- Positionner l'image skyline en `absolute bottom-0` derriere tout le contenu
+- Supprimer la bande decorative separee actuelle
+- L'image sera en fond, centree en bas, avec une opacite faible pour que le texte reste lisible par-dessus
 
 ---
 
@@ -46,9 +28,6 @@ Modifier `src/components/Footer.tsx` pour ajouter l'image de skyline en fond dec
 
 | Fichier | Action |
 |---------|--------|
-| `src/assets/paris-eiffel-night.jpg` | Nouvelle image generee |
-| `src/assets/international-luxury-night.jpg` | Nouvelle image generee |
-| `src/assets/skyline-monuments.png` | Nouvelle image generee (silhouette monuments) |
-| `src/components/home/GlobalAxis.tsx` | Ajout images Paris + International aux cartes |
-| `src/components/Footer.tsx` | Ajout fond skyline decoratif |
+| `src/assets/international-luxury-night.jpg` | Regeneree avec prompt corrige |
+| `src/components/Footer.tsx` | Skyline repositionne en arriere-plan derriere le texte |
 
