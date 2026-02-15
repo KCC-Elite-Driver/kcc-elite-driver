@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
+import cairoInteriorNight from "@/assets/cairo-interior-night.jpg";
 import PageMeta from "@/components/PageMeta";
 
 interface VehicleCardProps {
@@ -94,8 +95,16 @@ const Fleet = () => {
         description="Découvrez notre flotte de véhicules premium : Mercedes Classe E, S et V. Confort et élégance garantis."
         path="/fleet"
       />
-      <section className="py-20 gradient-hero">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={cairoInteriorNight}
+            alt="Luxury Mercedes interior with Cairo city lights"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">{t.fleet_page_title}</h1>
           <p className="font-sans text-muted-foreground text-base max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.1s" }}>{t.fleet_page_subtitle}</p>
         </div>

@@ -4,6 +4,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { Plane, Clock, Star, Route, Check, ArrowRight, UserCheck, MapPin, Timer, ShieldCheck, Globe, Award, AlertCircle } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
 import JsonLd from "@/components/JsonLd";
+import cairoPyramidsNight from "@/assets/cairo-pyramids-night.jpg";
 
 interface ServiceCardProps {
   icon: React.ElementType;
@@ -131,9 +132,17 @@ const Services = () => {
         }}
       />
 
-      {/* Hero */}
-      <section className="py-20 gradient-hero">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
+      {/* Hero with Cairo Pyramids image */}
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={cairoPyramidsNight}
+            alt="Luxury chauffeur service at the Pyramids of Giza"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
           <ScrollReveal variant="fade-in">
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
               {t.services_title}

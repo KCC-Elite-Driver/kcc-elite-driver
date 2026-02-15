@@ -1,6 +1,7 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ShieldCheck, Clock, Languages } from "lucide-react";
+import cairoDetailGlove from "@/assets/cairo-detail-glove.jpg";
 
 const ValuesSection = () => {
   const { t } = useTranslation();
@@ -13,6 +14,18 @@ const ValuesSection = () => {
 
   return (
     <section className="py-24 bg-background">
+      {/* Cinematic banner */}
+      <ScrollReveal variant="fade-in">
+        <div className="relative h-64 md:h-80 overflow-hidden mb-16">
+          <img
+            src={cairoDetailGlove}
+            alt="White-gloved chauffeur opening car door with Pyramids in background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        </div>
+      </ScrollReveal>
+
       <div className="container mx-auto px-4 lg:px-8">
         {/* Heading */}
         <ScrollReveal variant="fade-up">
