@@ -19,6 +19,8 @@ const Header = () => {
     { label: t.services_dropdown_hourly, anchor: "#hourly" },
     { label: t.services_dropdown_event, anchor: "#event" },
     { label: t.services_dropdown_intercity, anchor: "#intercity" },
+    { label: t.services_dropdown_city, anchor: "#intercity" },
+    { label: t.services_dropdown_cultural, anchor: "#cultural" },
   ];
 
   const navLinks = [
@@ -48,7 +50,7 @@ const Header = () => {
       <header className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="container mx-auto flex items-center justify-between h-20 px-4 lg:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="KCC-EliteDriver" className="h-20 w-auto" />
+            <img src={logo} alt={t.hero_title} className="h-20 w-auto" />
           </Link>
 
           {/* Desktop nav */}
@@ -77,7 +79,7 @@ const Header = () => {
                     <div className="absolute top-full start-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-xl z-50 py-2 animate-fade-in">
                       {serviceItems.map((item) => (
                         <Link
-                          key={item.anchor}
+                          key={item.anchor + item.label}
                           to={`/services${item.anchor}`}
                           onClick={() => setServicesOpen(false)}
                           className="block px-4 py-2.5 text-sm font-sans text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors duration-150"
@@ -85,6 +87,14 @@ const Header = () => {
                           {item.label}
                         </Link>
                       ))}
+                      <div className="border-t border-border my-1" />
+                      <Link
+                        to="/services"
+                        onClick={() => setServicesOpen(false)}
+                        className="block px-4 py-2.5 text-sm font-sans font-semibold text-primary hover:bg-secondary transition-colors duration-150"
+                      >
+                        {t.services_dropdown_view_all}
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -108,7 +118,7 @@ const Header = () => {
           <div className="hidden md:flex items-center gap-6">
             <LanguageSwitcher />
             <Link
-              to="/contact"
+              to="/booking"
               className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-5 py-2 rounded-md hover:opacity-90 transition-opacity duration-200"
             >
               {t.nav_reserve}
@@ -153,7 +163,7 @@ const Header = () => {
                       <div className="mt-2 ms-4 flex flex-col gap-3">
                         {serviceItems.map((item) => (
                           <Link
-                            key={item.anchor}
+                            key={item.anchor + item.label}
                             to={`/services${item.anchor}`}
                             onClick={() => { setMobileOpen(false); setMobileServicesOpen(false); }}
                             className="text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
@@ -161,6 +171,14 @@ const Header = () => {
                             {item.label}
                           </Link>
                         ))}
+                        <div className="border-t border-border my-1" />
+                        <Link
+                          to="/services"
+                          onClick={() => { setMobileOpen(false); setMobileServicesOpen(false); }}
+                          className="text-sm font-sans font-semibold text-primary hover:text-foreground transition-colors"
+                        >
+                          {t.services_dropdown_view_all}
+                        </Link>
                       </div>
                     )}
                   </div>
@@ -183,7 +201,7 @@ const Header = () => {
                 <LanguageSwitcher />
               </div>
               <Link
-                to="/contact"
+                to="/booking"
                 onClick={() => setMobileOpen(false)}
                 className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-5 py-3 rounded-md text-center hover:opacity-90 transition-opacity duration-200"
               >

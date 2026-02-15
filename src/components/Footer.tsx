@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
 import logo from "@/assets/kcc-logo.webp";
 
 const Footer = () => {
@@ -15,8 +15,11 @@ const Footer = () => {
             <Link to="/" className="inline-block mb-4">
               <img src={logo} alt="KCC-EliteDriver" className="h-20 w-auto" />
             </Link>
-            <p className="text-muted-foreground text-sm font-sans leading-relaxed">
+            <p className="text-muted-foreground text-sm font-sans leading-relaxed mb-2">
               {t.footer_tagline}
+            </p>
+            <p className="text-muted-foreground text-xs font-sans leading-relaxed">
+              {t.footer_description}
             </p>
           </div>
 
@@ -42,6 +45,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/booking" className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans">
+                  {t.nav_booking}
+                </Link>
+              </li>
+              <li>
                 <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans">
                   {t.nav_contact}
                 </Link>
@@ -55,9 +63,31 @@ const Footer = () => {
               {t.footer_services_title}
             </h4>
             <ul className="space-y-3">
-              <li className="text-sm text-muted-foreground font-sans">{t.footer_service_airport}</li>
-              <li className="text-sm text-muted-foreground font-sans">{t.footer_service_hourly}</li>
-              <li className="text-sm text-muted-foreground font-sans">{t.footer_service_event}</li>
+              <li>
+                <Link to="/services#airport" className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans">
+                  {t.footer_service_airport}
+                </Link>
+              </li>
+              <li>
+                <Link to="/services#hourly" className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans">
+                  {t.footer_service_hourly}
+                </Link>
+              </li>
+              <li>
+                <Link to="/services#event" className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans">
+                  {t.footer_service_event}
+                </Link>
+              </li>
+              <li>
+                <Link to="/services#intercity" className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans">
+                  {t.footer_service_city}
+                </Link>
+              </li>
+              <li>
+                <Link to="/services#cultural" className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans">
+                  {t.footer_service_cultural}
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -68,7 +98,7 @@ const Footer = () => {
             </h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2">
-                <Mail size={14} className="text-primary" />
+                <Mail size={14} className="text-primary flex-shrink-0" />
                 <a
                   href="mailto:contact@kcc-elitedriver.com"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans"
@@ -77,7 +107,7 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <Phone size={14} className="text-primary" />
+                <Phone size={14} className="text-primary flex-shrink-0" />
                 <a
                   href="tel:+33123456789"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans"
@@ -85,14 +115,54 @@ const Footer = () => {
                   +33 1 23 45 67 89
                 </a>
               </li>
+              <li className="flex items-center gap-2">
+                <MessageCircle size={14} className="text-primary flex-shrink-0" />
+                <a
+                  href="https://wa.me/33123456789"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans"
+                >
+                  {t.footer_whatsapp}
+                </a>
+              </li>
+              <li className="flex items-start gap-2">
+                <MapPin size={14} className="text-primary flex-shrink-0 mt-0.5" />
+                <span className="text-sm text-muted-foreground font-sans">
+                  {t.footer_address}
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Clock size={14} className="text-primary flex-shrink-0 mt-0.5" />
+                <span className="text-sm text-muted-foreground font-sans">
+                  {t.footer_hours}
+                </span>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border mt-12 pt-8 text-center">
-          <p className="text-xs text-muted-foreground font-sans">
-            © {new Date().getFullYear()} KCC-EliteDriver. {t.footer_rights}
-          </p>
+        {/* Legal links + copyright */}
+        <div className="border-t border-border mt-12 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground font-sans">
+              © {new Date().getFullYear()} KCC-EliteDriver. {t.footer_rights}
+            </p>
+            <div className="flex flex-wrap items-center gap-4">
+              <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors font-sans">
+                {t.footer_privacy_link}
+              </Link>
+              <Link to="/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors font-sans">
+                {t.footer_terms_link}
+              </Link>
+              <Link to="/cancellation-policy" className="text-xs text-muted-foreground hover:text-primary transition-colors font-sans">
+                {t.footer_cancellation_link}
+              </Link>
+              <Link to="/legal" className="text-xs text-muted-foreground hover:text-primary transition-colors font-sans">
+                {t.footer_legal_link}
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
