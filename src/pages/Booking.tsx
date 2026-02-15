@@ -573,9 +573,9 @@ const Booking = () => {
                 {t.booking_next} <ArrowRight size={14} />
               </button>
             ) : (
-              <button onClick={handleConfirm}
-                className="flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200">
-                <Check size={14} /> {t.booking_confirm}
+              <button onClick={handleConfirm} disabled={submitting}
+                className="flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 disabled:opacity-50">
+                <Check size={14} /> {submitting ? "Envoi..." : t.booking_confirm}
               </button>
             )}
           </div>
