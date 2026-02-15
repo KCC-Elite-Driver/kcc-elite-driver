@@ -123,7 +123,7 @@ const Header = () => {
               className="flex items-center gap-1.5 text-sm font-sans font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               <User size={16} />
-              {user ? "Mon espace" : "Connexion"}
+              {user ? t.header_my_space : t.header_login}
             </Link>
             <Link
               to="/booking"

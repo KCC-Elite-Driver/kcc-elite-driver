@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/i18n/LanguageContext";
 import { LogOut, ArrowLeft, Plus, Pencil, Trash2, X, Check } from "lucide-react";
 
 type Driver = { id: string; provider_id: string; firstname: string; lastname: string; phone: string | null; email: string | null; created_at: string };
@@ -9,6 +10,7 @@ type Provider = { id: string; name: string };
 
 const AdminDrivers = () => {
   const { signOut } = useAuth();
+  const { t } = useTranslation();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -36,23 +38,18 @@ const AdminDrivers = () => {
     } else {
       await supabase.from("drivers").insert(payload);
     }
-    reset();
-    load();
+    reset(); load();
   };
 
   const handleEdit = (d: Driver) => {
     setForm({ firstname: d.firstname, lastname: d.lastname, phone: d.phone || "", email: d.email || "", provider_id: d.provider_id });
-    setEditId(d.id);
-    setShowForm(true);
+    setEditId(d.id); setShowForm(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Supprimer ce chauffeur ?")) return;
-    await supabase.from("drivers").delete().eq("id", id);
-    load();
+    if (!confirm(t.admin_delete_driver_confirm)) return;
+    await supabase.from("drivers").delete().eq("id", id); load();
   };
-
-  const getProviderName = (pid: string) => providers.find(p => p.id === pid)?.name || "—";
 
   return (
     <div className="min-h-screen bg-background">
@@ -60,46 +57,46 @@ const AdminDrivers = () => {
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-4">
             <Link to="/admin" className="text-muted-foreground hover:text-foreground"><ArrowLeft size={20} /></Link>
-            <h1 className="font-serif text-xl font-bold text-foreground">Chauffeurs</h1>
+            <h1 className="font-serif text-xl font-bold text-foreground">{t.admin_drivers}</h1>
           </div>
           <button onClick={signOut} className="flex items-center gap-1.5 font-sans text-sm text-muted-foreground hover:text-foreground"><LogOut size={16} /></button>
         </div>
       </header>
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-serif text-lg font-semibold text-foreground">{drivers.length} chauffeur{drivers.length !== 1 ? "s" : ""}</h2>
+          <h2 className="font-serif text-lg font-semibold text-foreground">{drivers.length} {t.admin_drivers.toLowerCase()}</h2>
           <button onClick={() => { reset(); setShowForm(true); }} className="flex items-center gap-1.5 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-4 py-2 rounded-md hover:opacity-90">
-            <Plus size={16} /> Ajouter
+            <Plus size={16} /> {t.admin_add}
           </button>
         </div>
 
         {showForm && (
           <div className="rounded-lg border border-border bg-card p-5 mb-6 space-y-4">
-            <h3 className="font-serif text-base font-semibold text-foreground">{editId ? "Modifier" : "Nouveau"} chauffeur</h3>
+            <h3 className="font-serif text-base font-semibold text-foreground">{editId ? t.admin_edit_driver : t.admin_new_driver}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input placeholder="Prénom *" value={form.firstname} onChange={e => setForm({ ...form, firstname: e.target.value })}
+              <input placeholder={`${t.admin_firstname} *`} value={form.firstname} onChange={e => setForm({ ...form, firstname: e.target.value })}
                 className="bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-              <input placeholder="Nom *" value={form.lastname} onChange={e => setForm({ ...form, lastname: e.target.value })}
+              <input placeholder={`${t.admin_lastname} *`} value={form.lastname} onChange={e => setForm({ ...form, lastname: e.target.value })}
                 className="bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input placeholder="Téléphone" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
+              <input placeholder={t.admin_phone} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
                 className="bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-              <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
+              <input placeholder={t.admin_email_label} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
                 className="bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
             </div>
             <div>
-              <label className="font-sans text-xs font-medium text-muted-foreground block mb-1.5">Prestataire *</label>
+              <label className="font-sans text-xs font-medium text-muted-foreground block mb-1.5">{t.admin_provider_label} *</label>
               <select value={form.provider_id} onChange={e => setForm({ ...form, provider_id: e.target.value })}
                 className="w-full bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
-                <option value="">Sélectionner...</option>
+                <option value="">{t.admin_select}</option>
                 {providers.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
             <div className="flex gap-2 justify-end">
               <button onClick={reset} className="font-sans text-sm px-4 py-2 rounded-md border border-border text-muted-foreground hover:text-foreground"><X size={14} /></button>
               <button onClick={handleSave} className="flex items-center gap-1.5 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-4 py-2 rounded-md hover:opacity-90">
-                <Check size={14} /> {editId ? "Enregistrer" : "Créer"}
+                <Check size={14} /> {editId ? t.admin_save : t.admin_create}
               </button>
             </div>
           </div>
@@ -131,7 +128,7 @@ const AdminDrivers = () => {
             );
           })}
           {drivers.length === 0 && !showForm && (
-            <p className="font-sans text-sm text-muted-foreground text-center py-8">Aucun chauffeur. Ajoutez d'abord un prestataire, puis un chauffeur.</p>
+            <p className="font-sans text-sm text-muted-foreground text-center py-8">{t.admin_no_drivers}</p>
           )}
         </div>
       </main>

@@ -376,6 +376,111 @@ export type TranslationKeys = {
   about_value_integrity_desc: string;
   about_value_anticipation: string;
   about_value_anticipation_desc: string;
+
+  // Auth & shared
+  auth_email: string;
+  auth_password: string;
+  auth_password_confirm: string;
+  auth_login: string;
+  auth_login_loading: string;
+  auth_signup: string;
+  auth_signup_loading: string;
+  auth_logout: string;
+  auth_no_account: string;
+  auth_has_account: string;
+  auth_verify_email: string;
+  auth_verify_email_desc: string;
+  auth_back_login: string;
+  auth_password_min: string;
+  auth_password_mismatch: string;
+
+  // Header auth
+  header_my_space: string;
+  header_login: string;
+
+  // Admin
+  admin_title: string;
+  admin_login_title: string;
+  admin_login_desc: string;
+  admin_dashboard: string;
+  admin_bookings: string;
+  admin_providers: string;
+  admin_drivers: string;
+  admin_all: string;
+  admin_pending: string;
+  admin_confirmed: string;
+  admin_completed: string;
+  admin_cancelled: string;
+  admin_no_bookings: string;
+  admin_client: string;
+  admin_service: string;
+  admin_date: string;
+  admin_route: string;
+  admin_status: string;
+  admin_driver: string;
+  admin_actions: string;
+  admin_edit: string;
+  admin_close: string;
+  admin_unassigned: string;
+  admin_add: string;
+  admin_save: string;
+  admin_create: string;
+  admin_edit_label: string;
+  admin_new_provider: string;
+  admin_edit_provider: string;
+  admin_delete_provider_confirm: string;
+  admin_no_providers: string;
+  admin_new_driver: string;
+  admin_edit_driver: string;
+  admin_delete_driver_confirm: string;
+  admin_no_drivers: string;
+  admin_provider_label: string;
+  admin_select: string;
+  admin_firstname: string;
+  admin_lastname: string;
+  admin_phone: string;
+  admin_email_label: string;
+  admin_name: string;
+
+  // Client
+  client_my_bookings: string;
+  client_new_booking: string;
+  client_no_bookings: string;
+  client_book_now: string;
+  client_details: string;
+  client_rebook: string;
+  client_booking_detail: string;
+  client_back_bookings: string;
+  client_modify: string;
+  client_cancel_booking: string;
+  client_cancel_confirm: string;
+  client_cancel_yes: string;
+  client_cancel_no: string;
+  client_save: string;
+  client_cancel_edit: string;
+  client_login_title: string;
+  client_login_desc: string;
+  client_register_title: string;
+  client_register_desc: string;
+
+  // Booking status
+  status_pending: string;
+  status_confirmed: string;
+  status_completed: string;
+  status_cancelled: string;
+
+  // Booking detail fields
+  field_service: string;
+  field_pickup: string;
+  field_dropoff: string;
+  field_date: string;
+  field_time: string;
+  field_vehicle: string;
+  field_passengers: string;
+  field_luggage: string;
+  field_flight: string;
+  field_notes: string;
+  booking_submitting: string;
 };
 
 export const translations: Record<Language, TranslationKeys> = { // v3
@@ -739,6 +844,108 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     legal_company: "KCC-EliteDriver — Service de chauffeur privé haut de gamme. Siège social : Paris, France. Email : contact@kcc-elitedriver.com. Téléphone : +33 1 23 45 67 89.",
     legal_hosting: "Site hébergé par Lovable (lovable.dev). Hébergement sécurisé conforme aux normes européennes.",
     legal_ip: "L'ensemble du contenu de ce site (textes, images, logos, design) est la propriété exclusive de KCC-EliteDriver. Toute reproduction sans autorisation est interdite.",
+
+    // Auth
+    auth_email: "Email",
+    auth_password: "Mot de passe",
+    auth_password_confirm: "Confirmer le mot de passe",
+    auth_login: "Se connecter",
+    auth_login_loading: "Connexion...",
+    auth_signup: "S'inscrire",
+    auth_signup_loading: "Inscription...",
+    auth_logout: "Déconnexion",
+    auth_no_account: "Pas encore de compte ?",
+    auth_has_account: "Déjà un compte ?",
+    auth_verify_email: "Vérifiez votre email",
+    auth_verify_email_desc: "Un lien de confirmation a été envoyé à",
+    auth_back_login: "Retour à la connexion",
+    auth_password_min: "Le mot de passe doit contenir au moins 6 caractères",
+    auth_password_mismatch: "Les mots de passe ne correspondent pas",
+
+    header_my_space: "Mon espace",
+    header_login: "Connexion",
+
+    // Admin
+    admin_title: "KCC Admin",
+    admin_login_title: "Administration",
+    admin_login_desc: "Connectez-vous pour accéder au panneau admin",
+    admin_dashboard: "Tableau de bord",
+    admin_bookings: "Réservations",
+    admin_providers: "Prestataires",
+    admin_drivers: "Chauffeurs",
+    admin_all: "Toutes",
+    admin_pending: "En attente",
+    admin_confirmed: "Confirmée",
+    admin_completed: "Terminée",
+    admin_cancelled: "Annulée",
+    admin_no_bookings: "Aucune réservation",
+    admin_client: "Client",
+    admin_service: "Service",
+    admin_date: "Date",
+    admin_route: "Trajet",
+    admin_status: "Statut",
+    admin_driver: "Chauffeur",
+    admin_actions: "Actions",
+    admin_edit: "Modifier",
+    admin_close: "Fermer",
+    admin_unassigned: "Non assigné",
+    admin_add: "Ajouter",
+    admin_save: "Enregistrer",
+    admin_create: "Créer",
+    admin_edit_label: "Modifier",
+    admin_new_provider: "Nouveau prestataire",
+    admin_edit_provider: "Modifier prestataire",
+    admin_delete_provider_confirm: "Supprimer ce prestataire et tous ses chauffeurs ?",
+    admin_no_providers: "Aucun prestataire. Ajoutez-en un pour commencer.",
+    admin_new_driver: "Nouveau chauffeur",
+    admin_edit_driver: "Modifier chauffeur",
+    admin_delete_driver_confirm: "Supprimer ce chauffeur ?",
+    admin_no_drivers: "Aucun chauffeur. Ajoutez d'abord un prestataire, puis un chauffeur.",
+    admin_provider_label: "Prestataire",
+    admin_select: "Sélectionner...",
+    admin_firstname: "Prénom",
+    admin_lastname: "Nom",
+    admin_phone: "Téléphone",
+    admin_email_label: "Email",
+    admin_name: "Nom",
+
+    // Client
+    client_my_bookings: "Mes réservations",
+    client_new_booking: "Nouvelle",
+    client_no_bookings: "Aucune réservation pour le moment",
+    client_book_now: "Réserver maintenant",
+    client_details: "Détails",
+    client_rebook: "Réserver à nouveau",
+    client_booking_detail: "Détail de la réservation",
+    client_back_bookings: "Retour aux réservations",
+    client_modify: "Modifier",
+    client_cancel_booking: "Annuler cette réservation",
+    client_cancel_confirm: "Confirmer l'annulation ?",
+    client_cancel_yes: "Oui, annuler",
+    client_cancel_no: "Non",
+    client_save: "Enregistrer",
+    client_cancel_edit: "Annuler",
+    client_login_title: "Mon espace",
+    client_login_desc: "Connectez-vous pour gérer vos réservations",
+    client_register_title: "Créer un compte",
+    client_register_desc: "Inscrivez-vous pour gérer vos réservations",
+
+    status_pending: "En attente",
+    status_confirmed: "Confirmée",
+    status_completed: "Terminée",
+    status_cancelled: "Annulée",
+
+    field_service: "Service",
+    field_pickup: "Prise en charge",
+    field_dropoff: "Destination",
+    field_date: "Date",
+    field_time: "Heure",
+    field_vehicle: "Véhicule",
+    field_passengers: "Passagers",
+    field_luggage: "Bagages",
+    field_flight: "Vol",
+    field_notes: "Notes",
+    booking_submitting: "Envoi...",
   },
 
   en: {
@@ -1101,6 +1308,105 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     legal_company: "KCC-EliteDriver — Premium private driver service. Registered office: Paris, France. Email: contact@kcc-elitedriver.com. Phone: +33 1 23 45 67 89.",
     legal_hosting: "Website hosted by Lovable (lovable.dev). Secure hosting compliant with European standards.",
     legal_ip: "All content on this website (texts, images, logos, design) is the exclusive property of KCC-EliteDriver. Reproduction without authorisation is prohibited.",
+
+    auth_email: "Email",
+    auth_password: "Password",
+    auth_password_confirm: "Confirm password",
+    auth_login: "Sign in",
+    auth_login_loading: "Signing in...",
+    auth_signup: "Sign up",
+    auth_signup_loading: "Signing up...",
+    auth_logout: "Sign out",
+    auth_no_account: "Don't have an account?",
+    auth_has_account: "Already have an account?",
+    auth_verify_email: "Check your email",
+    auth_verify_email_desc: "A confirmation link has been sent to",
+    auth_back_login: "Back to sign in",
+    auth_password_min: "Password must be at least 6 characters",
+    auth_password_mismatch: "Passwords do not match",
+
+    header_my_space: "My account",
+    header_login: "Sign in",
+
+    admin_title: "KCC Admin",
+    admin_login_title: "Administration",
+    admin_login_desc: "Sign in to access the admin panel",
+    admin_dashboard: "Dashboard",
+    admin_bookings: "Bookings",
+    admin_providers: "Providers",
+    admin_drivers: "Drivers",
+    admin_all: "All",
+    admin_pending: "Pending",
+    admin_confirmed: "Confirmed",
+    admin_completed: "Completed",
+    admin_cancelled: "Cancelled",
+    admin_no_bookings: "No bookings",
+    admin_client: "Client",
+    admin_service: "Service",
+    admin_date: "Date",
+    admin_route: "Route",
+    admin_status: "Status",
+    admin_driver: "Driver",
+    admin_actions: "Actions",
+    admin_edit: "Edit",
+    admin_close: "Close",
+    admin_unassigned: "Unassigned",
+    admin_add: "Add",
+    admin_save: "Save",
+    admin_create: "Create",
+    admin_edit_label: "Edit",
+    admin_new_provider: "New provider",
+    admin_edit_provider: "Edit provider",
+    admin_delete_provider_confirm: "Delete this provider and all its drivers?",
+    admin_no_providers: "No providers yet. Add one to get started.",
+    admin_new_driver: "New driver",
+    admin_edit_driver: "Edit driver",
+    admin_delete_driver_confirm: "Delete this driver?",
+    admin_no_drivers: "No drivers yet. Add a provider first, then a driver.",
+    admin_provider_label: "Provider",
+    admin_select: "Select...",
+    admin_firstname: "First name",
+    admin_lastname: "Last name",
+    admin_phone: "Phone",
+    admin_email_label: "Email",
+    admin_name: "Name",
+
+    client_my_bookings: "My bookings",
+    client_new_booking: "New",
+    client_no_bookings: "No bookings yet",
+    client_book_now: "Book now",
+    client_details: "Details",
+    client_rebook: "Book again",
+    client_booking_detail: "Booking details",
+    client_back_bookings: "Back to bookings",
+    client_modify: "Edit",
+    client_cancel_booking: "Cancel this booking",
+    client_cancel_confirm: "Confirm cancellation?",
+    client_cancel_yes: "Yes, cancel",
+    client_cancel_no: "No",
+    client_save: "Save",
+    client_cancel_edit: "Cancel",
+    client_login_title: "My account",
+    client_login_desc: "Sign in to manage your bookings",
+    client_register_title: "Create an account",
+    client_register_desc: "Sign up to manage your bookings",
+
+    status_pending: "Pending",
+    status_confirmed: "Confirmed",
+    status_completed: "Completed",
+    status_cancelled: "Cancelled",
+
+    field_service: "Service",
+    field_pickup: "Pick-up",
+    field_dropoff: "Destination",
+    field_date: "Date",
+    field_time: "Time",
+    field_vehicle: "Vehicle",
+    field_passengers: "Passengers",
+    field_luggage: "Luggage",
+    field_flight: "Flight",
+    field_notes: "Notes",
+    booking_submitting: "Submitting...",
   },
 
   ar: {
@@ -1463,5 +1769,104 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     legal_company: "KCC-EliteDriver — خدمة سائق خاص فاخرة. المقر الرئيسي: باريس، فرنسا. البريد الإلكتروني: contact@kcc-elitedriver.com. الهاتف: +33 1 23 45 67 89.",
     legal_hosting: "الموقع مستضاف بواسطة Lovable (lovable.dev). استضافة آمنة متوافقة مع المعايير الأوروبية.",
     legal_ip: "جميع محتويات هذا الموقع (نصوص، صور، شعارات، تصميم) هي ملكية حصرية لـ KCC-EliteDriver. يُحظر الاستنساخ بدون إذن.",
+
+    auth_email: "البريد الإلكتروني",
+    auth_password: "كلمة المرور",
+    auth_password_confirm: "تأكيد كلمة المرور",
+    auth_login: "تسجيل الدخول",
+    auth_login_loading: "جارٍ الدخول...",
+    auth_signup: "إنشاء حساب",
+    auth_signup_loading: "جارٍ التسجيل...",
+    auth_logout: "تسجيل الخروج",
+    auth_no_account: "ليس لديك حساب؟",
+    auth_has_account: "لديك حساب بالفعل؟",
+    auth_verify_email: "تحقق من بريدك الإلكتروني",
+    auth_verify_email_desc: "تم إرسال رابط التأكيد إلى",
+    auth_back_login: "العودة لتسجيل الدخول",
+    auth_password_min: "يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل",
+    auth_password_mismatch: "كلمتا المرور غير متطابقتين",
+
+    header_my_space: "حسابي",
+    header_login: "تسجيل الدخول",
+
+    admin_title: "إدارة KCC",
+    admin_login_title: "الإدارة",
+    admin_login_desc: "سجّل الدخول للوصول إلى لوحة الإدارة",
+    admin_dashboard: "لوحة التحكم",
+    admin_bookings: "الحجوزات",
+    admin_providers: "مقدمو الخدمات",
+    admin_drivers: "السائقون",
+    admin_all: "الكل",
+    admin_pending: "قيد الانتظار",
+    admin_confirmed: "مؤكدة",
+    admin_completed: "مكتملة",
+    admin_cancelled: "ملغاة",
+    admin_no_bookings: "لا توجد حجوزات",
+    admin_client: "العميل",
+    admin_service: "الخدمة",
+    admin_date: "التاريخ",
+    admin_route: "المسار",
+    admin_status: "الحالة",
+    admin_driver: "السائق",
+    admin_actions: "الإجراءات",
+    admin_edit: "تعديل",
+    admin_close: "إغلاق",
+    admin_unassigned: "غير معيّن",
+    admin_add: "إضافة",
+    admin_save: "حفظ",
+    admin_create: "إنشاء",
+    admin_edit_label: "تعديل",
+    admin_new_provider: "مقدم خدمة جديد",
+    admin_edit_provider: "تعديل مقدم الخدمة",
+    admin_delete_provider_confirm: "حذف مقدم الخدمة وجميع سائقيه؟",
+    admin_no_providers: "لا يوجد مقدمو خدمات. أضف واحداً للبدء.",
+    admin_new_driver: "سائق جديد",
+    admin_edit_driver: "تعديل السائق",
+    admin_delete_driver_confirm: "حذف هذا السائق؟",
+    admin_no_drivers: "لا يوجد سائقون. أضف مقدم خدمة أولاً، ثم سائقاً.",
+    admin_provider_label: "مقدم الخدمة",
+    admin_select: "اختر...",
+    admin_firstname: "الاسم الأول",
+    admin_lastname: "اسم العائلة",
+    admin_phone: "الهاتف",
+    admin_email_label: "البريد الإلكتروني",
+    admin_name: "الاسم",
+
+    client_my_bookings: "حجوزاتي",
+    client_new_booking: "جديد",
+    client_no_bookings: "لا توجد حجوزات حالياً",
+    client_book_now: "احجز الآن",
+    client_details: "التفاصيل",
+    client_rebook: "احجز مرة أخرى",
+    client_booking_detail: "تفاصيل الحجز",
+    client_back_bookings: "العودة إلى الحجوزات",
+    client_modify: "تعديل",
+    client_cancel_booking: "إلغاء هذا الحجز",
+    client_cancel_confirm: "تأكيد الإلغاء؟",
+    client_cancel_yes: "نعم، إلغاء",
+    client_cancel_no: "لا",
+    client_save: "حفظ",
+    client_cancel_edit: "إلغاء",
+    client_login_title: "حسابي",
+    client_login_desc: "سجّل الدخول لإدارة حجوزاتك",
+    client_register_title: "إنشاء حساب",
+    client_register_desc: "سجّل لإدارة حجوزاتك",
+
+    status_pending: "قيد الانتظار",
+    status_confirmed: "مؤكدة",
+    status_completed: "مكتملة",
+    status_cancelled: "ملغاة",
+
+    field_service: "الخدمة",
+    field_pickup: "مكان الانطلاق",
+    field_dropoff: "الوجهة",
+    field_date: "التاريخ",
+    field_time: "الوقت",
+    field_vehicle: "المركبة",
+    field_passengers: "الركاب",
+    field_luggage: "الأمتعة",
+    field_flight: "الرحلة",
+    field_notes: "ملاحظات",
+    booking_submitting: "جارٍ الإرسال...",
   },
 };
