@@ -1,19 +1,50 @@
 
 
-# Repositionnement du skyline monuments dans le Footer
+# Ajout d'images Hero pour les pages A propos, Reservation et Contact
 
-## Changement
+## Images a generer
 
-Modifier le positionnement de l'image `skyline-monuments.png` dans `src/components/Footer.tsx` :
+### 1. Page Contact : Chauffeur dans un hall d'aeroport (choix de l'utilisateur)
+Un chauffeur en costume sombre, vu de dos, tenant une pancarte dans un hall d'arrivees d'aeroport luxueux. Eclairage cinematique nocturne, style "Quiet Luxury".
 
-- **Largeur** : repasser en pleine largeur (`w-full`) au lieu de `w-3/4`
-- **Position verticale** : descendre l'image pour qu'elle soit plus bas, en dessous de la zone de navigation. Utiliser un décalage négatif (`-bottom-8` ou similaire) ou réduire la hauteur visible (`h-24` ou `max-h-24`) pour que seule la partie haute des monuments dépasse dans le footer sans empiéter sur les colonnes de texte
-- Retirer le centrage `mx-auto right-0` devenu inutile avec `w-full`
-- Conserver l'opacité subtile à `opacity-[0.04]`
+**Fichier :** `src/assets/contact-airport-chauffeur.jpg`
 
-## Fichier modifié
+### 2. Page Reservation : Interieur d'un Mercedes vu depuis la banquette arriere
+Vue depuis la banquette arriere en cuir d'un Mercedes, montrant le tableau de bord eclaire et la route de nuit a travers le pare-brise. Atmosphere feutree et luxueuse.
+
+**Fichier :** `src/assets/booking-interior-night.jpg`
+
+### 3. Page A propos : Detail d'un chauffeur ajustant sa manchette pres d'un vehicule
+Gros plan cinematique sur les mains gantees d'un chauffeur ajustant sa manchette devant un vehicule noir, de nuit. Eclairage dore subtil.
+
+**Fichier :** `src/assets/about-chauffeur-detail.jpg`
+
+## Modifications de code
+
+Pour chaque page, remplacer la section hero simple (`gradient-hero` avec padding) par le pattern utilise dans `Services.tsx` : image en arriere-plan avec overlay degrade.
+
+### Fichiers modifies
 
 | Fichier | Action |
 |---------|--------|
-| `src/components/Footer.tsx` | Ajuster classes CSS de l'image skyline |
+| `src/assets/contact-airport-chauffeur.jpg` | Nouveau : image generee |
+| `src/assets/booking-interior-night.jpg` | Nouveau : image generee |
+| `src/assets/about-chauffeur-detail.jpg` | Nouveau : image generee |
+| `src/pages/Contact.tsx` | Hero avec image de fond + overlay |
+| `src/pages/Booking.tsx` | Hero avec image de fond + overlay |
+| `src/pages/About.tsx` | Hero avec image de fond + overlay |
+
+### Pattern applique (identique a Services.tsx)
+
+```text
+<section className="relative py-32 overflow-hidden">
+  <div className="absolute inset-0">
+    <img src={heroImage} className="w-full h-full object-cover" />
+    <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+  </div>
+  <div className="relative z-10 ...">
+    <!-- titre + sous-titre existants -->
+  </div>
+</section>
+```
 
