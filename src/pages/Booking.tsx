@@ -1,8 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home, Info, Mail, Phone, Shield } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import PageMeta from "@/components/PageMeta";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
@@ -47,8 +49,11 @@ const HelperText = ({ children }: { children: React.ReactNode }) => (
 const Booking = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [data, setData] = useState<BookingData>({
     service: null,
     pickup: "",
@@ -69,6 +74,38 @@ const Booking = () => {
     vehicle: null,
     paymentMethod: "card",
   });
+
+  // Pre-fill from URL params (re-booking)
+  useEffect(() => {
+    const service = searchParams.get("service") as ServiceType | null;
+    const pickup = searchParams.get("pickup");
+    const dropoff = searchParams.get("dropoff");
+    const vehicle = searchParams.get("vehicle");
+    const firstname = searchParams.get("firstname");
+    const lastname = searchParams.get("lastname");
+    const email = searchParams.get("email");
+    const phone = searchParams.get("phone");
+    if (service || pickup || firstname) {
+      setData(prev => ({
+        ...prev,
+        ...(service && { service }),
+        ...(pickup && { pickup }),
+        ...(dropoff && { dropoff }),
+        ...(vehicle && { vehicle }),
+        ...(firstname && { firstname }),
+        ...(lastname && { lastname }),
+        ...(email && { email }),
+        ...(phone && { phone }),
+      }));
+    }
+  }, [searchParams]);
+
+  // Pre-fill email from logged-in user
+  useEffect(() => {
+    if (user?.email && !data.email) {
+      setData(prev => ({ ...prev, email: user.email! }));
+    }
+  }, [user]);
 
   const steps = [
     t.booking_step_service,
@@ -114,7 +151,37 @@ const Booking = () => {
     }
   };
 
-  const handleConfirm = () => setCompleted(true);
+  const handleConfirm = async () => {
+    setSubmitting(true);
+    try {
+      const bookingPayload = {
+        client_id: user?.id || null,
+        service_type: data.service,
+        pickup: data.pickup,
+        dropoff: data.dropoff || "",
+        date: data.date,
+        time: data.time,
+        firstname: data.firstname,
+        lastname: data.lastname,
+        email: data.email,
+        phone: `${data.phoneCode} ${data.phone}`,
+        passengers: data.passengers,
+        luggage: data.luggage,
+        notes: data.notes || null,
+        flight_number: data.flightNumber || null,
+        meet_greet: data.meetGreet,
+        vehicle: data.vehicle,
+        payment_method: data.paymentMethod,
+        status: "pending" as const,
+      };
+      await supabase.from("bookings").insert(bookingPayload);
+      setCompleted(true);
+    } catch (err) {
+      console.error("Booking error:", err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleReset = () => {
     setData({
