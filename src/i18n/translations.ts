@@ -69,6 +69,7 @@ export type TranslationKeys = {
   // Contact
   contact_title: string;
   contact_subtitle: string;
+  contact_description: string;
   contact_name: string;
   contact_email: string;
   contact_phone: string;
@@ -78,6 +79,8 @@ export type TranslationKeys = {
   contact_service_hourly: string;
   contact_service_event: string;
   contact_service_other: string;
+  contact_service_city: string;
+  contact_service_tours: string;
   contact_send: string;
   contact_success: string;
   contact_whatsapp: string;
@@ -85,6 +88,38 @@ export type TranslationKeys = {
   contact_map_coming: string;
   contact_direct: string;
   contact_direct_subtitle: string;
+  contact_form_title: string;
+  contact_form_desc: string;
+  contact_name_placeholder: string;
+  contact_email_placeholder: string;
+  contact_email_helper: string;
+  contact_phone_placeholder: string;
+  contact_phone_helper: string;
+  contact_service_placeholder: string;
+  contact_service_helper: string;
+  contact_message_placeholder: string;
+  contact_message_helper: string;
+  contact_privacy_checkbox: string;
+  contact_privacy_desc: string;
+  contact_submit_helper: string;
+  contact_success_title: string;
+  contact_email_direct: string;
+  contact_email_direct_helper: string;
+  contact_whatsapp_helper: string;
+  contact_call_helper: string;
+  contact_call_number: string;
+  contact_call_hours: string;
+  contact_faq_title: string;
+  contact_faq_q1: string;
+  contact_faq_a1: string;
+  contact_faq_q2: string;
+  contact_faq_a2: string;
+  contact_faq_q3: string;
+  contact_faq_a3: string;
+  contact_faq_q4: string;
+  contact_faq_a4: string;
+  contact_faq_q5: string;
+  contact_faq_a5: string;
 
   // Footer
   footer_tagline: string;
@@ -349,23 +384,58 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     values_multilingual_desc: "Chauffeurs francophones, anglophones et arabophones. Fluidité totale dans chaque échange, compréhension des nuances culturelles de chaque marché.",
 
     contact_title: "Contactez-nous",
-    contact_subtitle: "Pour une demande sur mesure ou un devis personnalisé",
+    contact_subtitle: "Pour une demande sur mesure, un devis personnalisé ou des questions sur nos services.",
+    contact_description: "Notre équipe est disponible pour vous servir. Réponse garantie sous 2 heures.",
     contact_name: "Nom complet",
     contact_email: "Adresse e-mail",
     contact_phone: "Téléphone",
     contact_message: "Votre message",
     contact_service: "Type de service",
-    contact_service_airport: "Transfert aéroport",
-    contact_service_hourly: "Mise à disposition",
+    contact_service_airport: "Transfer Aéroport",
+    contact_service_hourly: "Mise à Disposition Horaire",
     contact_service_event: "Événement VIP",
-    contact_service_other: "Autre",
-    contact_send: "Envoyer",
-    contact_success: "Message envoyé avec succès. Nous vous répondrons dans les plus brefs délais.",
-    contact_whatsapp: "WhatsApp",
-    contact_call: "Appeler",
+    contact_service_other: "Autre demande",
+    contact_service_city: "Intercités & Longue Distance",
+    contact_service_tours: "Circuits Touristiques Privés",
+    contact_send: "Envoyer mon message",
+    contact_success: "Votre message a été envoyé avec succès. Notre équipe vous répondra sous peu à l'adresse email fournie.",
+    contact_whatsapp: "Discuter sur WhatsApp",
+    contact_call: "Appeler maintenant",
     contact_map_coming: "Google Maps — Bientôt disponible",
     contact_direct: "Contact direct",
-    contact_direct_subtitle: "Réponse garantie sous 2 heures",
+    contact_direct_subtitle: "Réponse garantie sous 2 heures (Lun-Ven 8h-20h / Sam-Dim 9h-18h)",
+    contact_form_title: "Envoyez-nous un message",
+    contact_form_desc: "Complétez ce formulaire. Nous vous répondrons rapidement.",
+    contact_name_placeholder: "Jean Dupont",
+    contact_email_placeholder: "jean.dupont@example.com",
+    contact_email_helper: "Nous vous répondrons à cette adresse.",
+    contact_phone_placeholder: "+33 6 XX XX XX XX",
+    contact_phone_helper: "Pour vous contacter directement si nécessaire.",
+    contact_service_placeholder: "Sélectionnez un service",
+    contact_service_helper: "Cela nous aide à diriger votre message au bon service.",
+    contact_message_placeholder: "Décrivez votre demande : type de service, dates, besoins spécifiques, préférences...",
+    contact_message_helper: "Plus vous nous donnez de détails, plus nous pourrons personnaliser notre réponse.",
+    contact_privacy_checkbox: "J'accepte que mes données soient traitées pour répondre à ma demande",
+    contact_privacy_desc: "Vos données personnelles seront traitées conformément à notre Politique de confidentialité.",
+    contact_submit_helper: "Nos équipes répondent généralement sous 2 heures pendant les heures de bureau.",
+    contact_success_title: "Merci !",
+    contact_email_direct: "contact@kcc-elitedriver.com",
+    contact_email_direct_helper: "Réponse garantie sous 2 heures.",
+    contact_whatsapp_helper: "Chat instantané. Disponible 24h/24, réponse rapide.",
+    contact_call_helper: "Parlez directement à un agent. Gratuit depuis la France.",
+    contact_call_number: "+33 1 23 45 67 89",
+    contact_call_hours: "Lun-Ven 08:00-20:00 / Sam-Dim 09:00-18:00 (CET)",
+    contact_faq_title: "Questions fréquemment posées",
+    contact_faq_q1: "Quel est votre délai de réponse ?",
+    contact_faq_a1: "Nous garantissons une réponse sous 2 heures pendant les heures de bureau (lun-ven 8h-20h, sam-dim 9h-18h).",
+    contact_faq_q2: "Puis-je modifier ma réservation ?",
+    contact_faq_a2: "Oui. Annulation gratuite jusqu'à 24h avant le départ (48h pour Meet & Greet à l'aéroport).",
+    contact_faq_q3: "Proposez-vous des services pour les groupes ?",
+    contact_faq_a3: "Absolument. Notre Van Prestige accueille jusqu'à 7 passagers. Pour les délégations plus importantes, nous coordonnons plusieurs véhicules.",
+    contact_faq_q4: "Comment sont traitées mes données personnelles ?",
+    contact_faq_a4: "Vos données sont traitées de manière confidentielle conformément à nos standards de sécurité les plus stricts.",
+    contact_faq_q5: "Acceptez-vous les paiements en espèces ?",
+    contact_faq_a5: "Oui, réglez en espèces directement auprès du chauffeur. Tarif fixe, pas de surprise. Reçu fourni.",
 
     footer_tagline: "L'excellence à chaque kilomètre",
     footer_navigation: "Navigation",
@@ -621,24 +691,59 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     values_multilingual: "Multilingual",
     values_multilingual_desc: "French-speaking, English-speaking and Arabic-speaking drivers. Seamless communication in every exchange, cultural understanding across all markets.",
 
-    contact_title: "Contact Us",
-    contact_subtitle: "For a bespoke request or a personalised quote",
+    contact_title: "Get in Touch",
+    contact_subtitle: "For bespoke requests, personalised quotes, or questions about our services.",
+    contact_description: "Our team is here to serve you. Response guaranteed within 2 hours.",
     contact_name: "Full name",
     contact_email: "Email address",
-    contact_phone: "Phone",
+    contact_phone: "Phone number",
     contact_message: "Your message",
     contact_service: "Service type",
-    contact_service_airport: "Airport transfer",
-    contact_service_hourly: "Hourly standby",
+    contact_service_airport: "Airport Transfer",
+    contact_service_hourly: "Hourly Standby",
     contact_service_event: "VIP Event",
-    contact_service_other: "Other",
-    contact_send: "Send",
-    contact_success: "Message sent successfully. We will reply as soon as possible.",
-    contact_whatsapp: "WhatsApp",
-    contact_call: "Call",
+    contact_service_other: "Other inquiry",
+    contact_service_city: "Inter-City & Long-Distance",
+    contact_service_tours: "Private Cultural Tours",
+    contact_send: "Send my Message",
+    contact_success: "Your message has been sent successfully. Our team will respond shortly to the email address provided.",
+    contact_whatsapp: "Chat on WhatsApp",
+    contact_call: "Call Now",
     contact_map_coming: "Google Maps — Coming Soon",
-    contact_direct: "Direct contact",
-    contact_direct_subtitle: "Guaranteed response within 2 hours",
+    contact_direct: "Direct Contact",
+    contact_direct_subtitle: "Response guaranteed within 2 hours (Mon-Fri 8am-8pm / Sat-Sun 9am-6pm)",
+    contact_form_title: "Send us a Message",
+    contact_form_desc: "Complete this form. We'll respond promptly.",
+    contact_name_placeholder: "John Smith",
+    contact_email_placeholder: "john.smith@example.com",
+    contact_email_helper: "We'll reply to this address.",
+    contact_phone_placeholder: "+33 6 XX XX XX XX",
+    contact_phone_helper: "For direct contact if needed.",
+    contact_service_placeholder: "Select a service",
+    contact_service_helper: "This helps us route your message to the right department.",
+    contact_message_placeholder: "Describe your request: service type, dates, specific needs, preferences...",
+    contact_message_helper: "The more details you provide, the better we can personalise our response.",
+    contact_privacy_checkbox: "I agree my data is processed to respond to my inquiry",
+    contact_privacy_desc: "Your personal data will be processed in accordance with our Privacy Policy.",
+    contact_submit_helper: "Our team typically responds within 2 hours during business hours.",
+    contact_success_title: "Thank You!",
+    contact_email_direct: "contact@kcc-elitedriver.com",
+    contact_email_direct_helper: "Response guaranteed within 2 hours.",
+    contact_whatsapp_helper: "Instant chat. Available 24/7, quick response.",
+    contact_call_helper: "Speak to an agent directly. Free from France.",
+    contact_call_number: "+33 1 23 45 67 89",
+    contact_call_hours: "Mon-Fri 08:00-20:00 / Sat-Sun 09:00-18:00 (CET)",
+    contact_faq_title: "Frequently Asked Questions",
+    contact_faq_q1: "What is your response time?",
+    contact_faq_a1: "We guarantee a response within 2 hours during business hours (Mon-Fri 8am-8pm, Sat-Sun 9am-6pm).",
+    contact_faq_q2: "Can I modify my booking?",
+    contact_faq_a2: "Yes. Free cancellation up to 24 hours before departure (48 hours for airport Meet & Greet).",
+    contact_faq_q3: "Do you offer services for groups?",
+    contact_faq_a3: "Absolutely. Our Van Prestige can accommodate up to 7 passengers. For larger delegations, we coordinate multiple vehicles.",
+    contact_faq_q4: "How is my personal data handled?",
+    contact_faq_a4: "Your data is processed confidentially in accordance with our strictest security standards.",
+    contact_faq_q5: "Do you accept cash payments?",
+    contact_faq_a5: "Yes, you can pay in cash directly to the driver. Fixed pricing, no surprises. Receipt provided.",
 
     footer_tagline: "Excellence at every milestone",
     footer_navigation: "Navigation",
@@ -895,7 +1000,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     values_multilingual_desc: "سائقون يتحدثون الفرنسية والإنجليزية والعربية. سلاسة تامة في كل تواصل، فهم للفروق الثقافية في كل سوق.",
 
     contact_title: "اتصل بنا",
-    contact_subtitle: "لطلب مخصص أو عرض سعر شخصي",
+    contact_subtitle: "لطلب مخصص، عرض سعر شخصي أو أسئلة حول خدماتنا.",
+    contact_description: "فريقنا متاح لخدمتك. رد مضمون خلال ساعتين.",
     contact_name: "الاسم الكامل",
     contact_email: "البريد الإلكتروني",
     contact_phone: "الهاتف",
@@ -904,14 +1010,48 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     contact_service_airport: "نقل من المطار",
     contact_service_hourly: "حجز بالساعة",
     contact_service_event: "حدث VIP",
-    contact_service_other: "أخرى",
-    contact_send: "إرسال",
-    contact_success: "تم إرسال الرسالة بنجاح. سنرد عليك في أقرب وقت ممكن.",
-    contact_whatsapp: "واتساب",
-    contact_call: "اتصل",
+    contact_service_other: "طلب آخر",
+    contact_service_city: "بين المدن والمسافات الطويلة",
+    contact_service_tours: "جولات ثقافية خاصة",
+    contact_send: "إرسال رسالتي",
+    contact_success: "تم إرسال رسالتك بنجاح. سيرد فريقنا قريباً على البريد الإلكتروني المقدم.",
+    contact_whatsapp: "الدردشة على واتساب",
+    contact_call: "اتصل الآن",
     contact_map_coming: "خرائط جوجل — قريباً",
     contact_direct: "تواصل مباشر",
-    contact_direct_subtitle: "رد مضمون خلال ساعتين",
+    contact_direct_subtitle: "رد مضمون خلال ساعتين (الإثنين-الجمعة 8ص-8م / السبت-الأحد 9ص-6م)",
+    contact_form_title: "أرسل لنا رسالة",
+    contact_form_desc: "أكمل هذا النموذج. سنرد عليك بسرعة.",
+    contact_name_placeholder: "أحمد محمد",
+    contact_email_placeholder: "ahmed@example.com",
+    contact_email_helper: "سنرد على هذا العنوان.",
+    contact_phone_placeholder: "+33 6 XX XX XX XX",
+    contact_phone_helper: "للتواصل معك مباشرة إذا لزم الأمر.",
+    contact_service_placeholder: "اختر خدمة",
+    contact_service_helper: "هذا يساعدنا في توجيه رسالتك للقسم المناسب.",
+    contact_message_placeholder: "صف طلبك: نوع الخدمة، التواريخ، الاحتياجات الخاصة، التفضيلات...",
+    contact_message_helper: "كلما قدمت تفاصيل أكثر، كلما استطعنا تخصيص ردنا بشكل أفضل.",
+    contact_privacy_checkbox: "أوافق على معالجة بياناتي للرد على استفساري",
+    contact_privacy_desc: "سيتم معالجة بياناتك الشخصية وفقاً لسياسة الخصوصية الخاصة بنا.",
+    contact_submit_helper: "يرد فريقنا عادة خلال ساعتين خلال ساعات العمل.",
+    contact_success_title: "شكراً لك!",
+    contact_email_direct: "contact@kcc-elitedriver.com",
+    contact_email_direct_helper: "رد مضمون خلال ساعتين.",
+    contact_whatsapp_helper: "دردشة فورية. متاح 24/7، رد سريع.",
+    contact_call_helper: "تحدث مع وكيل مباشرة. مجاني من فرنسا.",
+    contact_call_number: "+33 1 23 45 67 89",
+    contact_call_hours: "الإثنين-الجمعة 08:00-20:00 / السبت-الأحد 09:00-18:00 (CET)",
+    contact_faq_title: "الأسئلة المتكررة",
+    contact_faq_q1: "ما هو وقت الرد لديكم؟",
+    contact_faq_a1: "نضمن رداً خلال ساعتين خلال ساعات العمل (الإثنين-الجمعة 8ص-8م، السبت-الأحد 9ص-6م).",
+    contact_faq_q2: "هل يمكنني تعديل حجزي؟",
+    contact_faq_a2: "نعم. إلغاء مجاني حتى 24 ساعة قبل المغادرة (48 ساعة للاستقبال الشخصي في المطار).",
+    contact_faq_q3: "هل تقدمون خدمات للمجموعات؟",
+    contact_faq_a3: "بالتأكيد. فان بريستيج يتسع لـ 7 ركاب. للوفود الأكبر، ننسق عدة مركبات.",
+    contact_faq_q4: "كيف تُعالج بياناتي الشخصية؟",
+    contact_faq_a4: "تُعالج بياناتك بسرية تامة وفقاً لأعلى معايير الأمان لدينا.",
+    contact_faq_q5: "هل تقبلون الدفع النقدي؟",
+    contact_faq_a5: "نعم، يمكنك الدفع نقداً مباشرة للسائق. تسعير ثابت بلا مفاجآت. إيصال مقدم.",
 
     footer_tagline: "التميّز في كل كيلومتر",
     footer_navigation: "التنقل",

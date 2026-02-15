@@ -3,9 +3,23 @@ import ContactForm from "@/components/contact/ContactForm";
 import DirectContact from "@/components/contact/DirectContact";
 import MapPlaceholder from "@/components/contact/MapPlaceholder";
 import PageMeta from "@/components/PageMeta";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Contact = () => {
   const { t } = useTranslation();
+
+  const faqItems = [
+    { q: t.contact_faq_q1, a: t.contact_faq_a1 },
+    { q: t.contact_faq_q2, a: t.contact_faq_a2 },
+    { q: t.contact_faq_q3, a: t.contact_faq_a3 },
+    { q: t.contact_faq_q4, a: t.contact_faq_a4 },
+    { q: t.contact_faq_q5, a: t.contact_faq_a5 },
+  ];
 
   return (
     <div className="pt-16">
@@ -22,6 +36,9 @@ const Contact = () => {
           </h1>
           <p className="font-sans text-muted-foreground text-base max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.1s" }}>
             {t.contact_subtitle}
+          </p>
+          <p className="font-sans text-sm text-muted-foreground mt-2 max-w-xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            {t.contact_description}
           </p>
         </div>
       </section>
@@ -41,6 +58,27 @@ const Contact = () => {
               <MapPlaceholder />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-20 bg-secondary/30">
+        <div className="container mx-auto px-4 lg:px-8 max-w-3xl">
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground text-center mb-10 opacity-0 animate-fade-in" style={{ animationFillMode: "forwards" }}>
+            {t.contact_faq_title}
+          </h2>
+          <Accordion type="single" collapsible className="opacity-0 animate-fade-in" style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}>
+            {faqItems.map((item, i) => (
+              <AccordionItem key={i} value={`faq-${i}`}>
+                <AccordionTrigger className="font-sans text-sm text-foreground text-left">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="font-sans text-sm text-muted-foreground">
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
     </div>
