@@ -2,6 +2,14 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Landmark, Building2, Globe } from "lucide-react";
 import cairoLibraryDusk from "@/assets/cairo-library-dusk.jpg";
+import parisEiffelNight from "@/assets/paris-eiffel-night.jpg";
+import internationalLuxuryNight from "@/assets/international-luxury-night.jpg";
+
+const axisImages = [
+  { src: cairoLibraryDusk, alt: "Luxury chauffeur at the Bibliotheca Alexandrina" },
+  { src: parisEiffelNight, alt: "Mercedes S-Class near the Eiffel Tower at night" },
+  { src: internationalLuxuryNight, alt: "Luxury sedan at an international terminal" },
+];
 
 const GlobalAxis = () => {
   const { t } = useTranslation();
@@ -32,17 +40,14 @@ const GlobalAxis = () => {
           {axes.map((axis, i) => (
             <ScrollReveal key={axis.title} variant="fade-up" delay={i * 0.15}>
               <div className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-all duration-300">
-                {/* Cairo card gets the library image */}
-                {i === 0 && (
-                  <div className="relative h-40 overflow-hidden">
-                    <img
-                      src={cairoLibraryDusk}
-                      alt="Luxury chauffeur at the Bibliotheca Alexandrina"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
-                  </div>
-                )}
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={axisImages[i].src}
+                    alt={axisImages[i].alt}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
+                </div>
                 <div className="p-8">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
                     <axis.icon size={24} className="text-primary" />

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
 import logo from "@/assets/kcc-logo.webp";
+import skylineMonuments from "@/assets/skyline-monuments.png";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -142,8 +143,18 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Skyline monuments decorative band */}
+        <div className="mt-12 -mb-4">
+          <img
+            src={skylineMonuments}
+            alt=""
+            className="w-full h-auto opacity-15 select-none pointer-events-none"
+            aria-hidden="true"
+          />
+        </div>
+
         {/* Legal links + copyright */}
-        <div className="border-t border-border mt-12 pt-8">
+        <div className="border-t border-border pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground font-sans">
               © {new Date().getFullYear()} KCC-EliteDriver. {t.footer_rights}
