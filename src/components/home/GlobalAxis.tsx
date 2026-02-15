@@ -45,6 +45,8 @@ const GlobalAxis = () => {
                     src={axisImages[i].src}
                     alt={axisImages[i].alt}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
                 </div>

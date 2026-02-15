@@ -214,7 +214,7 @@ const Booking = () => {
       <PageMeta title="Réservation — KCC-EliteDriver" description="Réservez votre chauffeur privé en quelques étapes. Service disponible 24h/24." path="/booking" />
       <section className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="Mercedes interior view at night" className="w-full h-full object-cover" />
+          <img src={heroImage} alt="Mercedes interior view at night" className="w-full h-full object-cover" loading="eager" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
         </div>
         <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">

@@ -26,7 +26,7 @@ const VehicleCard = ({ name, description, passengers, luggage, amenities, image,
       style={{ animationDelay: `${index * 0.15}s`, animationFillMode: "forwards" }}
     >
       <div className="relative h-56 bg-secondary flex items-center justify-center overflow-hidden">
-         <img src={image} alt={name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+         <img src={image} alt={name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
         <div className="absolute top-4 left-4 bg-primary/10 border border-primary/20 rounded-full px-3 py-1">
           <span className="text-xs font-sans font-medium text-primary">{name}</span>

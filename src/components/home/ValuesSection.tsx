@@ -21,6 +21,8 @@ const ValuesSection = () => {
             src={cairoDetailGlove}
             alt="White-gloved chauffeur opening car door with Pyramids in background"
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         </div>
