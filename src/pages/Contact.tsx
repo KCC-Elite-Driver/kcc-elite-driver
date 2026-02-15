@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import heroImage from "@/assets/contact-airport-chauffeur.jpg";
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -29,8 +30,12 @@ const Contact = () => {
         path="/contact"
       />
       {/* Hero */}
-      <section className="py-20 gradient-hero">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="Chauffeur in airport arrivals hall" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">
             {t.contact_title}
           </h1>

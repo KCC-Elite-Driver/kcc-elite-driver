@@ -8,6 +8,7 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
+import heroImage from "@/assets/booking-interior-night.jpg";
 
 type ServiceType = "airport" | "hourly" | "event" | "city";
 
@@ -211,8 +212,12 @@ const Booking = () => {
   return (
     <div className="pt-16">
       <PageMeta title="Réservation — KCC-EliteDriver" description="Réservez votre chauffeur privé en quelques étapes. Service disponible 24h/24." path="/booking" />
-      <section className="py-16 gradient-hero">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="Mercedes interior view at night" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">{t.booking_title}</h1>
           <p className="font-sans text-muted-foreground text-base max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.1s" }}>{t.booking_subtitle}</p>
         </div>
