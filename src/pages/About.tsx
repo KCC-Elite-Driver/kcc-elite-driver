@@ -3,6 +3,7 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ShieldCheck, Award, GraduationCap, FileCheck, ArrowRight, Users, Eye, BookOpen, Lock, Star, Scale, Lightbulb } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
+import heroImage from "@/assets/about-chauffeur-detail.jpg";
 
 const About = () => {
   const { t } = useTranslation();
@@ -35,8 +36,12 @@ const About = () => {
         path="/about"
       />
       {/* Hero */}
-      <section className="py-20 gradient-hero">
-        <div className="container mx-auto px-4 lg:px-8 text-center">
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="Chauffeur adjusting cufflink near luxury vehicle" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        </div>
+        <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
           <ScrollReveal variant="fade-in">
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
               {t.about_title}
