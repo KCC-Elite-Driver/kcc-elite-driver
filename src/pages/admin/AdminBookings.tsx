@@ -1,0 +1,162 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { LogOut, ArrowLeft, ChevronDown } from "lucide-react";
+
+type Booking = {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  phone: string;
+  service_type: string | null;
+  pickup: string;
+  dropoff: string;
+  date: string;
+  time: string;
+  vehicle: string | null;
+  status: string;
+  driver_id: string | null;
+  provider_id: string | null;
+  created_at: string;
+};
+
+type Provider = { id: string; name: string };
+type Driver = { id: string; firstname: string; lastname: string; provider_id: string };
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: "En attente",
+  confirmed: "Confirmée",
+  completed: "Terminée",
+  cancelled: "Annulée",
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: "bg-amber-500/10 text-amber-500",
+  confirmed: "bg-emerald-500/10 text-emerald-500",
+  completed: "bg-blue-500/10 text-blue-500",
+  cancelled: "bg-destructive/10 text-destructive",
+};
+
+const AdminBookings = () => {
+  const { signOut } = useAuth();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [filter, setFilter] = useState("all");
+  const [editId, setEditId] = useState<string | null>(null);
+
+  const load = async () => {
+    const [b, p, d] = await Promise.all([
+      supabase.from("bookings").select("*").order("created_at", { ascending: false }),
+      supabase.from("providers").select("id, name"),
+      supabase.from("drivers").select("id, firstname, lastname, provider_id"),
+    ]);
+    setBookings((b.data as Booking[]) ?? []);
+    setProviders((p.data as Provider[]) ?? []);
+    setDrivers((d.data as Driver[]) ?? []);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const filtered = filter === "all" ? bookings : bookings.filter(b => b.status === filter);
+
+  const updateBooking = async (id: string, updates: Record<string, any>) => {
+    await supabase.from("bookings").update(updates as any).eq("id", id);
+    load();
+    setEditId(null);
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto flex items-center justify-between h-16 px-4">
+          <div className="flex items-center gap-4">
+            <Link to="/admin" className="text-muted-foreground hover:text-foreground"><ArrowLeft size={20} /></Link>
+            <h1 className="font-serif text-xl font-bold text-foreground">Réservations</h1>
+          </div>
+          <button onClick={signOut} className="flex items-center gap-1.5 font-sans text-sm text-muted-foreground hover:text-foreground"><LogOut size={16} /></button>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-8">
+        {/* Filters */}
+        <div className="flex gap-2 mb-6 flex-wrap">
+          {["all", "pending", "confirmed", "completed", "cancelled"].map(s => (
+            <button key={s} onClick={() => setFilter(s)}
+              className={`font-sans text-xs px-3 py-1.5 rounded-full border transition-colors ${filter === s ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"}`}>
+              {s === "all" ? "Toutes" : STATUS_LABELS[s]}
+            </button>
+          ))}
+        </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-secondary/50">
+                <th className="text-left px-4 py-3 font-sans font-medium text-muted-foreground">Client</th>
+                <th className="text-left px-4 py-3 font-sans font-medium text-muted-foreground">Service</th>
+                <th className="text-left px-4 py-3 font-sans font-medium text-muted-foreground">Date</th>
+                <th className="text-left px-4 py-3 font-sans font-medium text-muted-foreground">Trajet</th>
+                <th className="text-left px-4 py-3 font-sans font-medium text-muted-foreground">Statut</th>
+                <th className="text-left px-4 py-3 font-sans font-medium text-muted-foreground">Chauffeur</th>
+                <th className="text-left px-4 py-3 font-sans font-medium text-muted-foreground">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(b => {
+                const assignedDriver = drivers.find(d => d.id === b.driver_id);
+                const isEditing = editId === b.id;
+                return (
+                  <tr key={b.id} className="border-b border-border/50 hover:bg-secondary/30">
+                    <td className="px-4 py-3 font-sans text-foreground">{b.firstname} {b.lastname}</td>
+                    <td className="px-4 py-3 font-sans text-muted-foreground">{b.service_type || "—"}</td>
+                    <td className="px-4 py-3 font-sans text-muted-foreground">{b.date} {b.time}</td>
+                    <td className="px-4 py-3 font-sans text-muted-foreground text-xs">{b.pickup} → {b.dropoff}</td>
+                    <td className="px-4 py-3">
+                      {isEditing ? (
+                        <select value={b.status} onChange={e => updateBooking(b.id, { status: e.target.value } as any)}
+                          className="bg-secondary border border-border rounded px-2 py-1 text-xs font-sans">
+                          {Object.entries(STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                        </select>
+                      ) : (
+                        <span className={`font-sans text-xs px-2 py-1 rounded-full ${STATUS_COLORS[b.status] || ""}`}>
+                          {STATUS_LABELS[b.status] || b.status}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {isEditing ? (
+                        <select value={b.driver_id || ""} onChange={e => updateBooking(b.id, { driver_id: e.target.value || null, provider_id: drivers.find(d => d.id === e.target.value)?.provider_id || null } as any)}
+                          className="bg-secondary border border-border rounded px-2 py-1 text-xs font-sans">
+                          <option value="">Non assigné</option>
+                          {drivers.map(d => <option key={d.id} value={d.id}>{d.firstname} {d.lastname}</option>)}
+                        </select>
+                      ) : (
+                        <span className="font-sans text-xs text-muted-foreground">
+                          {assignedDriver ? `${assignedDriver.firstname} ${assignedDriver.lastname}` : "Non assigné"}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <button onClick={() => setEditId(isEditing ? null : b.id)}
+                        className="font-sans text-xs text-primary hover:underline">
+                        {isEditing ? "Fermer" : "Modifier"}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filtered.length === 0 && (
+                <tr><td colSpan={7} className="px-4 py-8 text-center font-sans text-muted-foreground">Aucune réservation</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default AdminBookings;
