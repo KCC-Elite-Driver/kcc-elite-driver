@@ -1,33 +1,33 @@
 
 
-# Corrections : Image International + Footer Skyline
+# Corrections : Skyline Footer doré + Image International Classe V
 
-## 1. Regenerer l'image International
+## 1. Régénérer l'image skyline monuments avec fond noir et monuments dorés
 
-L'image actuelle a un defaut (Mercedes avec deux faces avant). Nouvelle generation avec un prompt plus precis specifiant clairement l'orientation laterale du vehicule.
+L'image actuelle a un fond qui crée un dégradé indésirable. Nouvelle génération avec un fond **noir pur** et des silhouettes de monuments en **doré/or subtil** pour s'intégrer parfaitement au footer noir du site.
 
-**Prompt ameliore :** "Cinematic 4K nighttime photograph of a single black luxury Mercedes sedan viewed from the side, parked at an elegant international airport terminal with modern glass facade. Only one car, seen in full side profile. Warm ambient lighting reflecting on polished car body. A chauffeur silhouette in dark suit standing beside the rear door, back to camera, white gloves visible. No face shown. Professional editorial automotive photography, quiet luxury aesthetic."
+**Prompt :** "Minimalist golden silhouette skyline on pure black background featuring iconic world monuments side by side: Egyptian Pyramids of Giza, Eiffel Tower Paris, Statue of Liberty New York, Big Ben London, Taj Mahal. Simple flat vector style silhouettes in subtle gold color (#C5A059). Wide panoramic format. Clean minimal design, pure black background #050505, no gradients."
+
+**Fichier :** `src/assets/skyline-monuments.png`
+
+## 2. Régénérer l'image International avec un Mercedes Classe V
+
+Remplacer le Classe S défectueux par un **Mercedes Classe V (van de luxe)** pour varier la flotte présentée.
+
+**Prompt :** "Cinematic 4K nighttime photograph of a single black Mercedes V-Class luxury van viewed from a three-quarter front angle, parked at an elegant international airport terminal with modern glass facade. Warm ambient lighting reflecting on polished van body. A chauffeur silhouette in dark suit standing beside the sliding rear door, back to camera, white gloves visible. No face shown. Professional editorial automotive photography, quiet luxury aesthetic."
 
 **Fichier :** `src/assets/international-luxury-night.jpg`
 
----
+## 3. Pas de changement de code nécessaire dans Footer.tsx
 
-## 2. Repositionner le skyline dans le Footer
-
-Actuellement, le skyline est place comme une bande separee entre le contenu et le copyright. D'apres la reference, les monuments doivent etre en arriere-plan, **derriere les colonnes de texte du footer**, avec une opacite subtile.
-
-### Changement dans `src/components/Footer.tsx` :
-- Rendre le conteneur principal du footer `relative`
-- Positionner l'image skyline en `absolute bottom-0` derriere tout le contenu
-- Supprimer la bande decorative separee actuelle
-- L'image sera en fond, centree en bas, avec une opacite faible pour que le texte reste lisible par-dessus
+La structure actuelle du footer est correcte (image en `absolute bottom-0` avec `opacity-10`). Seule l'image source change : en passant d'une image grise sur fond clair à une image dorée sur fond noir, le rendu sera cohérent avec le fond noir du footer sans dégradé de couleurs indésirable.
 
 ---
 
-## Resume des fichiers
+## Résumé des fichiers
 
 | Fichier | Action |
 |---------|--------|
-| `src/assets/international-luxury-night.jpg` | Regeneree avec prompt corrige |
-| `src/components/Footer.tsx` | Skyline repositionne en arriere-plan derriere le texte |
+| `src/assets/skyline-monuments.png` | Régénérée : fond noir, monuments dorés |
+| `src/assets/international-luxury-night.jpg` | Régénérée : Mercedes Classe V |
 
