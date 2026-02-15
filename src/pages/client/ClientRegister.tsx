@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/i18n/LanguageContext";
 import { UserPlus } from "lucide-react";
 
 const ClientRegister = () => {
   const { signUp } = useAuth();
-  const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -16,8 +17,8 @@ const ClientRegister = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (password.length < 6) { setError("Le mot de passe doit contenir au moins 6 caractères"); return; }
-    if (password !== confirm) { setError("Les mots de passe ne correspondent pas"); return; }
+    if (password.length < 6) { setError(t.auth_password_min); return; }
+    if (password !== confirm) { setError(t.auth_password_mismatch); return; }
     setLoading(true);
     const { error } = await signUp(email, password);
     if (error) {
@@ -35,9 +36,9 @@ const ClientRegister = () => {
           <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
             <UserPlus size={24} className="text-primary" />
           </div>
-          <h1 className="font-serif text-2xl font-bold text-foreground mb-2">Vérifiez votre email</h1>
-          <p className="font-sans text-sm text-muted-foreground mb-6">Un lien de confirmation a été envoyé à <strong>{email}</strong>. Cliquez dessus pour activer votre compte.</p>
-          <Link to="/client/login" className="font-sans text-sm text-primary hover:underline">Retour à la connexion</Link>
+          <h1 className="font-serif text-2xl font-bold text-foreground mb-2">{t.auth_verify_email}</h1>
+          <p className="font-sans text-sm text-muted-foreground mb-6">{t.auth_verify_email_desc} <strong>{email}</strong>.</p>
+          <Link to="/client/login" className="font-sans text-sm text-primary hover:underline">{t.auth_back_login}</Link>
         </div>
       </div>
     );
@@ -50,34 +51,34 @@ const ClientRegister = () => {
           <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
             <UserPlus size={24} className="text-primary" />
           </div>
-          <h1 className="font-serif text-2xl font-bold text-foreground">Créer un compte</h1>
-          <p className="font-sans text-sm text-muted-foreground mt-1">Inscrivez-vous pour gérer vos réservations</p>
+          <h1 className="font-serif text-2xl font-bold text-foreground">{t.client_register_title}</h1>
+          <p className="font-sans text-sm text-muted-foreground mt-1">{t.client_register_desc}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-1.5">Email</label>
+            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-1.5">{t.auth_email}</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
               className="w-full bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
           </div>
           <div>
-            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-1.5">Mot de passe</label>
+            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-1.5">{t.auth_password}</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
               className="w-full bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
           </div>
           <div>
-            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-1.5">Confirmer le mot de passe</label>
+            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-1.5">{t.auth_password_confirm}</label>
             <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} required
               className="w-full bg-secondary border border-border rounded-md px-3 py-2.5 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
           </div>
           {error && <p className="font-sans text-sm text-destructive">{error}</p>}
           <button type="submit" disabled={loading}
             className="w-full gradient-gold text-primary-foreground font-sans text-sm font-semibold py-2.5 rounded-md hover:opacity-90 transition-opacity disabled:opacity-50">
-            {loading ? "Inscription..." : "S'inscrire"}
+            {loading ? t.auth_signup_loading : t.auth_signup}
           </button>
         </form>
         <p className="font-sans text-sm text-muted-foreground text-center mt-6">
-          Déjà un compte ?{" "}
-          <Link to="/client/login" className="text-primary hover:underline">Se connecter</Link>
+          {t.auth_has_account}{" "}
+          <Link to="/client/login" className="text-primary hover:underline">{t.auth_login}</Link>
         </p>
       </div>
     </div>
