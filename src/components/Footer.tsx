@@ -8,8 +8,15 @@ const Footer = () => {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 lg:px-8 py-16">
+    <footer className="bg-card border-t border-border relative overflow-hidden">
+      {/* Skyline monuments background */}
+      <img
+        src={skylineMonuments}
+        alt=""
+        className="absolute bottom-0 left-0 w-full h-auto opacity-10 select-none pointer-events-none"
+        aria-hidden="true"
+      />
+      <div className="container mx-auto px-4 lg:px-8 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="md:col-span-1">
@@ -141,16 +148,6 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-        </div>
-
-        {/* Skyline monuments decorative band */}
-        <div className="mt-12 -mb-4">
-          <img
-            src={skylineMonuments}
-            alt=""
-            className="w-full h-auto opacity-15 select-none pointer-events-none"
-            aria-hidden="true"
-          />
         </div>
 
         {/* Legal links + copyright */}
