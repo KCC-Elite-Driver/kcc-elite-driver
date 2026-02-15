@@ -35,14 +35,6 @@ const Contact = () => {
           <img src={heroImage} alt="Chauffeur in airport arrivals hall" className="w-full h-full object-cover" loading="eager" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
         </div>
-        {/* Sign overlay — positioned on the chauffeur's hands */}
-        <div className="absolute bottom-[12%] left-1/2 -translate-x-1/2 z-[5] pointer-events-none animate-fade-in" style={{ animationDelay: "0.3s" }}>
-          <div className="bg-background/85 backdrop-blur-sm border border-primary/30 rounded px-8 py-3 flex items-center gap-6 shadow-lg">
-            <span className="font-serif text-lg md:text-xl font-bold text-primary tracking-wider">KCC</span>
-            <div className="w-px h-6 bg-primary/40" />
-            <span className="font-serif text-lg md:text-xl font-bold text-foreground tracking-wider">Elite Driver</span>
-          </div>
-        </div>
 
         <div className="relative z-10 container mx-auto px-4 lg:px-8 text-center">
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">
