@@ -1,86 +1,164 @@
 
 
-# Plan : Mise a jour des textes optimises — Page A propos
+# Plan : Mise a jour du tunnel de reservation — Textes optimises
 
-Ce plan aligne les textes de la page About avec le contenu optimise fourni, en francais, anglais (British English) et arabe.
+Ce plan aligne tous les textes du tunnel de reservation (Booking) avec le contenu UX Writing fourni, en francais, anglais (British English) et arabe.
 
 ---
 
-## 1. Mise a jour des traductions (`src/i18n/translations.ts`)
+## 1. Traductions (`src/i18n/translations.ts`)
+
+### Cles existantes a mettre a jour
+
+| Cle | Ancienne valeur FR | Nouvelle valeur FR |
+|-----|--------------------|--------------------|
+| `booking_subtitle` | "Reservez votre chauffeur en quelques etapes" | "Reservez votre chauffeur en quelques etapes" (identique) |
+| `booking_select_service` | "Choisissez votre service" | "Selectionnez votre type de service" |
+| `booking_notes_label` | "Notes speciales" | "Demandes particulieres" |
+| `booking_notes_placeholder` | "Notes au chauffeur – Demandes particulieres" | "A l'attention de votre chauffeur : siege enfant requis, acces handicape, musique douce, silence, etc." |
+| `booking_company_invoice` | "Facture entreprise ?" | "Facturation a titre professionnel" |
+| `booking_meet_greet_desc` | "Accueil personnalise a l'arrivee" | "Accueil personnalise a votre arrivee avec detection de votre vol." |
+| `booking_cancellation_policy` | texte court | "Annulation flexible sans frais jusqu'a 24 heures avant votre depart. Au-dela, des frais de 50% s'appliquent. Pour les services avec Meet & Greet a l'aeroport, delai d'annulation : 48 heures. Nous comprenons que vos plans peuvent changer ; nous restons justes dans nos conditions." |
+| `booking_success` | "Reservation confirmee !" | "Reservation confirmee !" (identique) |
+| `booking_success_desc` | "Votre reservation est confirmee. Un email de recapitulatif a ete envoye. Nous vous remercions de votre confiance." | "Merci ! Votre reservation est confirmee. Un email de confirmation contenant tous les details de votre reservation a ete envoye. Nous vous remercions de votre confiance." |
+| `booking_confirm` | "Confirmer la reservation" | "Confirmer la reservation" (avec icone check deja en place) |
+| `booking_next` | "Suivant" | "Continuer" |
+| `booking_prev` | "Precedent" | "Precedent" (identique) |
+| `booking_payment_card` | "Carte bancaire" | "Carte bancaire" (identique) |
+| `booking_payment_cash` | "Especes au chauffeur" | "Paiement en especes" |
+| `booking_summary` | "Recapitulatif" | "Recapitulatif de votre reservation" |
+
+Memes modifications pour EN et AR.
 
 ### Nouvelles cles a ajouter au type `TranslationKeys`
 
 ```
-about_cta_desc: string;
-about_values_title: string;
-about_value_discretion: string;
-about_value_discretion_desc: string;
-about_value_excellence: string;
-about_value_excellence_desc: string;
-about_value_integrity: string;
-about_value_integrity_desc: string;
-about_value_anticipation: string;
-about_value_anticipation_desc: string;
+// Booking - service descriptions (step 1)
+booking_service_airport_desc: string;
+booking_service_hourly_desc: string;
+booking_service_event_desc: string;
+booking_service_city_desc: string;
+
+// Booking - step subtitles
+booking_select_service_desc: string;
+booking_details_title: string;
+booking_details_desc: string;
+booking_passenger_title: string;
+booking_passenger_desc: string;
+booking_vehicle_title: string;
+booking_vehicle_desc: string;
+booking_summary_desc: string;
+
+// Booking - field labels & helpers
+booking_pickup_field: string;
+booking_destination_field: string;
+booking_date_field: string;
+booking_date_helper: string;
+booking_time_field: string;
+booking_time_helper: string;
+booking_email_helper: string;
+booking_phone_helper: string;
+booking_notes_helper: string;
+booking_flight_helper: string;
+booking_meet_greet_helper: string;
+booking_vehicle_helper: string;
+
+// Booking - payment helpers
+booking_payment_card_desc: string;
+booking_payment_cash_desc: string;
+booking_payment_card_helper: string;
+booking_payment_cash_helper: string;
+booking_payment_reassurance: string;
+
+// Booking - confirmation screen extras
+booking_back_home: string;
 ```
 
-### Cles existantes a modifier (FR)
+### Valeurs FR des nouvelles cles
 
-| Cle | Ancienne valeur | Nouvelle valeur |
-|-----|----------------|-----------------|
-| `about_story_p2` | "...chaque client merite une experience de transport qui depasse ses attentes. Que ce soit un dirigeant..." | "...chaque client merite une experience de transport qui transcende les simples attentes. Qu'il s'agisse d'un dirigeant d'entreprise en deplacement au Caire, d'une famille en voyage a Paris, ou d'un diplomate necessitant un service discret et securise, nous adaptons notre excellence a chaque situation." |
-| `about_story_p3` | "...transport prive haut de gamme...chauffeurs tries sur le volet...vehicules premium..." | "...transport prive d'excellence...chauffeurs rigoureusement selectionnes...vehicules haut de gamme entretenus selon les standards les plus exigeants." |
-| `about_team_drivers_desc` | Version courte | "Chaque chauffeur est rigoureusement selectionne pour son professionnalisme, sa connaissance approfondie des itineraires du Caire et de Paris, et sa maitrise parfaite du francais, de l'anglais et de l'arabe. Experience, discretion et excellence : notre standard." |
-| `about_team_discretion_desc` | Version courte | "Nos chauffeurs sont formes aux plus hauts standards de confidentialite et de securite, garantissant la serenite totale de nos clients les plus exigeants. Votre vie privee est notre priorite absolue." |
-| `about_team_training_desc` | "conduite securitaire, protocole VIP..." | "conduite defensive avancee, protocoles VIP, protocoles de securite renforces, premiers secours et connaissance complete des vehicules de derniere generation." |
-| `about_cert_vtc_desc` | Version courte | "Licence professionnelle de transport de personnes delivree par les autorites competentes. Conformite totale avec la reglementation en vigueur en France et en Egypte." |
-| `about_cert_insurance_desc` | Version courte | "Couverture d'assurance complete tous risques pour chaque trajet : passagers, bagages et vehicule inclus. Protection maximale pour votre tranquillite d'esprit." |
-| `about_cert_safety` | "Formation Securite" | "Formation Securite Renforcee" |
-| `about_cert_safety_desc` | Version courte | "Chauffeurs certifies en conduite defensive avancee et protocoles de securite de haut niveau. Entrainement regulier pour repondre aux normes internationales les plus strictes." |
-| `about_cert_iso_desc` | Version courte | "Processus qualite alignes sur les normes internationales ISO de service premium. Audit et amelioration continue pour garantir l'excellence operationnelle." |
-| `about_cta` | "Pret a vivre l'excellence ?" | "Commencons votre voyage d'excellence" |
+| Cle | Valeur FR |
+|-----|-----------|
+| `booking_service_airport_desc` | "Transferts entre les aeroports et vos destinations." |
+| `booking_service_hourly_desc` | "Reservez votre chauffeur pour une duree flexible." |
+| `booking_service_event_desc` | "Transport pour vos evenements prives ou professionnels." |
+| `booking_service_city_desc` | "Trajets longue distance avec confort premium." |
+| `booking_select_service_desc` | "Choisissez le service qui correspond a votre besoin." |
+| `booking_details_title` | "Details de votre trajet" |
+| `booking_details_desc` | "Precisez votre itineraire et vos horaires." |
+| `booking_passenger_title` | "Vos informations" |
+| `booking_passenger_desc` | "Completez vos coordonnees. Vos donnees restent confidentielles." |
+| `booking_vehicle_title` | "Choisissez votre vehicule" |
+| `booking_vehicle_desc` | "Selectionnez le vehicule adapte a votre profil et besoins." |
+| `booking_summary_desc` | "Verifiez tous les details avant de confirmer." |
+| `booking_pickup_field` | "Lieu de prise en charge" |
+| `booking_destination_field` | "Destination" |
+| `booking_date_field` | "Date de depart" |
+| `booking_date_helper` | "Selectionnez la date de votre depart." |
+| `booking_time_field` | "Heure de depart" |
+| `booking_time_helper` | "Indiquez l'heure exacte de votre prise en charge." |
+| `booking_email_helper` | "Nous vous enverrons une confirmation et les details de votre reservation." |
+| `booking_phone_helper` | "Numero utilise pour le suivi de votre vol." |
+| `booking_notes_helper` | "Decrivez vos demandes speciales. Nos chauffeurs les honorent avec discretion." |
+| `booking_flight_helper` | "Nous suivrons votre arrivee en temps reel pour une prise en charge optimale." |
+| `booking_meet_greet_helper` | "Nos equipes vous accueilleront discretement et vous accompagneront jusqu'a votre vehicule." |
+| `booking_vehicle_helper` | "Tous nos vehicules sont entretenus a des standards premium et confies a des chauffeurs rigoureusement selectionnes." |
+| `booking_payment_card_desc` | "Paiement securise avec SSL. Visa, Mastercard, American Express acceptees." |
+| `booking_payment_cash_desc` | "Reglez directement aupres de votre chauffeur en devises locales." |
+| `booking_payment_card_helper` | "Votre paiement est securise par encryptage SSL 256-bit." |
+| `booking_payment_cash_helper` | "Pratique et discret. Tarif fixe sans surprise. Recu fourni." |
+| `booking_payment_reassurance` | "Tous les paiements sont traites de maniere confidentielle et conforme aux standards internationaux de securite. Votre vie privee est protegee." |
+| `booking_back_home` | "Retour a l'accueil" |
 
-### Nouvelles cles (FR)
-
-| Cle | Valeur |
-|-----|--------|
-| `about_cta_desc` | "Decouvrez comment KCC-EliteDriver peut transformer vos deplacements." |
-| `about_values_title` | "Nos Valeurs" |
-| `about_value_discretion` | "Discretion" |
-| `about_value_discretion_desc` | "Confidentialite absolue. Vos trajets, vos horaires, vos rencontres : tout reste prive." |
-| `about_value_excellence` | "Excellence" |
-| `about_value_excellence_desc` | "Nous ne nous contentons jamais du \"bon\". L'excellence est notre standard minimum." |
-| `about_value_integrity` | "Integrite" |
-| `about_value_integrity_desc` | "Transparence totale, tarification honnete, services sans detour." |
-| `about_value_anticipation` | "Anticipation" |
-| `about_value_anticipation_desc` | "Nous prevoyons vos besoins avant que vous les exprimiez." |
-
-### Memes modifications en anglais (EN)
-
-Toutes les cles existantes seront mises a jour avec les textes British English fournis (ex: "transcends expectations", "rigorously vetted", "Enhanced Security Training", "Begin Your Journey of Excellence").
-
-Nouvelles cles EN : "Our Values", "Discretion", "Excellence", "Integrity", "Anticipation" avec descriptions.
-
-### Memes modifications en arabe (AR)
-
-Toutes les cles mises a jour et nouvelles seront traduites en arabe pour maintenir la parite trilingue et la compatibilite RTL.
+Valeurs EN et AR equivalentes ajoutees egalement.
 
 ---
 
-## 2. Enrichissement de la page About (`src/pages/About.tsx`)
+## 2. Interface du tunnel (`src/pages/Booking.tsx`)
 
-### Ajout de la section "Nos Valeurs"
+### Etape 0 — Selection du service
 
-Une nouvelle section sera inseree entre les Certifications et le CTA final, affichant 4 valeurs en grille (2x2 ou 4 colonnes) :
-- Discretion
-- Excellence
-- Integrite
-- Anticipation
+- Ajouter une description courte sous chaque option de service (utilise les nouvelles cles `booking_service_*_desc`)
+- Ajouter un sous-titre descriptif sous le titre de section
 
-Chaque valeur sera presentee avec un titre en gras et une description courte, dans le style des cartes de certification existantes.
+### Etape 1 — Details du trajet
 
-### Enrichissement du CTA final
+- Remplacer le titre par `booking_details_title`
+- Ajouter le sous-titre `booking_details_desc`
+- Ajouter des labels explicites (`booking_pickup_field`, `booking_date_field`, etc.)
+- Ajouter des helper texts sous les champs date et heure
 
-Le CTA affichera desormais une description optionnelle (`about_cta_desc`) sous le titre, avant le bouton. Le texte du bouton CTA utilisera une cle dediee selon la langue (FR: "Contact", EN: "Get in touch").
+### Etape 2 — Informations passager
+
+- Remplacer le titre par `booking_passenger_title`
+- Ajouter le sous-titre `booking_passenger_desc`
+- Ajouter des helper texts sous les champs e-mail, telephone, notes, vol et Meet & Greet
+- Mettre a jour le placeholder des notes
+- Mettre a jour le label de la facture entreprise
+
+### Etape 3 — Selection du vehicule
+
+- Remplacer le titre par `booking_vehicle_title`
+- Ajouter le sous-titre `booking_vehicle_desc`
+- Ajouter le helper text global sous les options
+
+### Etape 4 — Recapitulatif et paiement
+
+- Mettre a jour le titre avec `booking_summary` (plus complet)
+- Ajouter le sous-titre `booking_summary_desc`
+- Enrichir les descriptions des options de paiement avec `booking_payment_card_desc` et `booking_payment_cash_desc`
+- Ajouter les helper texts sous chaque option de paiement
+- Ajouter le message de rassurance global `booking_payment_reassurance`
+
+### Ecran de confirmation
+
+- Enrichir le message de succes avec le texte optimise
+- Ajouter un bouton "Retour a l'accueil" (`booking_back_home`)
+
+---
+
+## 3. Traductions arabes
+
+Toutes les nouvelles cles seront traduites en arabe pour maintenir la parite trilingue et la compatibilite RTL.
 
 ---
 
@@ -88,6 +166,6 @@ Le CTA affichera desormais une description optionnelle (`about_cta_desc`) sous l
 
 | Fichier | Modification |
 |---------|-------------|
-| `src/i18n/translations.ts` | Mise a jour de ~11 cles existantes + ajout de ~9 nouvelles cles (FR, EN, AR) |
-| `src/pages/About.tsx` | Ajout section Valeurs + description CTA |
+| `src/i18n/translations.ts` | Mise a jour de ~15 cles existantes + ajout de ~25 nouvelles cles (FR, EN, AR) |
+| `src/pages/Booking.tsx` | Ajout de descriptions, labels, helper texts et sous-titres a chaque etape |
 
