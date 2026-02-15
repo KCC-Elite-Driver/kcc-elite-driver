@@ -1,6 +1,7 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Landmark, Building2, Globe } from "lucide-react";
+import cairoLibraryDusk from "@/assets/cairo-library-dusk.jpg";
 
 const GlobalAxis = () => {
   const { t } = useTranslation();
@@ -30,16 +31,29 @@ const GlobalAxis = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {axes.map((axis, i) => (
             <ScrollReveal key={axis.title} variant="fade-up" delay={i * 0.15}>
-              <div className="group relative bg-card border border-border rounded-lg p-8 hover:border-primary/30 transition-all duration-300">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
-                  <axis.icon size={24} className="text-primary" />
+              <div className="group relative bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-all duration-300">
+                {/* Cairo card gets the library image */}
+                {i === 0 && (
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={cairoLibraryDusk}
+                      alt="Luxury chauffeur at the Bibliotheca Alexandrina"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
+                  </div>
+                )}
+                <div className="p-8">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors duration-300">
+                    <axis.icon size={24} className="text-primary" />
+                  </div>
+                  <h3 className="font-serif text-xl font-semibold text-foreground mb-3">
+                    {axis.title}
+                  </h3>
+                  <p className="font-sans text-sm text-muted-foreground leading-relaxed">
+                    {axis.desc}
+                  </p>
                 </div>
-                <h3 className="font-serif text-xl font-semibold text-foreground mb-3">
-                  {axis.title}
-                </h3>
-                <p className="font-sans text-sm text-muted-foreground leading-relaxed">
-                  {axis.desc}
-                </p>
                 <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-500" />
               </div>
             </ScrollReveal>
