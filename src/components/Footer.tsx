@@ -13,7 +13,7 @@ const Footer = () => {
       <img
         src={skylineMonuments}
         alt=""
-        className="absolute bottom-0 left-0 w-full h-auto opacity-10 select-none pointer-events-none"
+        className="absolute bottom-0 left-0 w-3/4 h-auto opacity-[0.04] select-none pointer-events-none mx-auto right-0"
         aria-hidden="true"
       />
       <div className="container mx-auto px-4 lg:px-8 py-16 relative z-10">
