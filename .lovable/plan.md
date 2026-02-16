@@ -1,40 +1,42 @@
 
 
-## Agrandir le widget de reservation et localiser le format de date
+## Drapeaux de langue, traducteur mobile en haut, et correction du debordement heure
 
-### Probleme actuel
-- Le widget est limite a `max-w-3xl` (48rem / 768px), ce qui compresse les 4 champs sur une seule ligne.
-- Les champs de saisie utilisent `py-3` et `text-sm`, ce qui les rend etroits.
-- Le champ date utilise `<input type="date">` natif qui affiche toujours le format du navigateur, sans respecter la langue selectionnee.
+### 1. Drapeaux dans le LanguageSwitcher
 
-### Modifications prevues
+Remplacer les labels texte (FR, EN, AR) par des emojis drapeaux tout en gardant le code fonctionnel :
+- FR : drapeau francais (emoji ou image SVG inline)
+- EN : drapeau britannique
+- AR : drapeau egyptien (contexte du projet KCC Paris-Le Caire)
 
-#### 1. Elargir le widget (BookingWidget.tsx)
-- Passer `max-w-3xl` a `max-w-5xl` pour donner plus d'espace horizontal.
-- Changer la grille de `lg:grid-cols-4` a `lg:grid-cols-2` pour que chaque champ ait plus de largeur.
-- Augmenter le padding interne des champs : `py-3` vers `py-3.5` et `text-sm` vers `text-base`.
-- Appliquer les memes changements de taille aux champs dans LocationAutocomplete.tsx.
+Les drapeaux seront affiches comme emoji Unicode pour eviter d'ajouter des images. Le separateur `|` sera supprime car les drapeaux sont visuellement distincts.
 
-#### 2. Localiser le format de date
-- Remplacer le `<input type="date">` natif par un composant personnalise utilisant le `Calendar` (react-day-picker) deja installe, affiche dans un Popover.
-- Formater la date affichee avec `date-fns` (deja installe) et ses locales :
-  - `fr` : `dd/MM/yyyy`
-  - `en` : `MM/dd/yyyy`
-  - `ar` : `dd/MM/yyyy` (avec locale arabe)
-- Le composant utilisera `useTranslation()` pour detecter la langue courante et appliquer le bon format et la bonne locale au calendrier.
+### 2. Traducteur en haut du menu mobile
+
+Dans le Header, deplacer le `<LanguageSwitcher />` du bas du menu mobile (apres le separateur) vers le haut, juste avant les liens de navigation. Il sera affiche directement sous le padding top du panneau, avant les liens.
+
+### 3. Correction du debordement de la ligne heure sur mobile
+
+Le champ `<input type="time">` sur mobile deborde du cadre car il n'a pas de contrainte `min-width: 0` ni `overflow: hidden`. Corrections :
+- Ajouter `min-w-0` au conteneur relatif du champ heure pour empecher le debordement dans la grille CSS.
+- Ajouter `min-w-0` a l'input lui-meme.
 
 ### Details techniques
 
+**LanguageSwitcher.tsx** :
+- Modifier le tableau `languages` pour utiliser des drapeaux emoji :
+  - `{ code: "fr", label: "FR", flag: "\ud83c\uddeb\ud83c\uddf7" }`
+  - `{ code: "en", label: "EN", flag: "\ud83c\uddec\ud83c\udde7" }`
+  - `{ code: "ar", label: "AR", flag: "\ud83c\uddea\ud83c\uddec" }`
+- Afficher `flag` suivi de `label` dans chaque bouton, ou uniquement le drapeau pour un rendu plus compact.
+- Supprimer le separateur `|`.
+- Augmenter legerement la taille des boutons pour un clic facile.
+
+**Header.tsx (menu mobile)** :
+- Deplacer le bloc `<LanguageSwitcher />` de la ligne 208-210 vers juste apres `pt-20` (ligne 155), avant la boucle `navLinks.map`.
+- Le separateur `border-t` restera en bas pour le bouton "Reserver".
+
 **BookingWidget.tsx** :
-- Ajouter un state `date` de type `Date | undefined`.
-- Importer `Popover`, `PopoverTrigger`, `PopoverContent` de `@/components/ui/popover` et `Calendar` de `@/components/ui/calendar`.
-- Importer `format` et les locales `fr`, `enGB`, `ar` de `date-fns`.
-- Creer un mapping `{ fr: { locale: fr, fmt: "dd/MM/yyyy" }, en: { locale: enGB, fmt: "MM/dd/yyyy" }, ar: { locale: ar, fmt: "dd/MM/yyyy" } }`.
-- Afficher la date formatee dans le bouton du Popover, ou le placeholder si aucune date n'est selectionnee.
-- Passer la locale au composant `Calendar` via la prop `locale`.
-
-**LocationAutocomplete.tsx** :
-- Augmenter la taille des champs de saisie pour correspondre au nouveau style (py-3.5, text-base).
-
-**HeroSection.tsx** : aucun changement necessaire.
+- Ligne 94 : ajouter `min-w-0` au `div.relative` conteneur du champ heure.
+- Ligne 96-99 : ajouter `min-w-0` a la classe de l'input time.
 
