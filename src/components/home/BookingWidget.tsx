@@ -91,12 +91,12 @@ const BookingWidget = () => {
               />
             </PopoverContent>
           </Popover>
-          <div className="relative">
+          <div className="relative min-w-0">
             <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="time"
               placeholder={t.hero_time}
-              className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full min-w-0 bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
         </div>

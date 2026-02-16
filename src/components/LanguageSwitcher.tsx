@@ -1,33 +1,30 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import { type Language } from "@/i18n/translations";
 
-const languages: { code: Language; label: string }[] = [
-  { code: "fr", label: "FR" },
-  { code: "en", label: "EN" },
-  { code: "ar", label: "AR" },
+const languages: { code: Language; flag: string }[] = [
+  { code: "fr", flag: "🇫🇷" },
+  { code: "en", flag: "🇬🇧" },
+  { code: "ar", flag: "🇪🇬" },
 ];
 
 const LanguageSwitcher = () => {
   const { language, setLanguage } = useTranslation();
 
   return (
-    <div className="flex items-center gap-1">
-      {languages.map((lang, i) => (
-        <span key={lang.code} className="flex items-center gap-1">
-          <button
-            onClick={() => setLanguage(lang.code)}
-            className={`text-sm font-sans transition-colors duration-200 px-1 ${
-              language === lang.code
-                ? "text-primary font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {lang.label}
-          </button>
-          {i < languages.length - 1 && (
-            <span className="text-muted-foreground/40 text-xs">|</span>
-          )}
-        </span>
+    <div className="flex items-center gap-1.5">
+      {languages.map((lang) => (
+        <button
+          key={lang.code}
+          onClick={() => setLanguage(lang.code)}
+          className={`text-xl leading-none p-1 rounded transition-all duration-200 ${
+            language === lang.code
+              ? "ring-2 ring-primary scale-110"
+              : "opacity-60 hover:opacity-100 hover:scale-105"
+          }`}
+          aria-label={lang.code.toUpperCase()}
+        >
+          {lang.flag}
+        </button>
       ))}
     </div>
   );
