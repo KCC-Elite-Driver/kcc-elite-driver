@@ -1,42 +1,35 @@
 
 
-## Drapeaux de langue, traducteur mobile en haut, et correction du debordement heure
+## Transformer le Language Switcher en dropdown avec icone globe
 
-### 1. Drapeaux dans le LanguageSwitcher
+### Rendu cible (base sur les images de reference)
+- Dans la barre de navigation : une icone globe + le code langue actuel (ex: "fr", "en", "ar")
+- Au clic : un dropdown s'ouvre avec chaque langue affichee sous forme de drapeau + nom complet (ex: "Francais", "English", "العربية")
+- Style sombre coherent avec le theme du site
 
-Remplacer les labels texte (FR, EN, AR) par des emojis drapeaux tout en gardant le code fonctionnel :
-- FR : drapeau francais (emoji ou image SVG inline)
-- EN : drapeau britannique
-- AR : drapeau egyptien (contexte du projet KCC Paris-Le Caire)
+### Modifications
 
-Les drapeaux seront affiches comme emoji Unicode pour eviter d'ajouter des images. Le separateur `|` sera supprime car les drapeaux sont visuellement distincts.
+#### LanguageSwitcher.tsx - Refonte complete
+- Remplacer les 3 boutons drapeaux par un composant `DropdownMenu` (deja installe via Radix)
+- Le declencheur (trigger) affiche :
+  - L'icone `Globe` de lucide-react
+  - Le code de la langue active en minuscules (fr, en, ar)
+- Le menu dropdown affiche 3 items :
+  - Drapeau emoji + nom complet de la langue
+  - FR : "Francais", EN : "English", AR : "العربية"
+  - L'item actif sera visuellement distingue (texte primary)
 
-### 2. Traducteur en haut du menu mobile
-
-Dans le Header, deplacer le `<LanguageSwitcher />` du bas du menu mobile (apres le separateur) vers le haut, juste avant les liens de navigation. Il sera affiche directement sous le padding top du panneau, avant les liens.
-
-### 3. Correction du debordement de la ligne heure sur mobile
-
-Le champ `<input type="time">` sur mobile deborde du cadre car il n'a pas de contrainte `min-width: 0` ni `overflow: hidden`. Corrections :
-- Ajouter `min-w-0` au conteneur relatif du champ heure pour empecher le debordement dans la grille CSS.
-- Ajouter `min-w-0` a l'input lui-meme.
+#### Header.tsx - Aucun changement
+- Le composant LanguageSwitcher est deja correctement place en desktop (ligne 120) et en mobile (ligne 156-158)
+- La refonte du LanguageSwitcher s'appliquera automatiquement aux deux
 
 ### Details techniques
 
 **LanguageSwitcher.tsx** :
-- Modifier le tableau `languages` pour utiliser des drapeaux emoji :
-  - `{ code: "fr", label: "FR", flag: "\ud83c\uddeb\ud83c\uddf7" }`
-  - `{ code: "en", label: "EN", flag: "\ud83c\uddec\ud83c\udde7" }`
-  - `{ code: "ar", label: "AR", flag: "\ud83c\uddea\ud83c\uddec" }`
-- Afficher `flag` suivi de `label` dans chaque bouton, ou uniquement le drapeau pour un rendu plus compact.
-- Supprimer le separateur `|`.
-- Augmenter legerement la taille des boutons pour un clic facile.
-
-**Header.tsx (menu mobile)** :
-- Deplacer le bloc `<LanguageSwitcher />` de la ligne 208-210 vers juste apres `pt-20` (ligne 155), avant la boucle `navLinks.map`.
-- Le separateur `border-t` restera en bas pour le bouton "Reserver".
-
-**BookingWidget.tsx** :
-- Ligne 94 : ajouter `min-w-0` au `div.relative` conteneur du champ heure.
-- Ligne 96-99 : ajouter `min-w-0` a la classe de l'input time.
+- Importer `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` depuis `@/components/ui/dropdown-menu`
+- Importer `Globe` depuis `lucide-react`
+- Tableau des langues : `{ code, flag, name }` avec les noms complets
+- Le trigger sera un bouton avec `Globe` (16px) + texte du code langue
+- Le contenu du dropdown : fond sombre (`bg-card`), items avec drapeau + nom, espacement confortable
+- Au clic sur un item : appeler `setLanguage(code)` et le menu se ferme automatiquement
 
