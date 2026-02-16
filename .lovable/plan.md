@@ -1,21 +1,38 @@
 
 
-## Corriger la hauteur du champ heure sur mobile
+## Afficher "--:--" quand le champ heure est vide
 
 ### Probleme
-Apres avoir ajoute `appearance-none` pour supprimer le style natif iOS, le champ heure a perdu sa hauteur naturelle et apparait beaucoup plus petit que les autres champs (lieu, destination, date).
+Le champ `input type="time"` en HTML ne supporte pas les placeholders. Quand aucune heure n'est selectionnee, la case reste completement vide au lieu d'afficher un texte indicatif.
 
 ### Solution
-Ajouter une hauteur minimale explicite sur le champ heure pour qu'il corresponde exactement aux autres champs du formulaire. Les autres champs utilisent `py-3.5` qui donne environ 48-50px de hauteur. On va ajouter `h-[50px]` sur l'input time pour garantir une hauteur identique, ainsi que des styles webkit supplementaires pour forcer iOS a respecter cette hauteur.
+Ajouter un etat `time` au composant et afficher un texte "--:--" par-dessus le champ quand il est vide. Quand l'utilisateur clique dessus, le selecteur natif d'heure s'ouvre normalement.
 
-### Modification technique
+### Modifications techniques
 
-**BookingWidget.tsx** - Ligne 99 :
-- Ajouter `h-[50px]` pour forcer la meme hauteur que les autres champs
-- Ajouter `[&::-webkit-calendar-picker-indicator]:opacity-0` pour masquer l'indicateur natif iOS tout en gardant le tap fonctionnel
+**BookingWidget.tsx** :
+1. Ajouter un state `time` : `const [time, setTime] = useState("")`
+2. Remplacer le bloc du champ heure par une version avec overlay conditionnel :
+   - L'input time reste present mais invisible quand vide (couleur transparente)
+   - Un `span` affiche "--:--" en texte grise quand `time` est vide
+   - Quand l'utilisateur selectionne une heure, le span disparait et l'heure s'affiche normalement
+3. Ajouter `value={time}` et `onChange` sur l'input pour le rendre controle
 
 ```tsx
-className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0"
+<div className="relative w-full">
+  <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
+  <input
+    type="time"
+    value={time}
+    onChange={(e) => setTime(e.target.value)}
+    className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0"
+  />
+  {!time && (
+    <span className="absolute left-10 top-1/2 -translate-y-1/2 text-muted-foreground text-base font-sans pointer-events-none">
+      --:--
+    </span>
+  )}
+</div>
 ```
 
-Cela garantit que le champ heure a exactement la meme hauteur que les champs Lieu, Destination et Date sur tous les appareils.
+Aucun autre fichier n'est modifie. Le comportement est purement visuel et n'affecte pas la logique de reservation.
