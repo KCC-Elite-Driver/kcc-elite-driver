@@ -5,7 +5,9 @@ import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { fr, enGB, ar } from "date-fns/locale";
+import { fr } from "date-fns/locale/fr";
+import { enGB } from "date-fns/locale/en-GB";
+import { ar } from "date-fns/locale/ar";
 import { cn } from "@/lib/utils";
 
 const dateConfig = {
