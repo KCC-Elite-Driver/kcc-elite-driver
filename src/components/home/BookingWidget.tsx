@@ -22,6 +22,7 @@ const BookingWidget = () => {
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
   const [date, setDate] = useState<Date>();
+  const [time, setTime] = useState("");
 
   const { locale, fmt } = dateConfig[language];
 
@@ -95,9 +96,15 @@ const BookingWidget = () => {
             <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
             <input
               type="time"
-              placeholder={t.hero_time}
-              className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0"
             />
+            {!time && (
+              <span className="absolute left-10 top-1/2 -translate-y-1/2 text-muted-foreground text-base font-sans pointer-events-none">
+                --:--
+              </span>
+            )}
           </div>
         </div>
 
