@@ -1,41 +1,40 @@
 
-
-## Remplacer les emojis drapeaux par des images SVG
+## Corriger le champ heure du widget de reservation sur mobile
 
 ### Probleme
-Windows ne rend pas les emojis drapeaux Unicode. Au lieu de voir des drapeaux, les utilisateurs Windows voient les codes ISO pays en texte brut (FR, GB, EG). iOS et Android supportent les drapeaux emoji, d'ou le fonctionnement sur mobile.
+Sur mobile (iOS), le champ heure (`input type="time"`) ne s'affiche pas correctement :
+- L'icone horloge et la valeur horaire ne sont pas alignees dans le meme cadre
+- Le champ semble trop petit par rapport aux autres champs (pickup, destination, date)
+
+Cela est du au rendu natif de `input type="time"` sur iOS/Safari qui applique ses propres styles et ignore certaines proprietes CSS.
 
 ### Solution
-Utiliser des images SVG de drapeaux au lieu d'emojis Unicode. Les SVG s'affichent de maniere identique sur tous les systemes d'exploitation.
+Forcer le champ heure a occuper toute la largeur disponible et corriger le rendu iOS :
+1. Ajouter `-webkit-appearance: none` pour desactiver le style natif iOS
+2. Ajouter `box-sizing: border-box` explicitement
+3. S'assurer que le conteneur parent n'a pas de contrainte de largeur
 
-### Modifications
+### Modifications techniques
 
-#### Creer 3 fichiers SVG de drapeaux
-- `src/assets/flags/fr.svg` - Drapeau francais (tricolore bleu-blanc-rouge)
-- `src/assets/flags/gb.svg` - Drapeau britannique (Union Jack)
-- `src/assets/flags/eg.svg` - Drapeau egyptien (rouge-blanc-noir avec aigle)
+**BookingWidget.tsx** - Champ heure (lignes 94-101) :
+- Ajouter `appearance-none` (Tailwind pour `-webkit-appearance: none`) sur l'input time
+- Ajouter `block` pour forcer le display block
+- Changer le conteneur `div` pour qu'il prenne bien toute la largeur avec `w-full`
 
-Les SVG seront des fichiers inline legers (quelques lignes chacun) pour eviter les dependances externes.
-
-#### LanguageSwitcher.tsx
-- Remplacer les chaines emoji `flag` par des imports d'images SVG
-- Afficher les drapeaux avec une balise `<img>` de taille 20x15px (ratio drapeau) avec `rounded-sm` pour un rendu soigne
-- Le reste du composant (dropdown, globe icon, noms de langues) reste inchange
-
-### Details techniques
-
-**Tableau des langues mis a jour** :
-```
-const languages = [
-  { code: "fr", flag: frFlag, name: "Francais" },
-  { code: "en", flag: gbFlag, name: "English" },
-  { code: "ar", flag: egFlag, name: "العربية" },
-];
+```tsx
+<div className="relative w-full">
+  <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
+  <input
+    type="time"
+    placeholder={t.hero_time}
+    className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left"
+  />
+</div>
 ```
 
-**Rendu du drapeau** :
-```
-<img src={lang.flag} alt="" className="w-5 h-4 rounded-sm object-cover" />
-```
-
-Cela garantit un affichage identique sur Windows, Mac, Linux, iOS et Android.
+Les classes ajoutees :
+- `appearance-none` : supprime le style natif du navigateur
+- `block` : force display block
+- `w-full` sur le conteneur parent (remplace juste `relative min-w-0`)
+- `z-10` sur l'icone pour qu'elle reste au-dessus
+- `[&::-webkit-date-and-time-value]:text-left` : aligne le texte a gauche sur Safari/iOS
