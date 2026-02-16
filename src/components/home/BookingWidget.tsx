@@ -1,16 +1,30 @@
 import { useState } from "react";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Calendar, Clock, Search } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Search } from "lucide-react";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { fr, enGB, ar } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+
+const dateConfig = {
+  fr: { locale: fr, fmt: "dd/MM/yyyy" },
+  en: { locale: enGB, fmt: "MM/dd/yyyy" },
+  ar: { locale: ar, fmt: "dd/MM/yyyy" },
+} as const;
 
 const BookingWidget = () => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [mode, setMode] = useState<"oneway" | "hourly">("oneway");
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
+  const [date, setDate] = useState<Date>();
+
+  const { locale, fmt } = dateConfig[language];
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div className="w-full max-w-5xl mx-auto">
       <div className="bg-card/80 backdrop-blur-md border border-border rounded-lg p-6">
         {/* Toggle */}
         <div className="flex gap-1 bg-secondary rounded-md p-1 mb-6 w-fit">
@@ -37,7 +51,7 @@ const BookingWidget = () => {
         </div>
 
         {/* Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <LocationAutocomplete
             value={pickup}
             onChange={setPickup}
@@ -52,20 +66,35 @@ const BookingWidget = () => {
               iconColor="text-muted-foreground"
             />
           )}
-          <div className="relative">
-            <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="date"
-              placeholder={t.hero_date}
-              className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  "w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-left relative focus:outline-none focus:ring-1 focus:ring-primary",
+                  date ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                {date ? format(date, fmt, { locale }) : t.hero_date}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                locale={locale}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
           <div className="relative">
             <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="time"
               placeholder={t.hero_time}
-              className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
         </div>

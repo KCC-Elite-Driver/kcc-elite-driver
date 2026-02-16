@@ -93,7 +93,7 @@ const LocationAutocomplete = ({ value, onChange, placeholder, iconColor = "text-
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => handleChange(value)}
         placeholder={placeholder}
-        className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+        className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
         autoComplete="off"
       />
       {open && filtered.length > 0 && (
