@@ -1,35 +1,41 @@
 
 
-## Transformer le Language Switcher en dropdown avec icone globe
+## Remplacer les emojis drapeaux par des images SVG
 
-### Rendu cible (base sur les images de reference)
-- Dans la barre de navigation : une icone globe + le code langue actuel (ex: "fr", "en", "ar")
-- Au clic : un dropdown s'ouvre avec chaque langue affichee sous forme de drapeau + nom complet (ex: "Francais", "English", "العربية")
-- Style sombre coherent avec le theme du site
+### Probleme
+Windows ne rend pas les emojis drapeaux Unicode. Au lieu de voir des drapeaux, les utilisateurs Windows voient les codes ISO pays en texte brut (FR, GB, EG). iOS et Android supportent les drapeaux emoji, d'ou le fonctionnement sur mobile.
+
+### Solution
+Utiliser des images SVG de drapeaux au lieu d'emojis Unicode. Les SVG s'affichent de maniere identique sur tous les systemes d'exploitation.
 
 ### Modifications
 
-#### LanguageSwitcher.tsx - Refonte complete
-- Remplacer les 3 boutons drapeaux par un composant `DropdownMenu` (deja installe via Radix)
-- Le declencheur (trigger) affiche :
-  - L'icone `Globe` de lucide-react
-  - Le code de la langue active en minuscules (fr, en, ar)
-- Le menu dropdown affiche 3 items :
-  - Drapeau emoji + nom complet de la langue
-  - FR : "Francais", EN : "English", AR : "العربية"
-  - L'item actif sera visuellement distingue (texte primary)
+#### Creer 3 fichiers SVG de drapeaux
+- `src/assets/flags/fr.svg` - Drapeau francais (tricolore bleu-blanc-rouge)
+- `src/assets/flags/gb.svg` - Drapeau britannique (Union Jack)
+- `src/assets/flags/eg.svg` - Drapeau egyptien (rouge-blanc-noir avec aigle)
 
-#### Header.tsx - Aucun changement
-- Le composant LanguageSwitcher est deja correctement place en desktop (ligne 120) et en mobile (ligne 156-158)
-- La refonte du LanguageSwitcher s'appliquera automatiquement aux deux
+Les SVG seront des fichiers inline legers (quelques lignes chacun) pour eviter les dependances externes.
+
+#### LanguageSwitcher.tsx
+- Remplacer les chaines emoji `flag` par des imports d'images SVG
+- Afficher les drapeaux avec une balise `<img>` de taille 20x15px (ratio drapeau) avec `rounded-sm` pour un rendu soigne
+- Le reste du composant (dropdown, globe icon, noms de langues) reste inchange
 
 ### Details techniques
 
-**LanguageSwitcher.tsx** :
-- Importer `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` depuis `@/components/ui/dropdown-menu`
-- Importer `Globe` depuis `lucide-react`
-- Tableau des langues : `{ code, flag, name }` avec les noms complets
-- Le trigger sera un bouton avec `Globe` (16px) + texte du code langue
-- Le contenu du dropdown : fond sombre (`bg-card`), items avec drapeau + nom, espacement confortable
-- Au clic sur un item : appeler `setLanguage(code)` et le menu se ferme automatiquement
+**Tableau des langues mis a jour** :
+```
+const languages = [
+  { code: "fr", flag: frFlag, name: "Francais" },
+  { code: "en", flag: gbFlag, name: "English" },
+  { code: "ar", flag: egFlag, name: "العربية" },
+];
+```
 
+**Rendu du drapeau** :
+```
+<img src={lang.flag} alt="" className="w-5 h-4 rounded-sm object-cover" />
+```
+
+Cela garantit un affichage identique sur Windows, Mac, Linux, iOS et Android.
