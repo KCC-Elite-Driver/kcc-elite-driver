@@ -1,40 +1,21 @@
 
-## Corriger le champ heure du widget de reservation sur mobile
+
+## Corriger la hauteur du champ heure sur mobile
 
 ### Probleme
-Sur mobile (iOS), le champ heure (`input type="time"`) ne s'affiche pas correctement :
-- L'icone horloge et la valeur horaire ne sont pas alignees dans le meme cadre
-- Le champ semble trop petit par rapport aux autres champs (pickup, destination, date)
-
-Cela est du au rendu natif de `input type="time"` sur iOS/Safari qui applique ses propres styles et ignore certaines proprietes CSS.
+Apres avoir ajoute `appearance-none` pour supprimer le style natif iOS, le champ heure a perdu sa hauteur naturelle et apparait beaucoup plus petit que les autres champs (lieu, destination, date).
 
 ### Solution
-Forcer le champ heure a occuper toute la largeur disponible et corriger le rendu iOS :
-1. Ajouter `-webkit-appearance: none` pour desactiver le style natif iOS
-2. Ajouter `box-sizing: border-box` explicitement
-3. S'assurer que le conteneur parent n'a pas de contrainte de largeur
+Ajouter une hauteur minimale explicite sur le champ heure pour qu'il corresponde exactement aux autres champs du formulaire. Les autres champs utilisent `py-3.5` qui donne environ 48-50px de hauteur. On va ajouter `h-[50px]` sur l'input time pour garantir une hauteur identique, ainsi que des styles webkit supplementaires pour forcer iOS a respecter cette hauteur.
 
-### Modifications techniques
+### Modification technique
 
-**BookingWidget.tsx** - Champ heure (lignes 94-101) :
-- Ajouter `appearance-none` (Tailwind pour `-webkit-appearance: none`) sur l'input time
-- Ajouter `block` pour forcer le display block
-- Changer le conteneur `div` pour qu'il prenne bien toute la largeur avec `w-full`
+**BookingWidget.tsx** - Ligne 99 :
+- Ajouter `h-[50px]` pour forcer la meme hauteur que les autres champs
+- Ajouter `[&::-webkit-calendar-picker-indicator]:opacity-0` pour masquer l'indicateur natif iOS tout en gardant le tap fonctionnel
 
 ```tsx
-<div className="relative w-full">
-  <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
-  <input
-    type="time"
-    placeholder={t.hero_time}
-    className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left"
-  />
-</div>
+className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0"
 ```
 
-Les classes ajoutees :
-- `appearance-none` : supprime le style natif du navigateur
-- `block` : force display block
-- `w-full` sur le conteneur parent (remplace juste `relative min-w-0`)
-- `z-10` sur l'icone pour qu'elle reste au-dessus
-- `[&::-webkit-date-and-time-value]:text-left` : aligne le texte a gauche sur Safari/iOS
+Cela garantit que le champ heure a exactement la meme hauteur que les champs Lieu, Destination et Date sur tous les appareils.
