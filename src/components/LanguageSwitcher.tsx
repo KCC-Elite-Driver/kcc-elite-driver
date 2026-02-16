@@ -7,11 +7,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import frFlag from "@/assets/flags/fr.svg";
+import gbFlag from "@/assets/flags/gb.svg";
+import egFlag from "@/assets/flags/eg.svg";
 
 const languages: { code: Language; flag: string; name: string }[] = [
-  { code: "fr", flag: "🇫🇷", name: "Français" },
-  { code: "en", flag: "🇬🇧", name: "English" },
-  { code: "ar", flag: "🇪🇬", name: "العربية" },
+  { code: "fr", flag: frFlag, name: "Français" },
+  { code: "en", flag: gbFlag, name: "English" },
+  { code: "ar", flag: egFlag, name: "العربية" },
 ];
 
 const LanguageSwitcher = () => {
@@ -34,7 +37,7 @@ const LanguageSwitcher = () => {
               language === lang.code ? "text-primary" : ""
             }`}
           >
-            <span className="text-base leading-none">{lang.flag}</span>
+            <img src={lang.flag} alt="" className="w-5 h-4 rounded-sm object-cover" />
             <span>{lang.name}</span>
           </DropdownMenuItem>
         ))}
