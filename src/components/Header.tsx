@@ -153,6 +153,9 @@ const Header = () => {
           />
           <div className="absolute right-0 top-0 h-full w-72 bg-card border-l border-border animate-slide-in-right">
             <div className="flex flex-col pt-20 px-6 gap-6">
+              <div className="pb-2">
+                <LanguageSwitcher />
+              </div>
               {navLinks.map((link) =>
                 link.dropdown ? (
                   <div key={link.path}>
@@ -205,9 +208,7 @@ const Header = () => {
                   </Link>
                 )
               )}
-              <div className="pt-4 border-t border-border">
-                <LanguageSwitcher />
-              </div>
+              <div className="pt-4 border-t border-border" />
               <Link
                 to="/booking"
                 onClick={() => setMobileOpen(false)}
