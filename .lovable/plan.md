@@ -1,26 +1,26 @@
 
 
-## Regenerer l'image SUV en noir et repositionner en premier
+## Regenerer l'image SUV avec fond noir/dore et dimensions correctes
+
+### Probleme constate
+L'image du SUV (Soueast S07) a un fond gris clair qui ne correspond pas au fond noir profond avec reflets dores/ambre des trois images Mercedes (Business, First Class, Van Prestige). Le vehicule semble aussi plus petit et mal cadre par rapport aux autres.
 
 ### Ce qui sera fait
 
-1. **Generer une nouvelle image** du Soueast S07 en **noir**, vu de profil (vue laterale comme sur l'image de reference), avec le meme fond sombre/studio que les autres vehicules Mercedes de la flotte. L'image utilisera le modele Gemini pour produire un rendu coherent avec l'esthetique du site. Elle remplacera l'image actuelle dans `src/assets/soueast-s07-suv.jpg`.
+1. **Regenerer l'image** `src/assets/soueast-s07-suv.jpg` avec un prompt tres precis reproduisant :
+   - Fond noir profond identique aux Mercedes (#050505 a #1A1A1A)
+   - Reflets dores/ambre subtils sur la carrosserie et en arriere-plan
+   - Vue de profil laterale du Soueast S07 noir
+   - Vehicule centre et cadre de la meme maniere que les autres (occupe toute la largeur du cadre)
+   - Eclairage cinematique lateral avec halo dore chaud
+   - Style editorial luxe automobile, pas d'annotations
 
-2. **Deplacer le SUV en premiere position** (tout a gauche) dans les deux fichiers :
+2. **Aucune modification de code** : seul le fichier image sera remplace. Les composants FleetPreview.tsx et Fleet.tsx utilisent deja les memes classes CSS (`h-48` / `h-56`, `object-cover`) pour toutes les cartes, donc les dimensions du cadre seront automatiquement coherentes une fois l'image correctement proportionnee.
 
 ### Details techniques
 
-**Image** : Generation via Lovable AI (google/gemini-3-pro-image-preview) avec un prompt base sur l'image de reference : Soueast S07 noir, vue de profil laterale, fond sombre de studio (gris fonce/noir), eclairage cinematique, sans annotations ni dimensions, style editorial luxe.
+**Prompt de generation** (via google/gemini-3-pro-image-preview) :
+"Black Soueast S07 SUV, side profile view facing right, pure black background with subtle warm golden amber reflections and rim lighting on the car body, cinematic luxury automotive studio photography, car fills the entire frame horizontally, same exact dark moody aesthetic as a Mercedes S-Class studio shot, no text no annotations no watermarks, high contrast editorial style, 16:9 aspect ratio"
 
-**FleetPreview.tsx** - Ligne 13-18 : Reordonner le tableau pour placer le SUV en premier :
-```tsx
-const vehicles = [
-  { name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage },
-  { name: t.fleet_business, desc: t.fleet_business_desc, passengers: 3, luggage: 2, image: mercedesEClass },
-  { name: t.fleet_first, desc: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass },
-  { name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
-];
-```
-
-**Fleet.tsx** - Lignes 77-94 : Meme reordonnancement, le SUV avec ses equipements en premier dans le tableau.
+Le modele Gemini Pro Image sera utilise pour une meilleure qualite et coherence avec les autres visuels de la flotte.
 
