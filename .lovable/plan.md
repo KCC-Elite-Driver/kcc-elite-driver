@@ -1,26 +1,25 @@
 
 
-## Regenerer l'image SUV avec fond noir/dore et dimensions correctes
+## Regenerer l'image SUV : profil pur, fond noir/dore, cote conducteur
 
-### Probleme constate
-L'image du SUV (Soueast S07) a un fond gris clair qui ne correspond pas au fond noir profond avec reflets dores/ambre des trois images Mercedes (Business, First Class, Van Prestige). Le vehicule semble aussi plus petit et mal cadre par rapport aux autres.
+### Probleme
+L'image actuelle montre le SUV en vue 3/4 au lieu d'une vue de profil laterale pure comme les trois Mercedes. Il faut aussi corriger le fond (noir profond + reflets dores/ambre) et le cadrage.
 
 ### Ce qui sera fait
 
-1. **Regenerer l'image** `src/assets/soueast-s07-suv.jpg` avec un prompt tres precis reproduisant :
-   - Fond noir profond identique aux Mercedes (#050505 a #1A1A1A)
-   - Reflets dores/ambre subtils sur la carrosserie et en arriere-plan
-   - Vue de profil laterale du Soueast S07 noir
-   - Vehicule centre et cadre de la meme maniere que les autres (occupe toute la largeur du cadre)
-   - Eclairage cinematique lateral avec halo dore chaud
-   - Style editorial luxe automobile, pas d'annotations
+Regenerer `src/assets/soueast-s07-suv.jpg` avec ces specifications strictes :
 
-2. **Aucune modification de code** : seul le fichier image sera remplace. Les composants FleetPreview.tsx et Fleet.tsx utilisent deja les memes classes CSS (`h-48` / `h-56`, `object-cover`) pour toutes les cartes, donc les dimensions du cadre seront automatiquement coherentes une fois l'image correctement proportionnee.
+- **Vue de profil laterale pure** (pas de 3/4) : le vehicule est vu exactement de cote, comme les Mercedes
+- **Orientation vers la droite** (nez a droite) pour montrer le cote conducteur (conduite a gauche), coherent avec les autres images de la flotte
+- **Fond noir profond** (#050505) avec reflets dores/ambre chauds sur le sol et la carrosserie
+- **Eclairage cinematique** : halo dore lateral identique aux Mercedes
+- **Cadrage** : vehicule centre, remplissant le cadre horizontalement, proportions 16:9 (1920x1080)
+- **Style** : editorial luxe automobile, pas d'annotations, pas de texte
+
+Aucune modification de code. Seul le fichier image est remplace.
 
 ### Details techniques
 
-**Prompt de generation** (via google/gemini-3-pro-image-preview) :
-"Black Soueast S07 SUV, side profile view facing right, pure black background with subtle warm golden amber reflections and rim lighting on the car body, cinematic luxury automotive studio photography, car fills the entire frame horizontally, same exact dark moody aesthetic as a Mercedes S-Class studio shot, no text no annotations no watermarks, high contrast editorial style, 16:9 aspect ratio"
-
-Le modele Gemini Pro Image sera utilise pour une meilleure qualite et coherence avec les autres visuels de la flotte.
+Prompt optimise pour forcer le profil pur :
+"Black Soueast S07 SUV, EXACT side profile view perfectly perpendicular to camera, facing right, showing driver door side, pure black background with subtle warm golden amber reflections on floor and car body, golden rim lighting on edges, cinematic luxury automotive studio photography, car perfectly centered filling entire frame horizontally, same dark moody studio aesthetic as Mercedes S-Class press photo, absolutely no 3/4 angle, strict 90 degree side view only, no text no annotations no watermarks, high contrast editorial style, 1920x1080 16:9"
 
