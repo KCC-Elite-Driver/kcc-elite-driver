@@ -1,15 +1,16 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
-import { ShieldCheck, Clock, Languages } from "lucide-react";
+import { Lock, Star, Scale, Lightbulb } from "lucide-react";
 import cairoDetailGlove from "@/assets/cairo-detail-glove.jpg";
 
 const ValuesSection = () => {
   const { t } = useTranslation();
 
   const values = [
-    { icon: ShieldCheck, title: t.values_discretion, desc: t.values_discretion_desc },
-    { icon: Clock, title: t.values_punctuality, desc: t.values_punctuality_desc },
-    { icon: Languages, title: t.values_multilingual, desc: t.values_multilingual_desc },
+    { icon: Lock, title: t.values_discretion, desc: t.values_discretion_desc },
+    { icon: Star, title: t.values_punctuality, desc: t.values_punctuality_desc },
+    { icon: Scale, title: t.values_multilingual, desc: t.values_multilingual_desc },
+    { icon: Lightbulb, title: t.values_anticipation, desc: t.values_anticipation_desc },
   ];
 
   return (
@@ -42,17 +43,17 @@ const ValuesSection = () => {
         </ScrollReveal>
 
         {/* Values */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {values.map((value, i) => (
             <ScrollReveal key={value.title} variant="fade-up" delay={i * 0.15}>
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                  <value.icon size={28} className="text-primary" />
+              <div className="bg-card border border-border rounded-lg p-6 text-center h-full flex flex-col items-center">
+                <div className="w-14 h-14 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-5">
+                  <value.icon size={24} className="text-primary" />
                 </div>
-                <h3 className="font-serif text-xl font-semibold text-foreground mb-3">
+                <h3 className="font-serif text-lg font-semibold text-foreground mb-3">
                   {value.title}
                 </h3>
-                <p className="font-sans text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                <p className="font-sans text-sm text-muted-foreground leading-relaxed">
                   {value.desc}
                 </p>
               </div>

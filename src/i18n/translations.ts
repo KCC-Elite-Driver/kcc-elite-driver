@@ -67,6 +67,8 @@ export type TranslationKeys = {
   values_punctuality_desc: string;
   values_multilingual: string;
   values_multilingual_desc: string;
+  values_anticipation: string;
+  values_anticipation_desc: string;
 
   // Contact
   contact_title: string;
@@ -547,6 +549,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     values_punctuality_desc: "Anticipation constante. Suivi des vols en temps réel, gestion des aléas, arrivée toujours en avance. Jamais d'attente, jamais de retard.",
     values_multilingual: "Multilingue",
     values_multilingual_desc: "Chauffeurs francophones, anglophones et arabophones. Fluidité totale dans chaque échange, compréhension des nuances culturelles de chaque marché.",
+    values_anticipation: "Anticipation",
+    values_anticipation_desc: "Chaque détail est prévu à l'avance. Itinéraires optimisés, alternatives préparées, besoins anticipés avant même d'être exprimés.",
 
     contact_title: "Contactez-nous",
     contact_subtitle: "Pour une demande sur mesure, un devis personnalisé ou des questions sur nos services.",
@@ -1013,6 +1017,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     values_punctuality_desc: "Constant anticipation. Real-time flight monitoring, proactive management, always arriving ahead of schedule. No waiting, never delayed.",
     values_multilingual: "Multilingual",
     values_multilingual_desc: "French-speaking, English-speaking and Arabic-speaking drivers. Seamless communication in every exchange, cultural understanding across all markets.",
+    values_anticipation: "Anticipation",
+    values_anticipation_desc: "Every detail is planned ahead. Optimised routes, prepared alternatives, needs anticipated before they are even expressed.",
 
     contact_title: "Get in Touch",
     contact_subtitle: "For bespoke requests, personalised quotes, or questions about our services.",
@@ -1476,6 +1482,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     values_punctuality_desc: "استباق مستمر. تتبع الرحلات في الوقت الفعلي، إدارة الطوارئ، وصول دائماً قبل الموعد. لا انتظار، لا تأخير أبداً.",
     values_multilingual: "متعدد اللغات",
     values_multilingual_desc: "سائقون يتحدثون الفرنسية والإنجليزية والعربية. سلاسة تامة في كل تواصل، فهم للفروق الثقافية في كل سوق.",
+    values_anticipation: "الاستباق",
+    values_anticipation_desc: "كل تفصيل مُخطط مسبقاً. مسارات محسّنة، بدائل جاهزة، احتياجات متوقعة قبل التعبير عنها.",
 
     contact_title: "اتصل بنا",
     contact_subtitle: "لطلب مخصص، عرض سعر شخصي أو أسئلة حول خدماتنا.",

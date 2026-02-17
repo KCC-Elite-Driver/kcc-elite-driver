@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import JsonLd from "./JsonLd";
+import WhatsAppFloatingButton from "./WhatsAppFloatingButton";
 
 const Layout = () => {
   return (
@@ -27,6 +28,7 @@ const Layout = () => {
         <Outlet />
       </main>
       <Footer />
+      <WhatsAppFloatingButton />
     </div>
   );
 };
