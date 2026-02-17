@@ -1,52 +1,49 @@
 
 
-## Corrections de la page Reservation et navigation
+## Corrections du recapitulatif lateral et du calcul de prix
 
-### 1. Carte trajet avec prix estime et temps (Step 1 - Details du trajet)
+### Probleme identifie : le prix ne s'affiche jamais
 
-**Fichier** : `src/pages/Booking.tsx`
+**Cause racine** : Quand l'utilisateur selectionne une adresse depuis la liste statique (ex: "Aeroport Paris-Orly"), la fonction `handleSelectStatic` dans `GooglePlacesAutocomplete.tsx` n'appelle PAS `onPlaceSelect(placeId)`. Donc `pickupPlaceId` et `dropoffPlaceId` restent vides, et le calcul de prix ne se declenche jamais.
 
-- Ajouter un composant `TripSummaryCard` qui s'affiche dans l'etape 1 (Details) une fois que le pickup ET la destination sont renseignes
-- Ce composant appelle l'edge function `calculate-distance` pour obtenir la distance, la duree et le prix estime
-- Affichage : une carte avec bordure doree montrant :
-  - Icone MapPin + adresse de depart
-  - Ligne verticale pointillee
-  - Icone MapPin + adresse d'arrivee
-  - Section basse : Distance (km), Duree estimee (~min), Prix estime (avec devise auto EUR/EGP)
-- Le calcul se declenche automatiquement quand les deux placeId sont disponibles
-- Un loader s'affiche pendant le calcul
-- Le prix affiche est une estimation de base (multiplier vehicule applique plus tard a l'etape 3)
+De plus, les adresses statiques n'ont pas de `place_id` Google associe. Il faut soit :
+- Effectuer un appel supplementaire "Find Place from Text" pour obtenir le place_id a partir du nom
+- Soit ne declencher le calcul que pour les adresses selectionnees via Google (qui ont un place_id)
 
-### 2. Supprimer l'animation clignotante du bouton WhatsApp
+### Modifications prevues
 
-**Fichier** : `src/components/WhatsAppFloatingButton.tsx`
+**1. `src/components/GooglePlacesAutocomplete.tsx` - Recuperer le placeId pour les adresses statiques**
 
-- Retirer la classe `animate-pulse` du bouton
-- Garder uniquement le `hover:scale-110` pour une interaction subtile au survol
+- Modifier `handleSelectStatic` pour qu'il appelle l'edge function `google-places` avec le nom exact de l'adresse, recupere le premier `place_id` retourne, puis appelle `onPlaceSelect(placeId, name)`
+- Alternative plus simple : ajouter les `place_id` connus en dur pour les locations statiques les plus frequentes (CDG, Orly, etc.)
+- Approche retenue : faire un appel `google-places` en arriere-plan apres la selection statique pour obtenir le `place_id`, puis appeler `onPlaceSelect`
 
-### 3. Remonter en haut de page lors de la navigation
+**2. `src/pages/Booking.tsx` - Ajouter les extras (meet & greet) dans le recapitulatif**
 
-**Fichiers** : `src/components/ScrollToTop.tsx` (nouveau) + `src/App.tsx`
+- Dans la sidebar, ajouter une ligne "VIP Meet & Greet" quand `data.meetGreet === true` et que le pickup est un aeroport/gare
+- Afficher un prix fixe pour ce service (ex: 30 EUR / 500 EGP selon la devise detectee)
+- Mettre a jour le TOTAL pour inclure l'extra
+- Ajouter les extras pertinents : nombre de passagers, nombre de bagages, numero de vol
 
-- Creer un composant `ScrollToTop` qui ecoute les changements de `pathname` via `useLocation`
-- Appeler `window.scrollTo({ top: 0, behavior: "instant" })` a chaque changement de route
-- Integrer ce composant dans `App.tsx` a l'interieur du `BrowserRouter`
+**3. `src/pages/Booking.tsx` - Enrichir la sidebar avec toutes les informations**
 
-### 4. Uniformiser le calendrier de la page Reservation
+La sidebar affichera progressivement toutes les infos au fur et a mesure des etapes :
+- **Etape 0** : Service selectionne (icone + label)
+- **Etape 1** : Date/heure, Pickup, Destination, Distance, Duree
+- **Etape 2** : Nom du passager, email, telephone, nombre passagers/bagages, notes, numero de vol, Meet & Greet
+- **Etape 3** : Vehicule selectionne avec prix
+- **Etape 4** : Methode de paiement + Total final
 
-**Fichier** : `src/pages/Booking.tsx`
+**4. `supabase/functions/calculate-distance/index.ts` - Ajout de logs de debug**
 
-- Remplacer le `<input type="date">` natif par le composant `Calendar` (Popover + DayPicker) deja utilise dans le BookingWidget de la page d'accueil
-- Importer `Popover`, `PopoverTrigger`, `PopoverContent` et `Calendar` depuis les composants UI
-- Utiliser le meme style de bouton declencheur avec icone calendrier et formatage localise de la date
-- Le calendrier s'ouvrira dans un Popover identique a celui de la page d'accueil
+- Ajouter un `console.log` du resultat Distance Matrix brut pour diagnostiquer les erreurs 400
+- Logger `distRes.rows[0].elements[0].status` pour comprendre pourquoi certains trajets echouent
 
 ### Resume technique
 
 | Fichier | Modification |
 |---|---|
-| `src/pages/Booking.tsx` | Ajout carte trajet + remplacement input date par Calendar Popover |
-| `src/components/WhatsAppFloatingButton.tsx` | Suppression animate-pulse |
-| `src/components/ScrollToTop.tsx` | Nouveau composant scroll-to-top |
-| `src/App.tsx` | Integration ScrollToTop dans BrowserRouter |
+| `src/components/GooglePlacesAutocomplete.tsx` | Appel google-places apres selection statique pour obtenir le place_id |
+| `src/pages/Booking.tsx` | Sidebar enrichie avec extras, passager, service, et total dynamique |
+| `supabase/functions/calculate-distance/index.ts` | Logs de debug pour diagnostiquer les erreurs |
 
