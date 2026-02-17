@@ -11,10 +11,10 @@ const FleetPreview = () => {
   const { t } = useTranslation();
 
   const vehicles = [
+    { name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage },
     { name: t.fleet_business, desc: t.fleet_business_desc, passengers: 3, luggage: 2, image: mercedesEClass },
     { name: t.fleet_first, desc: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass },
     { name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
-    { name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage },
   ];
 
   return (

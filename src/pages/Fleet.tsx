@@ -76,6 +76,10 @@ const Fleet = () => {
 
   const vehicles = [
     {
+      name: t.fleet_suv, description: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage,
+      amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: ShieldCheck, label: t.fleet_disinfection }],
+    },
+    {
       name: t.fleet_business, description: t.fleet_business_desc, passengers: 3, luggage: 2, image: mercedesEClass,
       amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }],
     },
@@ -86,10 +90,6 @@ const Fleet = () => {
     {
       name: t.fleet_van, description: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass,
       amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: LayoutGrid, label: t.fleet_conference }, { icon: Wine, label: t.fleet_refreshments }, { icon: ShieldCheck, label: t.fleet_disinfection }],
-    },
-    {
-      name: t.fleet_suv, description: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage,
-      amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: ShieldCheck, label: t.fleet_disinfection }],
     },
   ];
 
