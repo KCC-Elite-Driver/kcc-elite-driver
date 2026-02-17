@@ -11,7 +11,7 @@ const FleetPreview = () => {
   const { t } = useTranslation();
 
   const vehicles = [
-    { name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 3, luggage: 4, image: suvImage },
+    { name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 7, luggage: 4, image: suvImage },
     { name: t.fleet_business, desc: t.fleet_business_desc, passengers: 3, luggage: 2, image: mercedesEClass },
     { name: t.fleet_first, desc: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass },
     { name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
@@ -36,7 +36,7 @@ const FleetPreview = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {vehicles.map((vehicle, i) => (
             <ScrollReveal key={vehicle.name} variant="fade-up" delay={i * 0.15}>
-              <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-all duration-300 h-full flex flex-col">
+              <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-all duration-300">
                 <div className="relative h-48 bg-secondary flex items-center justify-center overflow-hidden">
                   <img
                     src={vehicle.image}
@@ -47,11 +47,11 @@ const FleetPreview = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
                 </div>
-                <div className="p-6 flex-1 flex flex-col">
+                <div className="p-6">
                   <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
                     {vehicle.name}
                   </h3>
-                  <p className="font-sans text-sm text-muted-foreground mb-4 leading-relaxed flex-1">
+                  <p className="font-sans text-sm text-muted-foreground mb-4 leading-relaxed">
                     {vehicle.desc}
                   </p>
                   <div className="flex items-center gap-4 mb-5">
