@@ -3,6 +3,7 @@ import ContactForm from "@/components/contact/ContactForm";
 import DirectContact from "@/components/contact/DirectContact";
 import MapPlaceholder from "@/components/contact/MapPlaceholder";
 import PageMeta from "@/components/PageMeta";
+import JsonLd from "@/components/JsonLd";
 import {
   Accordion,
   AccordionContent,
@@ -25,9 +26,19 @@ const Contact = () => {
   return (
     <div className="pt-16">
       <PageMeta
-        title="Contact — KCC-EliteDriver"
-        description="Contactez-nous pour un devis personnalisé. Réponse garantie sous 2 heures."
+        title="Contact — KCC-EliteDriver | Devis Gratuit 24h/24"
+        description="Contactez KCC-EliteDriver pour un devis gratuit. Réponse garantie sous 2h. WhatsApp, téléphone ou formulaire. Chauffeur privé Cairo & Paris."
         path="/contact"
+      />
+      <JsonLd
+        data={{
+          "@type": "FAQPage",
+          mainEntity: faqItems.map(item => ({
+            "@type": "Question",
+            name: item.q,
+            acceptedAnswer: { "@type": "Answer", text: item.a },
+          })),
+        }}
       />
       {/* Hero */}
       <section className="relative py-32 overflow-hidden">

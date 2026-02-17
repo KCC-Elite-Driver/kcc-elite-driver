@@ -109,8 +109,8 @@ const Services = () => {
   return (
     <div className="pt-16">
       <PageMeta
-        title="Nos Services — KCC-EliteDriver"
-        description="Transferts aéroport, mise à disposition, événements VIP et intercités. Services de chauffeur privé sur mesure."
+        title="Services Chauffeur Privé — KCC-EliteDriver"
+        description="Transferts aéroport CDG, Orly & Le Caire, mise à disposition horaire, événements VIP, intercités. Chauffeur privé sur mesure au Caire et à Paris."
         path="/services"
       />
       <JsonLd
