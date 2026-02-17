@@ -30,6 +30,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" /></noscript>
+
+    <!-- Preload mobile hero image -->
+    <link rel="preload" as="image" type="image/webp" href="/src/assets/hero-chauffeur-paris.jpg?format=webp&w=600&q=70" media="(max-width: 640px)" fetchpriority="high" />
+
+    <!-- Inline critical CSS for header + hero (avoid render-blocking stylesheet) -->
+    <style>
+      :root{--background:0 0% 2%;--foreground:0 0% 100%;--primary:40 45% 56%;--primary-foreground:0 0% 2%;--muted-foreground:0 0% 64%;--border:0 0% 18%;--card:0 0% 10%}
+      *,::after,::before{box-sizing:border-box;border-width:0;border-style:solid}
+      body{margin:0;font-family:Inter,system-ui,sans-serif;background:hsl(var(--background));color:hsl(var(--foreground));-webkit-font-smoothing:antialiased}
+      #root{min-height:100vh}
+      .glass{background:hsla(0,0%,2%,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid hsla(0,0%,100%,.06)}
+    </style>
   </head>
 
   <body>
