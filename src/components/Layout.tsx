@@ -1,8 +1,10 @@
 import { Outlet } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import JsonLd from "./JsonLd";
-import WhatsAppFloatingButton from "./WhatsAppFloatingButton";
+
+const WhatsAppFloatingButton = lazy(() => import("./WhatsAppFloatingButton"));
 
 const Layout = () => {
   return (
@@ -28,7 +30,9 @@ const Layout = () => {
         <Outlet />
       </main>
       <Footer />
-      <WhatsAppFloatingButton />
+      <Suspense fallback={null}>
+        <WhatsAppFloatingButton />
+      </Suspense>
     </div>
   );
 };

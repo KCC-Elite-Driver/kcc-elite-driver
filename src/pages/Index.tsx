@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <>
       <PageMeta
-        title="KCC-EliteDriver — Chauffeur Privé de Luxe Cairo & Paris"
+        title="Chauffeur Privé de Luxe Cairo & Paris"
         description="Réservez votre chauffeur privé haut de gamme au Caire et à Paris. Transferts aéroport, mise à disposition horaire, événements VIP. Service 24h/24, flotte premium."
         path="/"
       />
