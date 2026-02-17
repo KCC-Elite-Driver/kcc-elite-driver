@@ -13,7 +13,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <img src={logo} alt="KCC-EliteDriver" className="h-20 w-auto" />
+              <img src={logo} alt="KCC-EliteDriver" className="h-32 w-auto" />
             </Link>
             <p className="text-muted-foreground text-sm font-sans leading-relaxed mb-2">
               {t.footer_tagline}
@@ -143,7 +143,7 @@ const Footer = () => {
         </div>
 
         {/* Legal links + copyright */}
-        <div className="border-t border-border pt-8">
+        <div className="border-t border-border pt-8 mt-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground font-sans">
               © {new Date().getFullYear()} KCC-EliteDriver. {t.footer_rights}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Calendar as CalendarIcon, Clock, Search } from "lucide-react";
 import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
@@ -18,6 +19,7 @@ const dateConfig = {
 
 const BookingWidget = () => {
   const { t, language } = useTranslation();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<"oneway" | "hourly">("oneway");
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
@@ -98,7 +100,10 @@ const BookingWidget = () => {
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0"
+              className={cn(
+                "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0",
+                time ? "text-foreground" : "text-transparent"
+              )}
             />
             {!time && (
               <span className="absolute left-10 top-1/2 -translate-y-1/2 text-muted-foreground text-base font-sans pointer-events-none">
@@ -110,7 +115,18 @@ const BookingWidget = () => {
 
         {/* Search button */}
         <div className="mt-4 flex justify-end">
-          <button className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 flex items-center gap-2">
+          <button
+            onClick={() => {
+              const params = new URLSearchParams();
+              if (pickup) params.set("pickup", pickup);
+              if (dropoff) params.set("dropoff", dropoff);
+              if (date) params.set("date", date.toISOString());
+              if (time) params.set("time", time);
+              params.set("mode", mode);
+              navigate(`/booking?${params.toString()}`);
+            }}
+            className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 flex items-center gap-2"
+          >
             <Search size={16} />
             {t.hero_search}
           </button>

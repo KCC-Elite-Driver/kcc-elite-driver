@@ -23,7 +23,7 @@ const VehicleCard = ({ name, description, passengers, luggage, amenities, image,
 
   return (
     <div
-      className="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-all duration-300 opacity-0 animate-fade-in"
+      className="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-all duration-300 opacity-0 animate-fade-in flex flex-col h-full"
       style={{ animationDelay: `${index * 0.15}s`, animationFillMode: "forwards" }}
     >
       <div className="relative h-56 bg-secondary flex items-center justify-center overflow-hidden">
@@ -33,9 +33,9 @@ const VehicleCard = ({ name, description, passengers, luggage, amenities, image,
           <span className="text-xs font-sans font-medium text-primary">{name}</span>
         </div>
       </div>
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-1">
         <h3 className="font-serif text-2xl font-semibold text-foreground mb-3">{name}</h3>
-        <p className="font-sans text-sm text-muted-foreground mb-6 leading-relaxed">{description}</p>
+        <p className="font-sans text-sm text-muted-foreground mb-6 leading-relaxed flex-1">{description}</p>
         <div className="flex items-center gap-6 mb-6 pb-6 border-b border-border">
           <div className="flex items-center gap-2">
             <Users size={18} className="text-primary" />
@@ -61,7 +61,7 @@ const VehicleCard = ({ name, description, passengers, luggage, amenities, image,
         </div>
         <Link
           to="/contact"
-          className="w-full gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 flex items-center justify-center gap-2"
+          className="w-full gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 flex items-center justify-center gap-2 mt-auto"
         >
           {t.fleet_book}
           <ArrowRight size={14} />
