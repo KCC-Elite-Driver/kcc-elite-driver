@@ -26,7 +26,7 @@ const Header = () => {
       <header className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="container mx-auto flex items-center justify-between h-20 px-4 lg:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt={t.hero_title} className="h-20 w-auto" width={80} height={80} />
+            <img src={logo} alt={t.hero_title} className="h-20 w-auto object-contain" width={160} height={160} />
           </Link>
 
           {/* Desktop nav */}
