@@ -26,6 +26,7 @@ import ClientLogin from "./pages/client/ClientLogin";
 import ClientRegister from "./pages/client/ClientRegister";
 import ClientBookings from "./pages/client/ClientBookings";
 import ClientBookingDetail from "./pages/client/ClientBookingDetail";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1 } },
@@ -38,6 +39,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Public site */}
             <Route element={<Layout />}>
