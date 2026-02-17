@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Calendar as CalendarIcon, Clock, Search } from "lucide-react";
-import LocationAutocomplete from "@/components/LocationAutocomplete";
+import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -55,14 +55,14 @@ const BookingWidget = () => {
 
         {/* Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <LocationAutocomplete
+          <GooglePlacesAutocomplete
             value={pickup}
             onChange={setPickup}
             placeholder={t.hero_pickup}
             iconColor="text-primary"
           />
           {mode === "oneway" && (
-            <LocationAutocomplete
+            <GooglePlacesAutocomplete
               value={dropoff}
               onChange={setDropoff}
               placeholder={t.hero_dropoff}
