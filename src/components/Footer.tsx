@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Mail, Phone, MapPin, MessageCircle, Clock } from "lucide-react";
-import logo from "@/assets/kcc-logo.webp";
+import logo from "@/assets/kcc-logo.webp?format=webp&w=160";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -13,7 +13,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <img src={logo} alt="KCC-EliteDriver" className="h-32 w-auto" />
+              <img src={logo} alt="KCC-EliteDriver" className="h-32 w-auto" loading="lazy" decoding="async" width={160} height={128} />
             </Link>
             <p className="text-muted-foreground text-sm font-sans leading-relaxed mb-2">
               {t.footer_tagline}

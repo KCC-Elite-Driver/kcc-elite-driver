@@ -1,9 +1,11 @@
+import { lazy, Suspense } from "react";
 import HeroSection from "@/components/home/HeroSection";
-import GlobalAxis from "@/components/home/GlobalAxis";
-import FleetPreview from "@/components/home/FleetPreview";
-import ValuesSection from "@/components/home/ValuesSection";
 import PageMeta from "@/components/PageMeta";
 import JsonLd from "@/components/JsonLd";
+
+const GlobalAxis = lazy(() => import("@/components/home/GlobalAxis"));
+const FleetPreview = lazy(() => import("@/components/home/FleetPreview"));
+const ValuesSection = lazy(() => import("@/components/home/ValuesSection"));
 
 const Index = () => {
   return (
@@ -30,9 +32,11 @@ const Index = () => {
         }}
       />
       <HeroSection />
-      <GlobalAxis />
-      <FleetPreview />
-      <ValuesSection />
+      <Suspense fallback={<div className="min-h-[50vh]" />}>
+        <GlobalAxis />
+        <FleetPreview />
+        <ValuesSection />
+      </Suspense>
     </>
   );
 };
