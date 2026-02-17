@@ -1,7 +1,10 @@
+import { lazy, Suspense } from "react";
 import { useTranslation } from "@/i18n/LanguageContext";
-import ScrollReveal from "@/components/ScrollReveal";
-import BookingWidget from "./BookingWidget";
 import heroImage from "@/assets/hero-chauffeur-paris.jpg?format=webp&w=1920&q=75";
+import heroImageMobile from "@/assets/hero-chauffeur-paris.jpg?format=webp&w=600&q=70";
+
+const LazyBookingWidget = lazy(() => import("./BookingWidget"));
+const LazyScrollReveal = lazy(() => import("@/components/ScrollReveal"));
 
 const HeroSection = () => {
   const { t } = useTranslation();
@@ -12,6 +15,8 @@ const HeroSection = () => {
       <div className="absolute inset-0">
         <img
           src={heroImage}
+          srcSet={`${heroImageMobile} 600w, ${heroImage} 1920w`}
+          sizes="(max-width: 768px) 600px, 1920px"
           alt="Luxury chauffeur service in Paris"
           className="w-full h-full object-cover"
           loading="eager"
@@ -43,9 +48,11 @@ const HeroSection = () => {
         </p>
 
         {/* Booking Widget */}
-        <ScrollReveal variant="fade-up" delay={0.4}>
-          <BookingWidget />
-        </ScrollReveal>
+        <Suspense fallback={<div className="h-[200px]" />}>
+          <LazyScrollReveal variant="fade-up" delay={0.4}>
+            <LazyBookingWidget />
+          </LazyScrollReveal>
+        </Suspense>
       </div>
 
       {/* Bottom fade */}
