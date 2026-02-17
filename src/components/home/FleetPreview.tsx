@@ -5,6 +5,7 @@ import { Users, Briefcase, ArrowRight } from "lucide-react";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
+import suvImage from "@/assets/soueast-s07-suv.jpg";
 
 const FleetPreview = () => {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ const FleetPreview = () => {
     { name: t.fleet_business, desc: t.fleet_business_desc, passengers: 3, luggage: 2, image: mercedesEClass },
     { name: t.fleet_first, desc: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass },
     { name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
+    { name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage },
   ];
 
   return (
@@ -31,7 +33,7 @@ const FleetPreview = () => {
         </ScrollReveal>
 
         {/* Vehicle cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {vehicles.map((vehicle, i) => (
             <ScrollReveal key={vehicle.name} variant="fade-up" delay={i * 0.15}>
               <div className="group bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-all duration-300">
