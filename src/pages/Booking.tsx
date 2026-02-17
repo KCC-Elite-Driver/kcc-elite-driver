@@ -1,12 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home, Info, Mail, Phone, Shield } from "lucide-react";
+import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home, Info, Mail, Phone, Shield, Loader2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import PageMeta from "@/components/PageMeta";
-import LocationAutocomplete from "@/components/LocationAutocomplete";
+import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
@@ -54,6 +54,14 @@ const Booking = () => {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [pickupPlaceId, setPickupPlaceId] = useState("");
+  const [dropoffPlaceId, setDropoffPlaceId] = useState("");
+  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+  const [priceCurrency, setPriceCurrency] = useState("");
+  const [priceCurrencySymbol, setPriceCurrencySymbol] = useState("");
+  const [distanceKm, setDistanceKm] = useState<number | null>(null);
+  const [durationMin, setDurationMin] = useState<number | null>(null);
+  const [priceLoading, setPriceLoading] = useState(false);
   const [data, setData] = useState<BookingData>({
     service: null,
     pickup: "",
@@ -106,6 +114,35 @@ const Booking = () => {
       setData(prev => ({ ...prev, email: user.email! }));
     }
   }, [user]);
+
+  // Calculate price when pickup + dropoff + vehicle are set
+  const calculatePrice = useCallback(async (vehicle: string) => {
+    if (!pickupPlaceId || !dropoffPlaceId) return;
+    setPriceLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("calculate-distance", {
+        body: { originPlaceId: pickupPlaceId, destinationPlaceId: dropoffPlaceId, vehicle },
+      });
+      if (!error && data?.price != null) {
+        setEstimatedPrice(data.price);
+        setPriceCurrency(data.currency);
+        setPriceCurrencySymbol(data.currency_symbol);
+        setDistanceKm(data.distance_km);
+        setDurationMin(data.duration_min);
+      }
+    } catch (err) {
+      console.error("Price calc error:", err);
+    } finally {
+      setPriceLoading(false);
+    }
+  }, [pickupPlaceId, dropoffPlaceId]);
+
+  // Auto-calculate when all inputs are ready
+  useEffect(() => {
+    if (pickupPlaceId && dropoffPlaceId && data.vehicle) {
+      calculatePrice(data.vehicle);
+    }
+  }, [pickupPlaceId, dropoffPlaceId, data.vehicle, calculatePrice]);
 
   const steps = [
     t.booking_step_service,
@@ -342,11 +379,11 @@ const Booking = () => {
                   <div className="space-y-5">
                     <div>
                       <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_pickup_field}</label>
-                      <LocationAutocomplete value={data.pickup} onChange={(v) => setData({ ...data, pickup: v })} placeholder={t.hero_pickup} iconColor="text-primary" />
+                      <GooglePlacesAutocomplete value={data.pickup} onChange={(v) => setData({ ...data, pickup: v })} onPlaceSelect={(id) => setPickupPlaceId(id)} placeholder={t.hero_pickup} iconColor="text-primary" />
                     </div>
                     <div>
                       <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_destination_field}</label>
-                      <LocationAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
+                      <GooglePlacesAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} onPlaceSelect={(id) => setDropoffPlaceId(id)} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -487,6 +524,18 @@ const Booking = () => {
                             <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans"><Users size={12} className="text-primary" /> {vehicle.passengers} {t.fleet_passengers}</span>
                             <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans"><Briefcase size={12} className="text-primary" /> {vehicle.luggage} {t.fleet_luggage}</span>
                           </div>
+                          {pickupPlaceId && dropoffPlaceId && (
+                            <div className="mt-2">
+                              {priceLoading && data.vehicle === vehicle.key ? (
+                                <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans"><Loader2 size={12} className="animate-spin" /> Calcul...</span>
+                              ) : estimatedPrice !== null && data.vehicle === vehicle.key ? (
+                                <span className="font-sans text-sm font-semibold text-primary">
+                                  {estimatedPrice} {priceCurrencySymbol}
+                                  {distanceKm && <span className="text-xs text-muted-foreground font-normal ml-2">({distanceKm} km · ~{durationMin} min)</span>}
+                                </span>
+                              ) : null}
+                            </div>
+                          )}
                         </div>
                         <div className={`w-5 h-5 rounded-full border-2 shrink-0 transition-colors ${data.vehicle === vehicle.key ? "border-primary bg-primary" : "border-border"}`}>
                           {data.vehicle === vehicle.key && <Check size={12} className="text-primary-foreground m-auto mt-0.5" />}
@@ -515,6 +564,12 @@ const Booking = () => {
                     <SummaryRow label={t.booking_passengers_label} value={String(data.passengers)} />
                     <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
                     <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
+                    {estimatedPrice !== null && (
+                      <SummaryRow label="Prix estimé" value={`${estimatedPrice} ${priceCurrencySymbol}`} />
+                    )}
+                    {distanceKm !== null && (
+                      <SummaryRow label="Distance / Durée" value={`${distanceKm} km · ~${durationMin} min`} />
+                    )}
                     {data.flightNumber && <SummaryRow label={t.booking_flight_number} value={data.flightNumber} />}
                     {data.notes && <SummaryRow label={t.booking_notes_label} value={data.notes} />}
                   </div>

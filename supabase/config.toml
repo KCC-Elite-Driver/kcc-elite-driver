@@ -1,1 +1,7 @@
 project_id = "aderwtimjeqgcfcczpxb"
+
+[functions.google-places]
+verify_jwt = false
+
+[functions.calculate-distance]
+verify_jwt = false
