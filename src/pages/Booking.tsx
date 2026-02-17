@@ -1,7 +1,14 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Plane, Clock, Star, Route, MapPin, Calendar, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home, Info, Mail, Phone, Shield, Loader2 } from "lucide-react";
+import { Plane, Clock, Star, Route, MapPin, Calendar as CalendarIcon, Clock as ClockIcon, Users, Briefcase, Check, ArrowRight, ArrowLeft, CheckCircle, CreditCard, Banknote, AlertTriangle, Home, Info, Mail, Phone, Shield, Loader2 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { format, parseISO } from "date-fns";
+import { fr } from "date-fns/locale/fr";
+import { enGB } from "date-fns/locale/en-GB";
+import { ar } from "date-fns/locale/ar";
+import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -46,8 +53,10 @@ const HelperText = ({ children }: { children: React.ReactNode }) => (
   <p className="font-sans text-xs text-muted-foreground mt-1.5">{children}</p>
 );
 
+const dateLocales = { fr, en: enGB, ar } as const;
+
 const Booking = () => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
@@ -115,13 +124,13 @@ const Booking = () => {
     }
   }, [user]);
 
-  // Calculate price when pickup + dropoff + vehicle are set
-  const calculatePrice = useCallback(async (vehicle: string) => {
+  // Calculate price when pickup + dropoff are set
+  const calculatePrice = useCallback(async (vehicle?: string) => {
     if (!pickupPlaceId || !dropoffPlaceId) return;
     setPriceLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("calculate-distance", {
-        body: { originPlaceId: pickupPlaceId, destinationPlaceId: dropoffPlaceId, vehicle },
+        body: { originPlaceId: pickupPlaceId, destinationPlaceId: dropoffPlaceId, vehicle: vehicle || "business" },
       });
       if (!error && data?.price != null) {
         setEstimatedPrice(data.price);
@@ -137,10 +146,10 @@ const Booking = () => {
     }
   }, [pickupPlaceId, dropoffPlaceId]);
 
-  // Auto-calculate when all inputs are ready
+  // Auto-calculate when both placeIds are ready
   useEffect(() => {
-    if (pickupPlaceId && dropoffPlaceId && data.vehicle) {
-      calculatePrice(data.vehicle);
+    if (pickupPlaceId && dropoffPlaceId) {
+      calculatePrice(data.vehicle || undefined);
     }
   }, [pickupPlaceId, dropoffPlaceId, data.vehicle, calculatePrice]);
 
@@ -388,11 +397,31 @@ const Booking = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_date_field}</label>
-                        <div className="relative">
-                          <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                          <input type="date" value={data.date} onChange={(e) => setData({ ...data, date: e.target.value })}
-                            className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
-                        </div>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button
+                              className={cn(
+                                "w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-left relative focus:outline-none focus:ring-1 focus:ring-primary",
+                                data.date ? "text-foreground" : "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                              {data.date
+                                ? format(parseISO(data.date), language === "en" ? "MM/dd/yyyy" : "dd/MM/yyyy", { locale: dateLocales[language] })
+                                : t.hero_date}
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={data.date ? parseISO(data.date) : undefined}
+                              onSelect={(d) => setData({ ...data, date: d ? format(d, "yyyy-MM-dd") : "" })}
+                              locale={dateLocales[language]}
+                              initialFocus
+                              className={cn("p-3 pointer-events-auto")}
+                            />
+                          </PopoverContent>
+                        </Popover>
                         <HelperText>{t.booking_date_helper}</HelperText>
                       </div>
                       <div>
@@ -405,6 +434,43 @@ const Booking = () => {
                         <HelperText>{t.booking_time_helper}</HelperText>
                       </div>
                     </div>
+
+                    {/* Trip Summary Card */}
+                    {pickupPlaceId && dropoffPlaceId && (
+                      <div className="rounded-lg border border-primary/30 bg-card p-5 mt-2">
+                        <div className="flex items-start gap-3 mb-4">
+                          <div className="flex flex-col items-center gap-0">
+                            <MapPin size={16} className="text-primary shrink-0" />
+                            <div className="w-px h-8 border-l-2 border-dashed border-primary/30" />
+                            <MapPin size={16} className="text-muted-foreground shrink-0" />
+                          </div>
+                          <div className="flex flex-col gap-3 min-w-0">
+                            <span className="font-sans text-sm text-foreground truncate">{data.pickup}</span>
+                            <span className="font-sans text-sm text-muted-foreground truncate">{data.dropoff}</span>
+                          </div>
+                        </div>
+                        {priceLoading ? (
+                          <div className="flex items-center justify-center py-3">
+                            <Loader2 size={20} className="animate-spin text-primary" />
+                          </div>
+                        ) : distanceKm != null ? (
+                          <div className="grid grid-cols-3 gap-4 pt-3 border-t border-border">
+                            <div className="text-center">
+                              <p className="font-sans text-xs text-muted-foreground">{t.booking_distance || "Distance"}</p>
+                              <p className="font-sans text-sm font-semibold text-foreground">{distanceKm} km</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="font-sans text-xs text-muted-foreground">{t.booking_duration || "Durée"}</p>
+                              <p className="font-sans text-sm font-semibold text-foreground">~{durationMin} min</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="font-sans text-xs text-muted-foreground">{t.booking_estimate || "Estimation"}</p>
+                              <p className="font-sans text-sm font-semibold text-primary">{priceCurrencySymbol}{estimatedPrice}</p>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

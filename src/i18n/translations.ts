@@ -245,6 +245,9 @@ export type TranslationKeys = {
   booking_step_details: string;
   booking_step_vehicle: string;
   booking_step_confirm: string;
+  booking_distance: string;
+  booking_duration: string;
+  booking_estimate: string;
   booking_select_service: string;
   booking_next: string;
   booking_prev: string;
@@ -667,6 +670,9 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_step_details: "Détails",
     booking_step_vehicle: "Véhicule",
     booking_step_confirm: "Confirmation",
+    booking_distance: "Distance",
+    booking_duration: "Durée",
+    booking_estimate: "Estimation",
     booking_select_service: "Sélectionnez votre type de service",
     booking_next: "Continuer",
     booking_prev: "Précédent",
@@ -1135,6 +1141,9 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_step_details: "Details",
     booking_step_vehicle: "Vehicle",
     booking_step_confirm: "Confirmation",
+    booking_distance: "Distance",
+    booking_duration: "Duration",
+    booking_estimate: "Estimate",
     booking_select_service: "Select your service type",
     booking_next: "Continue",
     booking_prev: "Previous",
@@ -1600,6 +1609,9 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_step_details: "التفاصيل",
     booking_step_vehicle: "المركبة",
     booking_step_confirm: "التأكيد",
+    booking_distance: "المسافة",
+    booking_duration: "المدة",
+    booking_estimate: "التقدير",
     booking_select_service: "اختر نوع الخدمة",
     booking_next: "متابعة",
     booking_prev: "السابق",
