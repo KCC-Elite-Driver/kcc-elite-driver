@@ -1,45 +1,58 @@
 
-## Corrections layout booking + navigation intelligente + simplification header
+## Conversion des images JPG en WebP + optimisation Lighthouse
 
-### 1. Egaliser la hauteur du sommaire avec le formulaire et centrer les cartes
+### Contexte
+Le score Lighthouse mobile est de 73 avec un FCP de 3,8s et un LCP de 4,8s. Les images JPG representent un poids important. Le format WebP offre une compression 25-35% meilleure que JPEG a qualite equivalente.
 
-**Fichier** : `src/pages/Booking.tsx`
+### Approche
+Installer le plugin `vite-imagetools` qui permet de convertir les images au format WebP au moment du build, directement via les imports. Aucun fichier image ne doit etre remplace manuellement : on ajoute `?format=webp` aux imports existants.
 
-- Remplacer le layout `flex-col lg:flex-row` par un layout ou le formulaire est centre (max-w-3xl mx-auto) et le sommaire est positionne en sidebar droite avec `lg:grid lg:grid-cols-[1fr_320px]`
-- Ajouter `min-h-0` et `self-start` au sommaire pour qu'il colle en haut sans depasser
-- Garder `lg:sticky lg:top-24` sur le sommaire
-- Le formulaire reste centre visuellement grace au grid
+### Modifications
 
-### 2. Navigation intelligente depuis le BookingWidget (page d'accueil)
+#### 1. Installer la dependance `vite-imagetools`
 
-**Fichier** : `src/components/home/BookingWidget.tsx`
+Ajouter le package qui gere la transformation d'images a la volee pendant le build Vite.
 
-Quand l'utilisateur clique "Rechercher" depuis la page d'accueil :
-- Si mode = "oneway" et que pickup + dropoff + date + time sont remplis : envoyer vers `/booking` avec un param `skipTo=3` (etape vehicule) + les params pre-remplis + `service=airport`
-- Si mode = "oneway" et que seuls pickup + date + time sont remplis (pas de dropoff) : envoyer avec `skipTo=1` pour completer la destination
-- Si mode = "hourly" et que pickup + date + time sont remplis : envoyer avec `skipTo=3` + `service=hourly`
+#### 2. Configurer Vite (`vite.config.ts`)
 
-**Fichier** : `src/pages/Booking.tsx`
+Ajouter le plugin `imagetools()` dans la liste des plugins Vite. Ajouter aussi une declaration de type pour que TypeScript accepte les imports avec query string.
 
-- Lire le param `skipTo` depuis les searchParams
-- Pre-remplir `data.service`, `data.pickup`, `data.dropoff`, `data.date`, `data.time` depuis les params
-- Appeler `setStep(Number(skipTo))` dans le useEffect d'initialisation
-- S'assurer que les placeIds sont aussi recuperes (via un appel google-places) pour que le calcul de prix se declenche
+#### 3. Ajouter les types pour les imports image (`src/vite-env.d.ts`)
 
-### 3. Supprimer le menu deroulant Services dans le Header
+Declarer les modules `*.jpg?format=webp` et `*.png?format=webp` pour que TypeScript ne genere pas d'erreurs.
 
-**Fichier** : `src/components/Header.tsx`
+#### 4. Mettre a jour tous les imports dans les composants
 
-- Retirer la propriete `dropdown: true` du lien Services dans `navLinks`
-- Supprimer tout le code du dropdown desktop (`serviceItems`, `handleMouseEnter`, `handleMouseLeave`, `dropdownRef`, `servicesOpen`, etc.)
-- Supprimer le dropdown mobile (`mobileServicesOpen`, etc.)
-- Le lien "Services" devient un lien simple comme les autres (Home, Flotte, etc.)
-- Nettoyer les imports inutiles (`ChevronDown`, etc. si plus utilise)
+Modifier chaque import d'image `.jpg` pour ajouter le suffixe `?format=webp&w=800` (ou `&w=1920` pour les images hero plein ecran). Cela genere automatiquement des fichiers WebP optimises et redimensionnes.
 
-### Resume technique
+Fichiers concernes (9 fichiers, ~16 imports) :
 
-| Fichier | Modification |
-|---|---|
-| `src/pages/Booking.tsx` | Grid layout centre + lecture param skipTo pour sauter les etapes |
-| `src/components/home/BookingWidget.tsx` | Logique skipTo selon les champs remplis |
-| `src/components/Header.tsx` | Suppression dropdown Services, lien direct simple |
+| Fichier | Images | Largeur |
+|---|---|---|
+| `src/components/home/HeroSection.tsx` | hero-chauffeur-paris.jpg | 1920px |
+| `src/components/home/FleetPreview.tsx` | 4 vehicules | 800px |
+| `src/components/home/GlobalAxis.tsx` | 3 villes | 800px |
+| `src/components/home/ValuesSection.tsx` | cairo-detail-glove.jpg | 1920px |
+| `src/pages/Fleet.tsx` | 4 vehicules + cairo-interior-night.jpg | 800px / 1920px |
+| `src/pages/About.tsx` | about-chauffeur-detail.jpg | 1920px |
+| `src/pages/Services.tsx` | cairo-pyramids-night.jpg | 1920px |
+| `src/pages/Booking.tsx` | 3 vehicules + booking-interior-night.jpg | 800px / 1920px |
+| `src/pages/Contact.tsx` | contact-airport-chauffeur.jpg | 1920px |
+
+#### 5. Convertir aussi `skyline-monuments.png`
+
+Si utilise quelque part, appliquer le meme traitement au fichier PNG.
+
+### Gains attendus
+
+- Reduction du poids des images de 25-35%
+- Amelioration du LCP (actuellement 4,8s) grace a des fichiers plus legers
+- Le redimensionnement (`w=800` pour les cartes) evite de charger des images surdimensionnees sur mobile
+- Aucun impact visuel : meme qualite percue
+
+### Details techniques
+
+- `vite-imagetools` genere les WebP au moment du build, pas de fichier a convertir manuellement
+- Les images originales JPG restent dans `src/assets/` comme source
+- Le navigateur recoit directement du WebP via le bundle Vite
+- Compatible avec tous les navigateurs modernes (support WebP > 97%)
