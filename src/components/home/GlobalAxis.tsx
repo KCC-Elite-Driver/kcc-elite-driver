@@ -1,9 +1,9 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Landmark, Building2, Globe } from "lucide-react";
-import cairoLibraryDusk from "@/assets/cairo-library-dusk.jpg";
-import parisEiffelNight from "@/assets/paris-eiffel-night.jpg";
-import internationalLuxuryNight from "@/assets/international-luxury-night.jpg";
+import cairoLibraryDusk from "@/assets/cairo-library-dusk.jpg?format=webp&w=800";
+import parisEiffelNight from "@/assets/paris-eiffel-night.jpg?format=webp&w=800";
+import internationalLuxuryNight from "@/assets/international-luxury-night.jpg?format=webp&w=800";
 
 const axisImages = [
   { src: cairoLibraryDusk, alt: "Luxury chauffeur at the Bibliotheca Alexandrina" },
