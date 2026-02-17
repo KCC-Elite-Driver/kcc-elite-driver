@@ -5,7 +5,7 @@ import { Users, Briefcase, ArrowRight } from "lucide-react";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
-const suvImage = "/placeholder.svg";
+import suvImage from "@/assets/soueast-s07-suv.jpg";
 
 const FleetPreview = () => {
   const { t } = useTranslation();

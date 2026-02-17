@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
-const suvImage = "/placeholder.svg";
+import suvImage from "@/assets/soueast-s07-suv.jpg";
 import cairoInteriorNight from "@/assets/cairo-interior-night.jpg";
 import PageMeta from "@/components/PageMeta";
 
