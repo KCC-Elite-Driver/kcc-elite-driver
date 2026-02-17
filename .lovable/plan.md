@@ -1,56 +1,26 @@
 
 
-## Ajouter la categorie SUV a la flotte
+## Regenerer l'image SUV en noir et repositionner en premier
 
 ### Ce qui sera fait
 
-1. **Generation d'image** : Utiliser l'IA de generation d'images (Lovable AI) pour creer une image realiste d'un SUV Soueast S07 en style luxe, coherent avec l'esthetique "Quiet Luxury" du site (ambiance nocturne, tons sombres, contraste eleve).
+1. **Generer une nouvelle image** du Soueast S07 en **noir**, vu de profil (vue laterale comme sur l'image de reference), avec le meme fond sombre/studio que les autres vehicules Mercedes de la flotte. L'image utilisera le modele Gemini pour produire un rendu coherent avec l'esthetique du site. Elle remplacera l'image actuelle dans `src/assets/soueast-s07-suv.jpg`.
 
-2. **Traductions** : Ajouter les cles suivantes dans les 3 langues (FR, EN, AR) dans `translations.ts` :
-   - `fleet_suv` : "SUV" (identique dans les 3 langues)
-   - `fleet_suv_desc` : Description du vehicule SUV (Soueast S07 ou equivalent, confort, espace, polyvalence)
-
-3. **FleetPreview** (`src/components/home/FleetPreview.tsx`) : Ajouter le SUV comme 4e vehicule dans le tableau, avec 5 passagers et 4 bagages. Adapter la grille en `md:grid-cols-2 lg:grid-cols-4` pour accueillir 4 cartes.
-
-4. **Fleet page** (`src/pages/Fleet.tsx`) : Ajouter le SUV avec ses equipements (WiFi, eau, chargeurs, protocole desinfection) et adapter la grille en `lg:grid-cols-4`.
-
-5. **Type translations** : Ajouter `fleet_suv` et `fleet_suv_desc` dans l'interface TypeScript des traductions.
+2. **Deplacer le SUV en premiere position** (tout a gauche) dans les deux fichiers :
 
 ### Details techniques
 
-**translations.ts** - Interface (apres ligne 46) :
-```
-fleet_suv: string;
-fleet_suv_desc: string;
+**Image** : Generation via Lovable AI (google/gemini-3-pro-image-preview) avec un prompt base sur l'image de reference : Soueast S07 noir, vue de profil laterale, fond sombre de studio (gris fonce/noir), eclairage cinematique, sans annotations ni dimensions, style editorial luxe.
+
+**FleetPreview.tsx** - Ligne 13-18 : Reordonner le tableau pour placer le SUV en premier :
+```tsx
+const vehicles = [
+  { name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage },
+  { name: t.fleet_business, desc: t.fleet_business_desc, passengers: 3, luggage: 2, image: mercedesEClass },
+  { name: t.fleet_first, desc: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass },
+  { name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
+];
 ```
 
-**translations.ts** - FR (apres fleet_van_desc) :
-```
-fleet_suv: "SUV",
-fleet_suv_desc: "Soueast S07 ou équivalent. Polyvalence et élégance pour tous vos trajets. Espace généreux, suspensions adaptatives, WiFi très haut débit et rafraîchissements premium à bord.",
-```
-
-**translations.ts** - EN :
-```
-fleet_suv: "SUV",
-fleet_suv_desc: "Soueast S07 or equivalent. Versatility and elegance for all your journeys. Generous space, adaptive suspension, ultra-high-speed WiFi and premium refreshments on board.",
-```
-
-**translations.ts** - AR :
-```
-fleet_suv: "SUV",
-fleet_suv_desc: "سوايست S07 أو ما يعادلها. تعدد الاستخدامات والأناقة لجميع رحلاتك. مساحة واسعة، تعليق تكيفي، واي فاي فائق السرعة ومرطبات فاخرة على متنها.",
-```
-
-**FleetPreview.tsx** :
-- Importer l'image SUV generee
-- Ajouter le 4e vehicule : `{ name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage }`
-- Grille : `grid-cols-1 md:grid-cols-2 lg:grid-cols-4`
-
-**Fleet.tsx** :
-- Importer l'image SUV
-- Ajouter le vehicule SUV avec equipements : WiFi, eau, chargeurs, desinfection
-- Grille : `lg:grid-cols-4`
-
-**Image** : Generee via Lovable AI avec le prompt axe sur un SUV Soueast S07 noir, ambiance nocturne luxe, style editorial. L'image sera sauvegardee dans `src/assets/soueast-s07-suv.jpg`.
+**Fleet.tsx** - Lignes 77-94 : Meme reordonnancement, le SUV avec ses equipements en premier dans le tableau.
 
