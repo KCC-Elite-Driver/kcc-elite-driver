@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg";
+import suvImage from "@/assets/soueast-s07-suv.jpg";
 import cairoInteriorNight from "@/assets/cairo-interior-night.jpg";
 import PageMeta from "@/components/PageMeta";
 
@@ -86,6 +87,10 @@ const Fleet = () => {
       name: t.fleet_van, description: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass,
       amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: LayoutGrid, label: t.fleet_conference }, { icon: Wine, label: t.fleet_refreshments }, { icon: ShieldCheck, label: t.fleet_disinfection }],
     },
+    {
+      name: t.fleet_suv, description: t.fleet_suv_desc, passengers: 5, luggage: 4, image: suvImage,
+      amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: ShieldCheck, label: t.fleet_disinfection }],
+    },
   ];
 
   return (
@@ -111,7 +116,7 @@ const Fleet = () => {
       </section>
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {vehicles.map((vehicle, i) => (
               <VehicleCard key={vehicle.name} {...vehicle} index={i} />
             ))}
