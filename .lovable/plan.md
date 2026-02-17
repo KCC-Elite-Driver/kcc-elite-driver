@@ -1,25 +1,22 @@
 
 
-## Regenerer l'image SUV : profil pur, fond noir/dore, cote conducteur
+## Remplacer l'image SUV par la photo fournie, adaptee au style flotte
 
-### Probleme
-L'image actuelle montre le SUV en vue 3/4 au lieu d'une vue de profil laterale pure comme les trois Mercedes. Il faut aussi corriger le fond (noir profond + reflets dores/ambre) et le cadrage.
+### Etape 1 : Copier l'image fournie dans le projet
+Copier `user-uploads://Starlit_Black_1_80a07f1abb.webp` vers `src/assets/soueast-s07-suv.jpg` (ou `.webp`).
 
-### Ce qui sera fait
+### Etape 2 : Adapter l'image au style "Luxe Silencieux"
+L'image fournie a un fond blanc/clair. Les 3 Mercedes ont un fond noir profond (#050505) avec des reflets dores/ambre. Il faut donc utiliser l'API d'edition d'image (google/gemini-3-pro-image-preview) pour :
+- Remplacer le fond blanc par un fond **noir profond** avec reflets dores/ambre subtils
+- Ajouter l'eclairage cinematique lateral (halo dore chaud) identique aux Mercedes
+- Conserver le vehicule tel quel (profil pur, cote conducteur)
+- Redimensionner/recadrer en **1920x1080 (16:9)** pour correspondre aux autres images de la flotte
 
-Regenerer `src/assets/soueast-s07-suv.jpg` avec ces specifications strictes :
-
-- **Vue de profil laterale pure** (pas de 3/4) : le vehicule est vu exactement de cote, comme les Mercedes
-- **Orientation vers la droite** (nez a droite) pour montrer le cote conducteur (conduite a gauche), coherent avec les autres images de la flotte
-- **Fond noir profond** (#050505) avec reflets dores/ambre chauds sur le sol et la carrosserie
-- **Eclairage cinematique** : halo dore lateral identique aux Mercedes
-- **Cadrage** : vehicule centre, remplissant le cadre horizontalement, proportions 16:9 (1920x1080)
-- **Style** : editorial luxe automobile, pas d'annotations, pas de texte
-
-Aucune modification de code. Seul le fichier image est remplace.
+### Etape 3 : Sauvegarder comme asset
+Le fichier final remplacera `src/assets/soueast-s07-suv.jpg`. Aucune modification de code necessaire car les imports et les classes CSS restent identiques.
 
 ### Details techniques
-
-Prompt optimise pour forcer le profil pur :
-"Black Soueast S07 SUV, EXACT side profile view perfectly perpendicular to camera, facing right, showing driver door side, pure black background with subtle warm golden amber reflections on floor and car body, golden rim lighting on edges, cinematic luxury automotive studio photography, car perfectly centered filling entire frame horizontally, same dark moody studio aesthetic as Mercedes S-Class press photo, absolutely no 3/4 angle, strict 90 degree side view only, no text no annotations no watermarks, high contrast editorial style, 1920x1080 16:9"
+- L'image sera editee via l'edge function AI avec le prompt : "Place this black SUV on a pure black background (#050505) with subtle warm golden amber reflections on the floor and car body edges, cinematic luxury automotive studio lighting with golden rim light, same aesthetic as a Mercedes press photo, 1920x1080 16:9 ratio, no text no watermarks"
+- Format de sortie : JPEG haute qualite
+- Aucune modification de code (FleetPreview.tsx, Fleet.tsx inchanges)
 
