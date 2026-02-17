@@ -1,81 +1,38 @@
 
 
-## Integration Google Places Autocomplete + Distance Matrix + Tarification dynamique
+## Mise a jour de la carte SUV Prestige
 
-### Vue d'ensemble
+### Changements
 
-Remplacer l'autocompletion statique actuelle par l'API Google Places (suggestions d'adresses en temps reel), et ajouter le calcul de prix via la Distance Matrix API avec adaptation automatique de la devise (EUR ou EGP) selon le lieu de depart.
+**1. Textes SUV Prestige** — Mise a jour des descriptions dans `src/i18n/translations.ts`
 
-### Architecture
+- **Francais** : "Soueast S07 ou equivalent. Technologie premium et espace genereux pour vos deplacements exigeants. Un SUV contemporain alliant robustesse et raffinement, offrant une visibilite optimale, un habitacle spacieux et une connectivite complete. Ideal pour les trajets avec importants bagages ou clients appreciant la technologie moderne. Equipe de WiFi tres haut debit, climatisation multi-zones, rafraichissements premium et presse francaise et internationale a bord."
 
-Deux fonctions backend seront creees pour garder la cle API Google cote serveur :
+- **English** : "Soueast S07 or equivalent. Premium technology and generous space for your demanding journeys. A contemporary SUV combining robustness with refinement, offering optimal visibility, spacious interior and complete connectivity. Ideal for journeys with substantial luggage or clients appreciating modern technology. Fitted with ultra-high-speed WiFi, multi-zone climate control, premium refreshments and international press on board."
 
-1. **`google-places`** : proxy vers l'API Google Places Autocomplete
-2. **`calculate-distance`** : appel Distance Matrix API + calcul du tarif
+- **Arabe** : Traduction equivalente du texte anglais, coherente avec le style des autres vehicules.
 
-Le composant `LocationAutocomplete` existant sera remplace par un nouveau `GooglePlacesAutocomplete` qui interroge la fonction backend.
+**2. Capacite passagers** — Passage de 7 a 3 passagers
 
-### Tarification
+- `src/components/home/FleetPreview.tsx` : ligne 14, `passengers: 7` devient `passengers: 3`
+- `src/pages/Fleet.tsx` : ligne 79, `passengers: 7` devient `passengers: 3`
 
-- **France / Europe** : 3 EUR par kilometre
-- **Egypte** : 150 EGP par kilometre
-- Detection automatique basee sur le pays du lieu de depart (retourne par Google Places)
-- Multiplicateur par categorie de vehicule :
-  - SUV Prestige : x1.0
-  - Business : x1.0
-  - First Class : x1.5
-  - Van Prestige : x1.3
+**3. Equipements sur la page Flotte** — `src/pages/Fleet.tsx`
 
-### Fichiers a creer
+Les amenities du SUV Prestige seront alignees avec la description enrichie. Ajout de :
+- Presse (icone `Newspaper`, label `t.fleet_press`)
+- Rafraichissements premium (icone `Wine`, label `t.fleet_refreshments`)
 
-**1. `supabase/functions/google-places/index.ts`**
-- Endpoint POST qui recoit `{ input, sessionToken? }`
-- Appelle l'API Google Places Autocomplete (REST)
-- Restreint les resultats a la France et l'Egypte (`components=country:fr|country:eg`)
-- Retourne les predictions (description, place_id, structured_formatting)
+La liste passera de 4 a 6 equipements, coherent avec le niveau de detail des autres vehicules premium.
 
-**2. `supabase/functions/calculate-distance/index.ts`**
-- Endpoint POST qui recoit `{ origin, destination, vehicle }`
-- Appelle l'API Google Distance Matrix (REST)
-- Detecte le pays d'origine via un appel Place Details ou Geocoding
-- Calcule : distance_km x tarif_base x multiplicateur_vehicule
-- Retourne `{ distance_km, duration_min, price, currency, currency_symbol }`
+**4. Alignement vertical des cartes** — `src/components/home/FleetPreview.tsx`
 
-**3. `src/components/GooglePlacesAutocomplete.tsx`**
-- Nouveau composant qui remplace `LocationAutocomplete`
-- Appelle la fonction backend `google-places` avec debounce (300ms)
-- Affiche les suggestions Google dans le meme style visuel (fond carte, icones)
-- Conserve la liste statique des lieux predéfinis en fallback (si l'API ne repond pas)
-- Meme interface props : `value`, `onChange`, `placeholder`, `iconColor`
-- Nouveau prop optionnel `onPlaceSelect(placeId, description)` pour stocker le place_id
+Correction du probleme d'alignement identifie precedemment : application de `flex flex-col` et `flex-1` pour que les elements du bas (passagers/bagages, CTA) soient alignes sur toutes les cartes malgre les longueurs de description differentes.
 
-### Fichiers a modifier
+### Fichiers modifies
 
-**4. `src/pages/Booking.tsx`**
-- Remplacer `LocationAutocomplete` par `GooglePlacesAutocomplete`
-- Ajouter les states : `pickupPlaceId`, `dropoffPlaceId`, `estimatedPrice`, `currency`, `distanceKm`, `durationMin`, `priceLoading`
-- Appeler `calculate-distance` automatiquement quand pickup + dropoff + vehicle sont remplis
-- Afficher le prix estime sur la carte vehicule (etape 3) et dans le resume (etape 4)
-- Stocker le prix et la devise dans le payload de la reservation envoyee a la base
-
-**5. `src/components/home/BookingWidget.tsx`**
-- Remplacer `LocationAutocomplete` par `GooglePlacesAutocomplete`
-
-**6. `supabase/config.toml`**
-- Ajouter les 2 fonctions avec `verify_jwt = false`
-
-### Details techniques
-
-**Debounce** : Les appels a Google Places sont declenches 300ms apres que l'utilisateur arrete de taper, pour eviter les appels excessifs.
-
-**Gestion d'erreur** : Si l'API Google echoue, le composant affiche la liste statique existante en fallback, assurant que le formulaire reste utilisable.
-
-**Session tokens** : Un session token unique est genere par session de recherche (uuid) pour grouper les requetes Places et reduire la facturation Google.
-
-**Detection devise** : La fonction `calculate-distance` utilise le champ `address_components` du geocoding pour detecter le code pays du depart. Si `country === "EG"` alors EGP, sinon EUR.
-
-**Affichage du prix** :
-- Sur les cartes vehicule (etape 3) : "A partir de XX EUR" ou "A partir de XX EGP"
-- Dans le resume (etape 4) : ligne supplementaire avec le prix estime
-- Indication que le prix est estimatif et peut varier
-
+| Fichier | Modifications |
+|---|---|
+| `src/i18n/translations.ts` | Descriptions SUV FR, EN, AR |
+| `src/components/home/FleetPreview.tsx` | Passagers 7 vers 3, fix alignement flex |
+| `src/pages/Fleet.tsx` | Passagers 7 vers 3, ajout amenities presse + rafraichissements |
