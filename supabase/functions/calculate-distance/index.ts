@@ -62,13 +62,17 @@ Deno.serve(async (req) => {
       getCountryFromPlaceId(originPlaceId, apiKey),
     ]);
 
+    // Debug logs
+    console.log("Distance Matrix raw response:", JSON.stringify(distRes));
+    console.log("Element status:", distRes.rows?.[0]?.elements?.[0]?.status);
+
     if (
       distRes.status !== "OK" ||
       !distRes.rows?.[0]?.elements?.[0] ||
       distRes.rows[0].elements[0].status !== "OK"
     ) {
       return new Response(
-        JSON.stringify({ error: "Cannot calculate distance", details: distRes.status }),
+        JSON.stringify({ error: "Cannot calculate distance", details: distRes.status, elementStatus: distRes.rows?.[0]?.elements?.[0]?.status }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
