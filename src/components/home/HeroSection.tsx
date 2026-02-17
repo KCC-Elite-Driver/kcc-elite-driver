@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import BookingWidget from "./BookingWidget";
-import heroImage from "@/assets/hero-chauffeur-paris.jpg?format=webp&w=1920";
+import heroImage from "@/assets/hero-chauffeur-paris.jpg?format=webp&w=1920&q=75";
 
 const HeroSection = () => {
   const { t } = useTranslation();
@@ -25,28 +25,22 @@ const HeroSection = () => {
 
       <div className="relative z-10 container mx-auto px-4 lg:px-8 py-20 text-center">
         {/* Badge */}
-        <ScrollReveal variant="fade-up">
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-8 backdrop-blur-sm">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-sans font-medium text-primary uppercase tracking-wider">
-              Cairo • Paris • International
-            </span>
-          </div>
-        </ScrollReveal>
+        <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-8 backdrop-blur-sm">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <span className="text-xs font-sans font-medium text-primary uppercase tracking-wider">
+            Cairo • Paris • International
+          </span>
+        </div>
 
         {/* Headline */}
-        <ScrollReveal variant="fade-up" delay={0.1}>
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-            {t.hero_title}
-          </h1>
-        </ScrollReveal>
+        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
+          {t.hero_title}
+        </h1>
 
         {/* Subtitle */}
-        <ScrollReveal variant="fade-up" delay={0.2}>
-          <p className="font-sans text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
-            {t.hero_subtitle}
-          </p>
-        </ScrollReveal>
+        <p className="font-sans text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
+          {t.hero_subtitle}
+        </p>
 
         {/* Booking Widget */}
         <ScrollReveal variant="fade-up" delay={0.4}>
