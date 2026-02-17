@@ -4,14 +4,13 @@ import heroImage from "@/assets/hero-chauffeur-paris.jpg?format=webp&w=1920&q=75
 import heroImageMobile from "@/assets/hero-chauffeur-paris.jpg?format=webp&w=600&q=70";
 
 const LazyBookingWidget = lazy(() => import("./BookingWidget"));
-const LazyScrollReveal = lazy(() => import("@/components/ScrollReveal"));
 
 const HeroSection = () => {
   const { t } = useTranslation();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-16">
-      {/* Background image */}
+      {/* Background image — no animation wrapper to avoid layout reflow */}
       <div className="absolute inset-0">
         <picture>
           <source media="(max-width: 640px)" srcSet={heroImageMobile} type="image/webp" />
@@ -20,7 +19,7 @@ const HeroSection = () => {
             alt="Luxury chauffeur service in Paris"
             className="w-full h-full object-cover"
             loading="eager"
-            decoding="async"
+            decoding="sync"
             fetchPriority="high"
             width={1920}
             height={1080}
@@ -48,11 +47,9 @@ const HeroSection = () => {
           {t.hero_subtitle}
         </p>
 
-        {/* Booking Widget */}
+        {/* Booking Widget — lazy loaded, no animation to avoid reflow */}
         <Suspense fallback={<div className="h-[200px]" />}>
-          <LazyScrollReveal variant="fade-up" delay={0.4}>
-            <LazyBookingWidget />
-          </LazyScrollReveal>
+          <LazyBookingWidget />
         </Suspense>
       </div>
 
