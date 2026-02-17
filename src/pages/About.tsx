@@ -31,8 +31,8 @@ const About = () => {
   return (
     <div className="pt-16">
       <PageMeta
-        title="À propos — KCC-EliteDriver"
-        description="L'histoire d'une excellence née entre Le Caire et Paris. Chauffeurs expérimentés et certifiés."
+        title="À propos — KCC-EliteDriver | Notre Histoire"
+        description="Découvrez KCC-EliteDriver : chauffeurs certifiés VTC, flotte premium, service bilingue entre Le Caire et Paris. Excellence et discrétion depuis 2018."
         path="/about"
       />
       {/* Hero */}

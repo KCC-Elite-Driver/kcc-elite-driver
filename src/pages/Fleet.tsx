@@ -96,8 +96,8 @@ const Fleet = () => {
   return (
     <div className="pt-16">
       <PageMeta
-        title="Notre Flotte — KCC-EliteDriver"
-        description="Découvrez notre flotte de véhicules premium : Mercedes Classe E, S et V. Confort et élégance garantis."
+        title="Flotte Premium — KCC-EliteDriver | Mercedes E, S & V"
+        description="Flotte de véhicules haut de gamme : Mercedes Classe E, S, V et SUV. Wi-Fi, rafraîchissements, désinfection. Réservez votre chauffeur privé."
         path="/fleet"
       />
       <section className="relative py-32 overflow-hidden">
