@@ -1,22 +1,35 @@
 
 
-## Remplacer l'image SUV par la photo fournie, adaptee au style flotte
+## Mise a jour de la carte SUV : titre "SUV Prestige", description enrichie, 7 passagers
 
-### Etape 1 : Copier l'image fournie dans le projet
-Copier `user-uploads://Starlit_Black_1_80a07f1abb.webp` vers `src/assets/soueast-s07-suv.jpg` (ou `.webp`).
+### Ce qui change
 
-### Etape 2 : Adapter l'image au style "Luxe Silencieux"
-L'image fournie a un fond blanc/clair. Les 3 Mercedes ont un fond noir profond (#050505) avec des reflets dores/ambre. Il faut donc utiliser l'API d'edition d'image (google/gemini-3-pro-image-preview) pour :
-- Remplacer le fond blanc par un fond **noir profond** avec reflets dores/ambre subtils
-- Ajouter l'eclairage cinematique lateral (halo dore chaud) identique aux Mercedes
-- Conserver le vehicule tel quel (profil pur, cote conducteur)
-- Redimensionner/recadrer en **1920x1080 (16:9)** pour correspondre aux autres images de la flotte
+Le vehicule SUV existe deja dans le code mais necessite des ajustements pour correspondre exactement aux specifications demandees.
 
-### Etape 3 : Sauvegarder comme asset
-Le fichier final remplacera `src/assets/soueast-s07-suv.jpg`. Aucune modification de code necessaire car les imports et les classes CSS restent identiques.
+### Modifications
+
+**1. Traductions (`src/i18n/translations.ts`)**
+- Renommer `fleet_suv` de "SUV" en **"SUV Prestige"** (FR), "SUV Prestige" (EN), "SUV بريستيج" (AR)
+- Remplacer `fleet_suv_desc` par la nouvelle description :
+  - FR : "Soueast S07 ou equivalent. Alliez technologie de pointe et confort spacieux. Un SUV moderne offrant un habitacle raffine, une connectivite intuitive et une securite renforcee pour une experience de route sereine."
+  - EN/AR : traductions equivalentes
+- Passer les passagers de **5 a 7**
+
+**2. Composant FleetPreview (`src/components/home/FleetPreview.tsx`)**
+- Modifier `passengers: 5` en `passengers: 7` pour le SUV
+
+**3. Page Fleet (`src/pages/Fleet.tsx`)**
+- Modifier `passengers: 5` en `passengers: 7` pour le SUV
+
+### Ce qui ne change PAS
+- L'image (`src/assets/soueast-s07-suv.jpg`) reste celle deja en place
+- La grille est deja configuree en 4 colonnes desktop / 2 colonnes tablette / 1 colonne mobile (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`)
+- Le style des cartes (fond anthracite, texte gris soie, bouton or, police Playfair/Inter) est deja conforme
+- Le CTA "Reserver" avec fleche dorée est deja present
+- L'ordre des vehicules reste : SUV Prestige, Business, First Class, Van Prestige
 
 ### Details techniques
-- L'image sera editee via l'edge function AI avec le prompt : "Place this black SUV on a pure black background (#050505) with subtle warm golden amber reflections on the floor and car body edges, cinematic luxury automotive studio lighting with golden rim light, same aesthetic as a Mercedes press photo, 1920x1080 16:9 ratio, no text no watermarks"
-- Format de sortie : JPEG haute qualite
-- Aucune modification de code (FleetPreview.tsx, Fleet.tsx inchanges)
+- 3 fichiers modifies : `translations.ts`, `FleetPreview.tsx`, `Fleet.tsx`
+- Seuls les textes et le nombre de passagers changent
+- Aucune nouvelle dependance, aucun changement de structure
 
