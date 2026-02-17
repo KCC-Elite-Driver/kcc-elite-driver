@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Users, Briefcase, ArrowRight } from "lucide-react";
-import mercedesEClass from "@/assets/mercedes-e-class.jpg";
-import mercedesSClass from "@/assets/mercedes-s-class.jpg";
-import mercedesVClass from "@/assets/mercedes-v-class.jpg";
-import suvImage from "@/assets/soueast-s07-suv.jpg";
+import mercedesEClass from "@/assets/mercedes-e-class.jpg?format=webp&w=800";
+import mercedesSClass from "@/assets/mercedes-s-class.jpg?format=webp&w=800";
+import mercedesVClass from "@/assets/mercedes-v-class.jpg?format=webp&w=800";
+import suvImage from "@/assets/soueast-s07-suv.jpg?format=webp&w=800";
 
 const FleetPreview = () => {
   const { t } = useTranslation();

@@ -14,10 +14,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import PageMeta from "@/components/PageMeta";
 import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
-import mercedesEClass from "@/assets/mercedes-e-class.jpg";
-import mercedesSClass from "@/assets/mercedes-s-class.jpg";
-import mercedesVClass from "@/assets/mercedes-v-class.jpg";
-import heroImage from "@/assets/booking-interior-night.jpg";
+import mercedesEClass from "@/assets/mercedes-e-class.jpg?format=webp&w=800";
+import mercedesSClass from "@/assets/mercedes-s-class.jpg?format=webp&w=800";
+import mercedesVClass from "@/assets/mercedes-v-class.jpg?format=webp&w=800";
+import heroImage from "@/assets/booking-interior-night.jpg?format=webp&w=1920";
 
 type ServiceType = "airport" | "hourly" | "event" | "city";
 

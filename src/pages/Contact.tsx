@@ -10,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import heroImage from "@/assets/contact-airport-chauffeur.jpg";
+import heroImage from "@/assets/contact-airport-chauffeur.jpg?format=webp&w=1920";
 
 const Contact = () => {
   const { t } = useTranslation();

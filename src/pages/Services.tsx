@@ -4,7 +4,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { Plane, Clock, Star, Route, Check, ArrowRight, UserCheck, MapPin, Timer, ShieldCheck, Globe, Award, AlertCircle } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
 import JsonLd from "@/components/JsonLd";
-import cairoPyramidsNight from "@/assets/cairo-pyramids-night.jpg";
+import cairoPyramidsNight from "@/assets/cairo-pyramids-night.jpg?format=webp&w=1920";
 
 interface ServiceCardProps {
   icon: React.ElementType;

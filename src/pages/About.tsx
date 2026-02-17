@@ -3,7 +3,7 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ShieldCheck, Award, GraduationCap, FileCheck, ArrowRight, Users, Eye, BookOpen, Lock, Star, Scale, Lightbulb } from "lucide-react";
 import PageMeta from "@/components/PageMeta";
-import heroImage from "@/assets/about-chauffeur-detail.jpg";
+import heroImage from "@/assets/about-chauffeur-detail.jpg?format=webp&w=1920";
 
 const About = () => {
   const { t } = useTranslation();

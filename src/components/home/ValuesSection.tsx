@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Lock, Star, Scale, Lightbulb } from "lucide-react";
-import cairoDetailGlove from "@/assets/cairo-detail-glove.jpg";
+import cairoDetailGlove from "@/assets/cairo-detail-glove.jpg?format=webp&w=1920";
 
 const ValuesSection = () => {
   const { t } = useTranslation();

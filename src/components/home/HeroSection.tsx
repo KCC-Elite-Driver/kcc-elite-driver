@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import ScrollReveal from "@/components/ScrollReveal";
 import BookingWidget from "./BookingWidget";
-import heroImage from "@/assets/hero-chauffeur-paris.jpg";
+import heroImage from "@/assets/hero-chauffeur-paris.jpg?format=webp&w=1920";
 
 const HeroSection = () => {
   const { t } = useTranslation();

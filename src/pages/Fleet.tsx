@@ -1,11 +1,11 @@
 import { useTranslation } from "@/i18n/LanguageContext";
 import { Users, Briefcase, Wifi, Droplets, Plug, Newspaper, DoorOpen, LayoutGrid, ArrowRight, Wine, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import mercedesEClass from "@/assets/mercedes-e-class.jpg";
-import mercedesSClass from "@/assets/mercedes-s-class.jpg";
-import mercedesVClass from "@/assets/mercedes-v-class.jpg";
-import suvImage from "@/assets/soueast-s07-suv.jpg";
-import cairoInteriorNight from "@/assets/cairo-interior-night.jpg";
+import mercedesEClass from "@/assets/mercedes-e-class.jpg?format=webp&w=800";
+import mercedesSClass from "@/assets/mercedes-s-class.jpg?format=webp&w=800";
+import mercedesVClass from "@/assets/mercedes-v-class.jpg?format=webp&w=800";
+import suvImage from "@/assets/soueast-s07-suv.jpg?format=webp&w=800";
+import cairoInteriorNight from "@/assets/cairo-interior-night.jpg?format=webp&w=1920";
 import PageMeta from "@/components/PageMeta";
 
 interface VehicleCardProps {
