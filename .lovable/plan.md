@@ -1,27 +1,22 @@
 
+## Passer l'anglais comme langue principale du site
 
-## Generer l'image du Soueast S07 SUV
+### Ce qui a ete verifie
 
-### Objectif
-Creer une image du SUV Soueast S07 noir avec exactement le meme rendu visuel que les 3 Mercedes existantes (E-Class, S-Class, V-Class).
+Les 4 cartes vehicules (SUV Prestige, Business, First Class, Van Prestige) s'affichent correctement sur la page Flotte avec une coherence visuelle : meme fond sombre, meme eclairage cinematique dore, meme style de carte. L'image du SUV Soueast S07 s'integre bien avec les 3 Mercedes.
 
-### Style de reference (commun aux 3 Mercedes)
-- Vue de profil laterale gauche (nez a gauche, arriere a droite)
-- Fond noir profond et uniforme
-- Sol en beton/asphalte gris texturise avec reflets diffus
-- Halo dore/ambre chaud en arriere-plan (sous et derriere le vehicule)
-- Eclairage cinematique avec rim light subtil sur les aretes de la carrosserie
-- Vehicule entierement noir, vitres teintees sombres
-- Format 16:9, resolution elevee
-- Esthetique studio automobile professionnel, PAS de rendu CGI
+Sur la page d'accueil, la section FleetPreview utilise des animations ScrollReveal qui fonctionnent correctement au scroll.
 
-### Prompt de generation
-"A black Soueast S07 SUV, side profile view facing left, in a professional luxury automotive studio photograph. The car is placed on a textured gray concrete floor with realistic soft diffused reflections. Deep black background with a subtle warm golden amber glow behind and underneath the car. Cinematic rim lighting on the car body edges. Tinted dark windows. Photorealistic, high resolution, 16:9 aspect ratio. No text, no watermarks, no borders, no logos."
+### Modifications prevues
 
-### Fichier cree
-- `src/assets/soueast-s07-suv.jpg` : nouvelle image generee
+**1. `src/i18n/LanguageContext.tsx`**
+- Changer la langue par defaut de `"fr"` a `"en"` (3 endroits : defaultContext, useState, defaultContext translations)
 
-### Fichiers modifies
-- `src/components/home/FleetPreview.tsx` : remplacer `const suvImage = "/placeholder.svg"` par `import suvImage from "@/assets/soueast-s07-suv.jpg"`
-- `src/pages/Fleet.tsx` : idem
+**2. `src/components/LanguageSwitcher.tsx`**
+- Reordonner la liste des langues : English en premier, puis Francais, puis Arabe
 
+**3. `index.html`**
+- Mettre `lang="en"` au lieu de `lang="fr"` sur la balise HTML (si applicable)
+
+### Resultat
+Le site s'affichera en anglais par defaut a la premiere visite. Les utilisateurs pourront toujours changer de langue via le selecteur.
