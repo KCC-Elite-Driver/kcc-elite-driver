@@ -1,21 +1,12 @@
-import { useState } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Calendar as CalendarIcon, Clock, Search } from "lucide-react";
-import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale/fr";
-import { enGB } from "date-fns/locale/en-GB";
-import { ar } from "date-fns/locale/ar";
+import { Calendar as CalendarIcon, Clock, Search, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const dateConfig = {
-  fr: { locale: fr, fmt: "dd/MM/yyyy" },
-  en: { locale: enGB, fmt: "MM/dd/yyyy" },
-  ar: { locale: ar, fmt: "dd/MM/yyyy" },
-} as const;
+// Lazy-load heavy dependencies only when user interacts
+const GooglePlacesAutocomplete = lazy(() => import("@/components/GooglePlacesAutocomplete"));
+const CalendarPopover = lazy(() => import("./CalendarPopover"));
 
 const BookingWidget = () => {
   const { t, language } = useTranslation();
@@ -24,9 +15,13 @@ const BookingWidget = () => {
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
   const [date, setDate] = useState<Date>();
+  const [dateLabel, setDateLabel] = useState("");
   const [time, setTime] = useState("");
+  const [activated, setActivated] = useState(false);
 
-  const { locale, fmt } = dateConfig[language];
+  const activate = useCallback(() => {
+    if (!activated) setActivated(true);
+  }, [activated]);
 
   return (
     <div className="w-full max-w-5xl mx-auto">
@@ -56,50 +51,59 @@ const BookingWidget = () => {
         </div>
 
         {/* Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <GooglePlacesAutocomplete
-            value={pickup}
-            onChange={setPickup}
-            placeholder={t.hero_pickup}
-            iconColor="text-primary"
-          />
-          {mode === "oneway" && (
-            <GooglePlacesAutocomplete
-              value={dropoff}
-              onChange={setDropoff}
-              placeholder={t.hero_dropoff}
-              iconColor="text-muted-foreground"
-            />
-          )}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                className={cn(
-                  "w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-left relative focus:outline-none focus:ring-1 focus:ring-primary",
-                  date ? "text-foreground" : "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                {date ? format(date, fmt, { locale }) : t.hero_date}
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                locale={locale}
-                initialFocus
-                className={cn("p-3 pointer-events-auto")}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4" onClick={activate} onFocus={activate}>
+          {/* Pickup */}
+          {activated ? (
+            <Suspense fallback={<PlaceholderInput icon={<MapPin size={16} className="text-primary" />} text={t.hero_pickup} />}>
+              <GooglePlacesAutocomplete
+                value={pickup}
+                onChange={setPickup}
+                placeholder={t.hero_pickup}
+                iconColor="text-primary"
               />
-            </PopoverContent>
-          </Popover>
+            </Suspense>
+          ) : (
+            <PlaceholderInput icon={<MapPin size={16} className="text-primary" />} text={t.hero_pickup} />
+          )}
+
+          {/* Dropoff */}
+          {mode === "oneway" && (
+            activated ? (
+              <Suspense fallback={<PlaceholderInput icon={<MapPin size={16} className="text-muted-foreground" />} text={t.hero_dropoff} />}>
+                <GooglePlacesAutocomplete
+                  value={dropoff}
+                  onChange={setDropoff}
+                  placeholder={t.hero_dropoff}
+                  iconColor="text-muted-foreground"
+                />
+              </Suspense>
+            ) : (
+              <PlaceholderInput icon={<MapPin size={16} className="text-muted-foreground" />} text={t.hero_dropoff} />
+            )
+          )}
+
+          {/* Date */}
+          {activated ? (
+            <Suspense fallback={<PlaceholderInput icon={<CalendarIcon size={16} className="text-muted-foreground" />} text={t.hero_date} />}>
+              <CalendarPopover
+                date={date}
+                onSelect={(d, label) => { setDate(d); setDateLabel(label); }}
+                placeholder={t.hero_date}
+                language={language}
+              />
+            </Suspense>
+          ) : (
+            <PlaceholderInput icon={<CalendarIcon size={16} className="text-muted-foreground" />} text={t.hero_date} />
+          )}
+
+          {/* Time */}
           <div className="relative w-full">
             <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
             <input
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
+              onFocus={activate}
               className={cn(
                 "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0",
                 time ? "text-foreground" : "text-transparent"
@@ -120,10 +124,14 @@ const BookingWidget = () => {
               const params = new URLSearchParams();
               if (pickup) params.set("pickup", pickup);
               if (dropoff) params.set("dropoff", dropoff);
-              if (date) params.set("date", format(date, "yyyy-MM-dd"));
+              if (date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, "0");
+                const d = String(date.getDate()).padStart(2, "0");
+                params.set("date", `${y}-${m}-${d}`);
+              }
               if (time) params.set("time", time);
 
-              // Smart skipTo logic
               if (mode === "oneway") {
                 params.set("service", "airport");
                 if (pickup && dropoff && date && time) {
@@ -150,5 +158,15 @@ const BookingWidget = () => {
     </div>
   );
 };
+
+/** Lightweight placeholder that matches real input styling */
+const PlaceholderInput = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
+  <div className="relative w-full">
+    <span className="absolute left-3 top-1/2 -translate-y-1/2">{icon}</span>
+    <div className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-muted-foreground cursor-text">
+      {text}
+    </div>
+  </div>
+);
 
 export default BookingWidget;

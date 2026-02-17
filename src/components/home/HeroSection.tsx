@@ -13,19 +13,18 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center justify-center pt-16">
       {/* Background image */}
       <div className="absolute inset-0">
-        <picture>
-          <source media="(max-width: 640px)" srcSet={heroImageMobile} type="image/webp" />
-          <img
-            src={heroImage}
-            alt="Luxury chauffeur service in Paris"
-            className="w-full h-full object-cover"
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-            width={1920}
-            height={1080}
-          />
-        </picture>
+        <img
+          srcSet={`${heroImageMobile} 600w, ${heroImage} 1920w`}
+          sizes="100vw"
+          src={heroImage}
+          alt="Luxury chauffeur service in Paris"
+          className="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          width={1920}
+          height={1080}
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
       </div>
 
