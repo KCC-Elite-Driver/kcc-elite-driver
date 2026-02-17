@@ -1,14 +1,13 @@
-import { lazy, Suspense } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import { lazy, Suspense } from "react";
 import Layout from "@/components/Layout";
 import Index from "./pages/Index";
 import ScrollToTop from "@/components/ScrollToTop";
-
-const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
-const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
-const TooltipProvider = lazy(() => import("@/components/ui/tooltip").then(m => ({ default: m.TooltipProvider })));
 
 const Fleet = lazy(() => import("./pages/Fleet"));
 const Services = lazy(() => import("./pages/Services"));
@@ -42,11 +41,10 @@ const PageFallback = () => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
-      <Suspense fallback={null}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
           <ScrollToTop />
           <Suspense fallback={<PageFallback />}>
             <Routes>
@@ -82,9 +80,8 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </Suspense>
+        </BrowserRouter>
+      </TooltipProvider>
     </LanguageProvider>
   </QueryClientProvider>
 );
