@@ -526,8 +526,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     fleet_first_desc: "Mercedes Classe S ou équivalent. L'excellence absolue pour vos moments les plus sensibles. Votre bureau mobile privé : WiFi très haut débit, climatisation zoning, espaces de travail intégrés, rafraîchissements haut de gamme, lecture sélectionnée.",
     fleet_van: "Van Prestige",
     fleet_van_desc: "Mercedes Classe V ou équivalent. Espace sans compromis pour délégations officielles et événements privés. Équipée de WiFi très haut débit, climatisation zoning, bar intégré, divertissement discret et configuration modulable selon vos besoins.",
-    fleet_suv: "SUV",
-    fleet_suv_desc: "Soueast S07 ou équivalent. Polyvalence et élégance pour tous vos trajets. Espace généreux, suspensions adaptatives, WiFi très haut débit et rafraîchissements premium à bord.",
+    fleet_suv: "SUV Prestige",
+    fleet_suv_desc: "Soueast S07 ou équivalent. Alliez technologie de pointe et confort spacieux. Un SUV moderne offrant un habitacle raffiné, une connectivité intuitive et une sécurité renforcée pour une expérience de route sereine.",
 
     fleet_page_title: "Notre Flotte",
     fleet_page_subtitle: "Sélectionnés avec soin pour chaque contexte",
@@ -992,8 +992,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     fleet_first_desc: "Mercedes-Benz S-Class or equivalent. Absolute excellence for your most important moments. Your private mobile office: ultra-high-speed WiFi, multi-zone climate control, integrated workspace, premium refreshments, curated reading materials.",
     fleet_van: "Van Prestige",
     fleet_van_desc: "Mercedes-Benz V-Class or equivalent. Uncompromised space for official delegations and private events. Fitted with ultra-high-speed WiFi, multi-zone climate control, integrated bar, subtle entertainment and modular seating for your specific needs.",
-    fleet_suv: "SUV",
-    fleet_suv_desc: "Soueast S07 or equivalent. Versatility and elegance for all your journeys. Generous space, adaptive suspension, ultra-high-speed WiFi and premium refreshments on board.",
+    fleet_suv: "SUV Prestige",
+    fleet_suv_desc: "Soueast S07 or equivalent. Cutting-edge technology meets spacious comfort. A modern SUV offering a refined cabin, intuitive connectivity and enhanced safety for a serene driving experience.",
 
     fleet_page_title: "Our Fleet",
     fleet_page_subtitle: "Carefully selected for every occasion",
@@ -1455,8 +1455,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     fleet_first_desc: "مرسيدس الفئة S أو ما يعادلها. التميّز المطلق لأهم لحظاتك. مكتبك المتنقل الخاص: واي فاي فائق السرعة، تكييف متعدد المناطق، مساحات عمل مدمجة، مرطبات فاخرة، قراءة مختارة.",
     fleet_van: "فان بريستيج",
     fleet_van_desc: "مرسيدس الفئة V أو ما يعادلها. مساحة بلا تنازل للوفود الرسمية والمناسبات الخاصة. مجهزة بواي فاي فائق السرعة، تكييف متعدد المناطق، بار مدمج، ترفيه راقٍ وتكوين قابل للتعديل حسب احتياجاتك.",
-    fleet_suv: "SUV",
-    fleet_suv_desc: "سوايست S07 أو ما يعادلها. تعدد الاستخدامات والأناقة لجميع رحلاتك. مساحة واسعة، تعليق تكيفي، واي فاي فائق السرعة ومرطبات فاخرة على متنها.",
+    fleet_suv: "SUV بريستيج",
+    fleet_suv_desc: "سوايست S07 أو ما يعادلها. اجمع بين التكنولوجيا المتطورة والراحة الفسيحة. سيارة SUV عصرية توفر مقصورة راقية واتصالاً بديهياً وأماناً معززاً لتجربة قيادة هادئة.",
 
     fleet_page_title: "أسطولنا",
     fleet_page_subtitle: "مختارة بعناية لكل سياق",
