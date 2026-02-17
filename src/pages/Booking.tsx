@@ -92,11 +92,14 @@ const Booking = () => {
     paymentMethod: "card",
   });
 
-  // Pre-fill from URL params (re-booking)
+  // Pre-fill from URL params (re-booking or skipTo from homepage widget)
   useEffect(() => {
     const service = searchParams.get("service") as ServiceType | null;
     const pickup = searchParams.get("pickup");
     const dropoff = searchParams.get("dropoff");
+    const date = searchParams.get("date");
+    const time = searchParams.get("time");
+    const skipTo = searchParams.get("skipTo");
     const vehicle = searchParams.get("vehicle");
     const firstname = searchParams.get("firstname");
     const lastname = searchParams.get("lastname");
@@ -108,6 +111,8 @@ const Booking = () => {
         ...(service && { service }),
         ...(pickup && { pickup }),
         ...(dropoff && { dropoff }),
+        ...(date && { date }),
+        ...(time && { time }),
         ...(vehicle && { vehicle }),
         ...(firstname && { firstname }),
         ...(lastname && { lastname }),
@@ -115,6 +120,18 @@ const Booking = () => {
         ...(phone && { phone }),
       }));
     }
+    if (skipTo) {
+      setStep(Number(skipTo));
+    }
+    // Resolve placeIds for pre-filled addresses
+    const resolvePlace = async (address: string, setter: (id: string) => void) => {
+      try {
+        const { data: res } = await supabase.functions.invoke("google-places", { body: { query: address } });
+        if (res?.predictions?.[0]?.place_id) setter(res.predictions[0].place_id);
+      } catch {}
+    };
+    if (pickup) resolvePlace(pickup, setPickupPlaceId);
+    if (dropoff) resolvePlace(dropoff, setDropoffPlaceId);
   }, [searchParams]);
 
   // Pre-fill email from logged-in user
@@ -355,9 +372,9 @@ const Booking = () => {
             ))}
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="lg:grid lg:grid-cols-[1fr_320px] gap-8 flex flex-col">
             {/* Left: Form */}
-            <div className="flex-1 max-w-3xl">
+            <div className="max-w-3xl w-full">
               <AnimatePresence mode="wait">
                 <motion.div key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
 
@@ -669,7 +686,7 @@ const Booking = () => {
             </div>
 
             {/* Right: Trip Summary Sidebar */}
-            <div className="lg:w-80 shrink-0">
+            <div className="self-start min-h-0">
               <div className="lg:sticky lg:top-24">
                 <div className="rounded-lg border border-border bg-card p-5">
                   <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t.booking_summary || "Récapitulatif"}</h3>

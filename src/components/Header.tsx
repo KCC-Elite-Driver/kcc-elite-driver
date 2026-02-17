@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, User } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -11,40 +11,15 @@ const Header = () => {
   const { user, isAdmin } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
-
-  const serviceItems = [
-    { label: t.services_dropdown_airport, anchor: "#airport" },
-    { label: t.services_dropdown_hourly, anchor: "#hourly" },
-    { label: t.services_dropdown_event, anchor: "#event" },
-    { label: t.services_dropdown_city, anchor: "#intercity" },
-    { label: t.services_dropdown_cultural, anchor: "#cultural" },
-  ];
 
   const navLinks = [
     { label: t.nav_home, path: "/" },
     { label: t.nav_fleet, path: "/fleet" },
-    { label: t.nav_services, path: "/services", dropdown: true },
+    { label: t.nav_services, path: "/services" },
     { label: t.nav_about, path: "/about" },
     { label: t.nav_booking, path: "/booking" },
     { label: t.nav_contact, path: "/contact" },
   ];
-
-  useEffect(() => {
-    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
-  }, []);
-
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setServicesOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => setServicesOpen(false), 200);
-  };
 
   return (
     <>
@@ -56,63 +31,19 @@ const Header = () => {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) =>
-              link.dropdown ? (
-                <div
-                  key={link.path}
-                  className="relative"
-                  ref={dropdownRef}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <Link
-                    to={link.path}
-                    className={`text-sm font-sans font-medium transition-colors duration-200 flex items-center gap-1 ${
-                      location.pathname === link.path
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {link.label}
-                    <ChevronDown size={14} className={`transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`} />
-                  </Link>
-                  {servicesOpen && (
-                    <div className="absolute top-full start-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-xl z-50 py-2 animate-fade-in">
-                      {serviceItems.map((item) => (
-                        <Link
-                          key={item.anchor + item.label}
-                          to={`/services${item.anchor}`}
-                          onClick={() => setServicesOpen(false)}
-                          className="block px-4 py-2.5 text-sm font-sans text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors duration-150"
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
-                      <div className="border-t border-border my-1" />
-                      <Link
-                        to="/services"
-                        onClick={() => setServicesOpen(false)}
-                        className="block px-4 py-2.5 text-sm font-sans font-semibold text-primary hover:bg-secondary transition-colors duration-150"
-                      >
-                        {t.services_dropdown_view_all}
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-sm font-sans font-medium transition-colors duration-200 ${
-                    location.pathname === link.path
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              )
-            )}
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`text-sm font-sans font-medium transition-colors duration-200 ${
+                  location.pathname === link.path
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Desktop right side */}
@@ -156,58 +87,20 @@ const Header = () => {
               <div className="pb-2">
                 <LanguageSwitcher />
               </div>
-              {navLinks.map((link) =>
-                link.dropdown ? (
-                  <div key={link.path}>
-                    <button
-                      onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                      className={`text-lg font-sans font-medium transition-colors duration-200 flex items-center gap-2 w-full ${
-                        location.pathname === link.path
-                          ? "text-primary"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {link.label}
-                      <ChevronDown size={16} className={`transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`} />
-                    </button>
-                    {mobileServicesOpen && (
-                      <div className="mt-2 ms-4 flex flex-col gap-3">
-                        {serviceItems.map((item) => (
-                          <Link
-                            key={item.anchor + item.label}
-                            to={`/services${item.anchor}`}
-                            onClick={() => { setMobileOpen(false); setMobileServicesOpen(false); }}
-                            className="text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
-                        <div className="border-t border-border my-1" />
-                        <Link
-                          to="/services"
-                          onClick={() => { setMobileOpen(false); setMobileServicesOpen(false); }}
-                          className="text-sm font-sans font-semibold text-primary hover:text-foreground transition-colors"
-                        >
-                          {t.services_dropdown_view_all}
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setMobileOpen(false)}
-                    className={`text-lg font-sans font-medium transition-colors duration-200 ${
-                      location.pathname === link.path
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                )
-              )}
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-lg font-sans font-medium transition-colors duration-200 ${
+                    location.pathname === link.path
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
               <div className="pt-4 border-t border-border" />
               <Link
                 to="/booking"

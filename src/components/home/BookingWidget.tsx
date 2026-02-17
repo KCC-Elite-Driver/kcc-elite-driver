@@ -120,9 +120,24 @@ const BookingWidget = () => {
               const params = new URLSearchParams();
               if (pickup) params.set("pickup", pickup);
               if (dropoff) params.set("dropoff", dropoff);
-              if (date) params.set("date", date.toISOString());
+              if (date) params.set("date", format(date, "yyyy-MM-dd"));
               if (time) params.set("time", time);
-              params.set("mode", mode);
+
+              // Smart skipTo logic
+              if (mode === "oneway") {
+                params.set("service", "airport");
+                if (pickup && dropoff && date && time) {
+                  params.set("skipTo", "3");
+                } else if (pickup && date && time) {
+                  params.set("skipTo", "1");
+                }
+              } else if (mode === "hourly") {
+                params.set("service", "hourly");
+                if (pickup && date && time) {
+                  params.set("skipTo", "3");
+                }
+              }
+
               navigate(`/booking?${params.toString()}`);
             }}
             className="gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 flex items-center gap-2"
