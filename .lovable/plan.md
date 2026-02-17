@@ -1,38 +1,35 @@
 
 
-## Mise a jour de la carte SUV Prestige
+## Raccourcir la description SUV Prestige (style identique aux autres cartes)
 
-### Changements
+### Probleme
 
-**1. Textes SUV Prestige** — Mise a jour des descriptions dans `src/i18n/translations.ts`
+La description SUV Prestige fait ~60 mots alors que les 3 autres vehicules font ~35 mots chacun. Le texte actuel ajoute des details superflus ("visibilite optimale, habitacle spacieux, connectivite complete, ideal pour les trajets...") absents des autres cartes.
 
-- **Francais** : "Soueast S07 ou equivalent. Technologie premium et espace genereux pour vos deplacements exigeants. Un SUV contemporain alliant robustesse et raffinement, offrant une visibilite optimale, un habitacle spacieux et une connectivite complete. Ideal pour les trajets avec importants bagages ou clients appreciant la technologie moderne. Equipe de WiFi tres haut debit, climatisation multi-zones, rafraichissements premium et presse francaise et internationale a bord."
+### Structure des autres descriptions (a reproduire)
 
-- **English** : "Soueast S07 or equivalent. Premium technology and generous space for your demanding journeys. A contemporary SUV combining robustness with refinement, offering optimal visibility, spacious interior and complete connectivity. Ideal for journeys with substantial luggage or clients appreciating modern technology. Fitted with ultra-high-speed WiFi, multi-zone climate control, premium refreshments and international press on board."
+Toutes les cartes suivent le meme schema en 2 phrases :
+1. **Modele + positionnement** (ex: "Mercedes Classe E ou equivalent. Confort discret et connectivite complete pour vos deplacements professionnels.")
+2. **Liste equipements** (ex: "Equipee de WiFi tres haut debit, climatisation intelligente, rafraichissements premium et presse a bord.")
 
-- **Arabe** : Traduction equivalente du texte anglais, coherente avec le style des autres vehicules.
+### Nouveaux textes
 
-**2. Capacite passagers** — Passage de 7 a 3 passagers
+**Francais** :
+"Soueast S07 ou equivalent. Technologie premium et espace genereux pour vos deplacements exigeants. Equipe de WiFi tres haut debit, climatisation multi-zones, rafraichissements premium et presse francaise et internationale a bord."
 
-- `src/components/home/FleetPreview.tsx` : ligne 14, `passengers: 7` devient `passengers: 3`
-- `src/pages/Fleet.tsx` : ligne 79, `passengers: 7` devient `passengers: 3`
+**English** :
+"Soueast S07 or equivalent. Premium technology and generous space for your demanding journeys. Fitted with ultra-high-speed WiFi, multi-zone climate control, premium refreshments and international press on board."
 
-**3. Equipements sur la page Flotte** — `src/pages/Fleet.tsx`
+**Arabe** :
+"سوايست S07 أو ما يعادلها. تقنية متميزة ومساحة سخية لرحلاتكم المتطلبة. مجهزة بواي فاي فائق السرعة، تكييف متعدد المناطق، مرطبات فاخرة وصحافة فرنسية ودولية على متنها."
 
-Les amenities du SUV Prestige seront alignees avec la description enrichie. Ajout de :
-- Presse (icone `Newspaper`, label `t.fleet_press`)
-- Rafraichissements premium (icone `Wine`, label `t.fleet_refreshments`)
+### Equipements (page Flotte)
 
-La liste passera de 4 a 6 equipements, coherent avec le niveau de detail des autres vehicules premium.
+Les amenities restent identiques a ce qui est deja configure (WiFi, eau, chargeurs, presse, rafraichissements, desinfection) — aucun changement.
 
-**4. Alignement vertical des cartes** — `src/components/home/FleetPreview.tsx`
+### Fichier modifie
 
-Correction du probleme d'alignement identifie precedemment : application de `flex flex-col` et `flex-1` pour que les elements du bas (passagers/bagages, CTA) soient alignes sur toutes les cartes malgre les longueurs de description differentes.
-
-### Fichiers modifies
-
-| Fichier | Modifications |
+| Fichier | Modification |
 |---|---|
-| `src/i18n/translations.ts` | Descriptions SUV FR, EN, AR |
-| `src/components/home/FleetPreview.tsx` | Passagers 7 vers 3, fix alignement flex |
-| `src/pages/Fleet.tsx` | Passagers 7 vers 3, ajout amenities presse + rafraichissements |
+| `src/i18n/translations.ts` | Raccourcir `fleet_suv_desc` en FR, EN, AR (~35 mots, meme style que Business/First/Van) |
+
