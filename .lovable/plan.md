@@ -1,49 +1,45 @@
 
+## Corrections layout booking + navigation intelligente + simplification header
 
-## Corrections du recapitulatif lateral et du calcul de prix
+### 1. Egaliser la hauteur du sommaire avec le formulaire et centrer les cartes
 
-### Probleme identifie : le prix ne s'affiche jamais
+**Fichier** : `src/pages/Booking.tsx`
 
-**Cause racine** : Quand l'utilisateur selectionne une adresse depuis la liste statique (ex: "Aeroport Paris-Orly"), la fonction `handleSelectStatic` dans `GooglePlacesAutocomplete.tsx` n'appelle PAS `onPlaceSelect(placeId)`. Donc `pickupPlaceId` et `dropoffPlaceId` restent vides, et le calcul de prix ne se declenche jamais.
+- Remplacer le layout `flex-col lg:flex-row` par un layout ou le formulaire est centre (max-w-3xl mx-auto) et le sommaire est positionne en sidebar droite avec `lg:grid lg:grid-cols-[1fr_320px]`
+- Ajouter `min-h-0` et `self-start` au sommaire pour qu'il colle en haut sans depasser
+- Garder `lg:sticky lg:top-24` sur le sommaire
+- Le formulaire reste centre visuellement grace au grid
 
-De plus, les adresses statiques n'ont pas de `place_id` Google associe. Il faut soit :
-- Effectuer un appel supplementaire "Find Place from Text" pour obtenir le place_id a partir du nom
-- Soit ne declencher le calcul que pour les adresses selectionnees via Google (qui ont un place_id)
+### 2. Navigation intelligente depuis le BookingWidget (page d'accueil)
 
-### Modifications prevues
+**Fichier** : `src/components/home/BookingWidget.tsx`
 
-**1. `src/components/GooglePlacesAutocomplete.tsx` - Recuperer le placeId pour les adresses statiques**
+Quand l'utilisateur clique "Rechercher" depuis la page d'accueil :
+- Si mode = "oneway" et que pickup + dropoff + date + time sont remplis : envoyer vers `/booking` avec un param `skipTo=3` (etape vehicule) + les params pre-remplis + `service=airport`
+- Si mode = "oneway" et que seuls pickup + date + time sont remplis (pas de dropoff) : envoyer avec `skipTo=1` pour completer la destination
+- Si mode = "hourly" et que pickup + date + time sont remplis : envoyer avec `skipTo=3` + `service=hourly`
 
-- Modifier `handleSelectStatic` pour qu'il appelle l'edge function `google-places` avec le nom exact de l'adresse, recupere le premier `place_id` retourne, puis appelle `onPlaceSelect(placeId, name)`
-- Alternative plus simple : ajouter les `place_id` connus en dur pour les locations statiques les plus frequentes (CDG, Orly, etc.)
-- Approche retenue : faire un appel `google-places` en arriere-plan apres la selection statique pour obtenir le `place_id`, puis appeler `onPlaceSelect`
+**Fichier** : `src/pages/Booking.tsx`
 
-**2. `src/pages/Booking.tsx` - Ajouter les extras (meet & greet) dans le recapitulatif**
+- Lire le param `skipTo` depuis les searchParams
+- Pre-remplir `data.service`, `data.pickup`, `data.dropoff`, `data.date`, `data.time` depuis les params
+- Appeler `setStep(Number(skipTo))` dans le useEffect d'initialisation
+- S'assurer que les placeIds sont aussi recuperes (via un appel google-places) pour que le calcul de prix se declenche
 
-- Dans la sidebar, ajouter une ligne "VIP Meet & Greet" quand `data.meetGreet === true` et que le pickup est un aeroport/gare
-- Afficher un prix fixe pour ce service (ex: 30 EUR / 500 EGP selon la devise detectee)
-- Mettre a jour le TOTAL pour inclure l'extra
-- Ajouter les extras pertinents : nombre de passagers, nombre de bagages, numero de vol
+### 3. Supprimer le menu deroulant Services dans le Header
 
-**3. `src/pages/Booking.tsx` - Enrichir la sidebar avec toutes les informations**
+**Fichier** : `src/components/Header.tsx`
 
-La sidebar affichera progressivement toutes les infos au fur et a mesure des etapes :
-- **Etape 0** : Service selectionne (icone + label)
-- **Etape 1** : Date/heure, Pickup, Destination, Distance, Duree
-- **Etape 2** : Nom du passager, email, telephone, nombre passagers/bagages, notes, numero de vol, Meet & Greet
-- **Etape 3** : Vehicule selectionne avec prix
-- **Etape 4** : Methode de paiement + Total final
-
-**4. `supabase/functions/calculate-distance/index.ts` - Ajout de logs de debug**
-
-- Ajouter un `console.log` du resultat Distance Matrix brut pour diagnostiquer les erreurs 400
-- Logger `distRes.rows[0].elements[0].status` pour comprendre pourquoi certains trajets echouent
+- Retirer la propriete `dropdown: true` du lien Services dans `navLinks`
+- Supprimer tout le code du dropdown desktop (`serviceItems`, `handleMouseEnter`, `handleMouseLeave`, `dropdownRef`, `servicesOpen`, etc.)
+- Supprimer le dropdown mobile (`mobileServicesOpen`, etc.)
+- Le lien "Services" devient un lien simple comme les autres (Home, Flotte, etc.)
+- Nettoyer les imports inutiles (`ChevronDown`, etc. si plus utilise)
 
 ### Resume technique
 
 | Fichier | Modification |
 |---|---|
-| `src/components/GooglePlacesAutocomplete.tsx` | Appel google-places apres selection statique pour obtenir le place_id |
-| `src/pages/Booking.tsx` | Sidebar enrichie avec extras, passager, service, et total dynamique |
-| `supabase/functions/calculate-distance/index.ts` | Logs de debug pour diagnostiquer les erreurs |
-
+| `src/pages/Booking.tsx` | Grid layout centre + lecture param skipTo pour sauter les etapes |
+| `src/components/home/BookingWidget.tsx` | Logique skipTo selon les champs remplis |
+| `src/components/Header.tsx` | Suppression dropdown Services, lien direct simple |
