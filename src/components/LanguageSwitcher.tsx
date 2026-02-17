@@ -12,8 +12,8 @@ import gbFlag from "@/assets/flags/gb.svg";
 import egFlag from "@/assets/flags/eg.svg";
 
 const languages: { code: Language; flag: string; name: string }[] = [
-  { code: "fr", flag: frFlag, name: "Français" },
   { code: "en", flag: gbFlag, name: "English" },
+  { code: "fr", flag: frFlag, name: "Français" },
   { code: "ar", flag: egFlag, name: "العربية" },
 ];
 
