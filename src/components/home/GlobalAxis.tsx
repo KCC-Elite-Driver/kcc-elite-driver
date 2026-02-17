@@ -47,6 +47,8 @@ const GlobalAxis = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                     decoding="async"
+                    width={800}
+                    height={450}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
                 </div>
