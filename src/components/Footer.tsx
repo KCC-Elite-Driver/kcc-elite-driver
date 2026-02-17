@@ -13,7 +13,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <img src={logo} alt="KCC-EliteDriver" className="h-32 w-auto object-contain" loading="lazy" decoding="async" width={160} height={160} />
+              <img src={logo} alt="KCC-EliteDriver" className="h-32 w-auto object-contain aspect-square" loading="lazy" decoding="async" width={160} height={160} />
             </Link>
             <p className="text-muted-foreground text-sm font-sans leading-relaxed mb-2">
               {t.footer_tagline}

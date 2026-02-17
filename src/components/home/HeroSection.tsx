@@ -14,7 +14,7 @@ const HeroSection = () => {
       {/* Background image */}
       <div className="absolute inset-0">
         <picture>
-          <source media="(max-width: 768px)" srcSet={heroImageMobile} />
+          <source media="(max-width: 640px)" srcSet={heroImageMobile} type="image/webp" />
           <img
             src={heroImage}
             alt="Luxury chauffeur service in Paris"
