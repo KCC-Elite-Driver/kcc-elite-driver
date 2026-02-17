@@ -16,7 +16,9 @@ export function useAuth() {
       .select("role")
       .eq("user_id", userId)
       .maybeSingle();
-    setRole((data?.role as AppRole) ?? "user");
+    const r = (data?.role as AppRole) ?? "user";
+    setRole(r);
+    return r;
   }, []);
 
   useEffect(() => {
@@ -46,8 +48,12 @@ export function useAuth() {
   }, [fetchRole]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!error && data.user) {
+      const r = await fetchRole(data.user.id);
+      return { error, role: r };
+    }
+    return { error, role: null };
   };
 
   const signUp = async (email: string, password: string) => {
