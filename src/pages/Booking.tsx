@@ -675,6 +675,14 @@ const Booking = () => {
                   <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t.booking_summary || "Récapitulatif"}</h3>
                   
                   <div className="space-y-3 text-sm font-sans">
+                    {/* Service type */}
+                    {data.service && (
+                      <div className="flex items-center gap-2 text-foreground">
+                        {(() => { const svc = services.find(s => s.key === data.service); return svc ? <svc.icon size={14} className="text-primary shrink-0" /> : null; })()}
+                        <span className="font-medium">{getServiceLabel(data.service)}</span>
+                      </div>
+                    )}
+
                     {/* Date & Time */}
                     {(data.date || data.time) && (
                       <div className="flex items-center gap-2 text-foreground">
@@ -722,6 +730,42 @@ const Booking = () => {
                       </div>
                     )}
 
+                    {/* Passenger info */}
+                    {(data.firstname || data.lastname) && (
+                      <div className="pt-2 border-t border-border space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">{t.booking_firstname}</span>
+                          <span className="text-foreground font-medium">{data.firstname} {data.lastname}</span>
+                        </div>
+                        {data.email && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground"><Mail size={12} className="inline mr-1" />{t.booking_email}</span>
+                            <span className="text-foreground text-xs truncate max-w-[55%]">{data.email}</span>
+                          </div>
+                        )}
+                        {data.phone && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground"><Phone size={12} className="inline mr-1" />{t.booking_phone}</span>
+                            <span className="text-foreground text-xs">{data.phoneCode} {data.phone}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">{t.booking_passengers_label}</span>
+                          <span className="text-foreground font-medium">{data.passengers}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">{t.booking_luggage_label}</span>
+                          <span className="text-foreground font-medium">{data.luggage}</span>
+                        </div>
+                        {data.flightNumber && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">{t.booking_flight_number}</span>
+                            <span className="text-foreground font-medium">{data.flightNumber}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Vehicle */}
                     {data.vehicle && (
                       <div className="pt-2 border-t border-border">
@@ -732,20 +776,25 @@ const Booking = () => {
                       </div>
                     )}
 
-                    {/* Price */}
+                    {/* Price + Extras + Total */}
                     {estimatedPrice != null && (
-                      <div className="pt-2 border-t border-border">
+                      <div className="pt-2 border-t border-border space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Prix</span>
-                          <span className="text-foreground font-medium">{estimatedPrice}{priceCurrencySymbol}</span>
+                          <span className="text-muted-foreground">Prix trajet</span>
+                          <span className="text-foreground font-medium">{estimatedPrice} {priceCurrencySymbol}</span>
                         </div>
-                        <div className="flex justify-between text-muted-foreground">
-                          <span>Extra</span>
-                          <span>—</span>
-                        </div>
+                        {/* Meet & Greet extra */}
+                        {data.meetGreet && isAirportOrStation && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground flex items-center gap-1"><Shield size={12} className="text-primary" /> VIP Meet & Greet</span>
+                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? "500 E£" : "30 €"}</span>
+                          </div>
+                        )}
                         <div className="flex justify-between pt-2 mt-2 border-t border-border">
                           <span className="font-semibold text-foreground">TOTAL</span>
-                          <span className="font-bold text-primary text-base">{estimatedPrice}{priceCurrencySymbol}</span>
+                          <span className="font-bold text-primary text-base">
+                            {(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 500 : 30) : 0))} {priceCurrencySymbol}
+                          </span>
                         </div>
                       </div>
                     )}
@@ -758,7 +807,7 @@ const Booking = () => {
                     )}
 
                     {/* Empty state */}
-                    {!data.pickup && !data.date && !data.vehicle && !priceLoading && (
+                    {!data.pickup && !data.date && !data.vehicle && !data.service && !priceLoading && (
                       <p className="text-xs text-muted-foreground italic">{"Les détails de votre trajet s'afficheront ici au fur et à mesure."}</p>
                     )}
                   </div>

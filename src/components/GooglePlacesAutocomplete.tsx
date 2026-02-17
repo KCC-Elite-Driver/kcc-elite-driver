@@ -135,9 +135,25 @@ const GooglePlacesAutocomplete = ({
     sessionTokenRef.current = crypto.randomUUID();
   };
 
-  const handleSelectStatic = (name: string) => {
+  const handleSelectStatic = async (name: string) => {
     onChange(name);
     setOpen(false);
+
+    // Fetch place_id for static location via google-places edge function
+    if (onPlaceSelect) {
+      try {
+        const { data, error } = await supabase.functions.invoke("google-places", {
+          body: { input: name, sessionToken: sessionTokenRef.current },
+        });
+        if (!error && data?.predictions?.length > 0) {
+          const placeId = data.predictions[0].place_id;
+          onPlaceSelect(placeId, name);
+          sessionTokenRef.current = crypto.randomUUID();
+        }
+      } catch (err) {
+        console.error("Static location place_id lookup failed:", err);
+      }
+    }
   };
 
   const handleFocus = () => {
