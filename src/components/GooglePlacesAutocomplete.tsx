@@ -15,6 +15,7 @@ const STATIC_LOCATIONS: StaticLocation[] = [
   { name: "Aéroport du Caire International", category: "airport" },
   { name: "Aéroport de Charm el-Cheikh", category: "airport" },
   { name: "Aéroport d'Hurghada", category: "airport" },
+  { name: "Aéroport International du Sphinx, Le Caire", category: "airport" },
   { name: "Gare du Nord, Paris", category: "station" },
   { name: "Gare de Lyon, Paris", category: "station" },
   { name: "Gare Montparnasse, Paris", category: "station" },
@@ -188,7 +189,7 @@ const GooglePlacesAutocomplete = ({
       )}
 
       {showDropdown && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg max-h-72 overflow-y-auto">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
           {/* Google results */}
           {hasGoogleResults && predictions.map((p) => (
             <button
