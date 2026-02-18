@@ -117,8 +117,8 @@ const GooglePlacesAutocomplete = ({
     const q = normalize(val);
     setStaticResults(
       val.trim().length > 0
-        ? STATIC_LOCATIONS.filter((l) => normalize(l.name).includes(q)).slice(0, 5)
-        : STATIC_LOCATIONS.slice(0, 5)
+        ? STATIC_LOCATIONS.filter((l) => normalize(l.name).includes(q)).slice(0, 8)
+        : STATIC_LOCATIONS.slice(0, 8)
     );
 
     setOpen(true);
@@ -161,8 +161,8 @@ const GooglePlacesAutocomplete = ({
     const q = normalize(value);
     setStaticResults(
       value.trim().length > 0
-        ? STATIC_LOCATIONS.filter((l) => normalize(l.name).includes(q)).slice(0, 5)
-        : STATIC_LOCATIONS.slice(0, 5)
+        ? STATIC_LOCATIONS.filter((l) => normalize(l.name).includes(q)).slice(0, 8)
+        : STATIC_LOCATIONS.slice(0, 8)
     );
     setOpen(true);
     if (value.trim().length >= 2) fetchPredictions(value);
