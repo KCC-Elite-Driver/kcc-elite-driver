@@ -591,7 +591,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     contact_privacy_desc: "Vos données personnelles seront traitées conformément à notre Politique de confidentialité.",
     contact_submit_helper: "Nos équipes répondent généralement sous 2 heures pendant les heures de bureau.",
     contact_success_title: "Merci !",
-    contact_email_direct: "contact@kcc-elitedriver.com",
+    contact_email_direct: "contact@kccelitedriver.com",
     contact_email_direct_helper: "Réponse garantie sous 2 heures.",
     contact_whatsapp_helper: "Chat instantané. Disponible 24h/24, réponse rapide.",
     contact_call_helper: "Parlez directement à un agent. Gratuit depuis la France.",
@@ -831,7 +831,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     privacy_rights: "Droit d'accès à vos données, droit de rectification, droit à l'oubli, droit à la portabilité.",
     privacy_security_title: "Sécurité",
     privacy_security: "Encryptage SSL 256-bit, serveurs sécurisés (compliance RGPD), politique d'accès restreint.",
-    privacy_contact: "Questions sur nos pratiques de confidentialité ? contact@kcc-elitedriver.com",
+    privacy_contact: "Questions sur nos pratiques de confidentialité ? contact@kccelitedriver.com",
 
     terms_title: "Conditions d'Utilisation",
     terms_acceptance: "L'utilisation du site et services implique acceptation de ces conditions.",
@@ -855,7 +855,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     cancellation_refund: "Traité sous 5-7 jours ouvrables, vers le mode de paiement original.",
 
     legal_title: "Mentions Légales",
-    legal_company: "KCC-EliteDriver — Service de chauffeur privé haut de gamme. Siège social : Paris, France. Email : contact@kcc-elitedriver.com. Téléphone : +33 1 23 45 67 89.",
+    legal_company: "KCC-EliteDriver — Service de chauffeur privé haut de gamme. Siège social : Paris, France. Email : contact@kccelitedriver.com. Téléphone : +33 1 23 45 67 89.",
     legal_hosting: "Site hébergé par Lovable (lovable.dev). Hébergement sécurisé conforme aux normes européennes.",
     legal_ip: "L'ensemble du contenu de ce site (textes, images, logos, design) est la propriété exclusive de KCC-EliteDriver. Toute reproduction sans autorisation est interdite.",
 
@@ -1062,7 +1062,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     contact_privacy_desc: "Your personal data will be processed in accordance with our Privacy Policy.",
     contact_submit_helper: "Our team typically responds within 2 hours during business hours.",
     contact_success_title: "Thank You!",
-    contact_email_direct: "contact@kcc-elitedriver.com",
+    contact_email_direct: "contact@kccelitedriver.com",
     contact_email_direct_helper: "Response guaranteed within 2 hours.",
     contact_whatsapp_helper: "Instant chat. Available 24/7, quick response.",
     contact_call_helper: "Speak to an agent directly. Free from France.",
@@ -1302,7 +1302,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     privacy_rights: "Right to access your data, right to rectification, right to be forgotten, right to data portability.",
     privacy_security_title: "Security",
     privacy_security: "256-bit SSL encryption, secure servers (GDPR compliance), restricted access policy.",
-    privacy_contact: "Questions about our privacy practices? contact@kcc-elitedriver.com",
+    privacy_contact: "Questions about our privacy practices? contact@kccelitedriver.com",
 
     terms_title: "Terms of Use",
     terms_acceptance: "Use of the website and services implies acceptance of these terms.",
@@ -1326,7 +1326,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     cancellation_refund: "Processed within 5-7 business days, to original payment method.",
 
     legal_title: "Legal Notice",
-    legal_company: "KCC-EliteDriver — Premium private driver service. Registered office: Paris, France. Email: contact@kcc-elitedriver.com. Phone: +33 1 23 45 67 89.",
+    legal_company: "KCC-EliteDriver — Premium private driver service. Registered office: Paris, France. Email: contact@kccelitedriver.com. Phone: +33 1 23 45 67 89.",
     legal_hosting: "Website hosted by Lovable (lovable.dev). Secure hosting compliant with European standards.",
     legal_ip: "All content on this website (texts, images, logos, design) is the exclusive property of KCC-EliteDriver. Reproduction without authorisation is prohibited.",
 
@@ -1530,7 +1530,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     contact_privacy_desc: "سيتم معالجة بياناتك الشخصية وفقاً لسياسة الخصوصية الخاصة بنا.",
     contact_submit_helper: "يرد فريقنا عادة خلال ساعتين خلال ساعات العمل.",
     contact_success_title: "شكراً لك!",
-    contact_email_direct: "contact@kcc-elitedriver.com",
+    contact_email_direct: "contact@kccelitedriver.com",
     contact_email_direct_helper: "رد مضمون خلال ساعتين.",
     contact_whatsapp_helper: "دردشة فورية. متاح 24/7، رد سريع.",
     contact_call_helper: "تحدث مع وكيل مباشرة. مجاني من فرنسا.",
@@ -1770,7 +1770,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     privacy_rights: "حق الوصول إلى بياناتك، حق التصحيح، حق النسيان، حق نقل البيانات.",
     privacy_security_title: "الأمان",
     privacy_security: "تشفير SSL 256-bit، خوادم آمنة (امتثال GDPR)، سياسة وصول مقيدة.",
-    privacy_contact: "أسئلة حول ممارسات الخصوصية لدينا؟ contact@kcc-elitedriver.com",
+    privacy_contact: "أسئلة حول ممارسات الخصوصية لدينا؟ contact@kccelitedriver.com",
 
     terms_title: "شروط الاستخدام",
     terms_acceptance: "استخدام الموقع والخدمات يعني قبول هذه الشروط.",
@@ -1794,7 +1794,7 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     cancellation_refund: "يُعالج خلال 5-7 أيام عمل، إلى طريقة الدفع الأصلية.",
 
     legal_title: "الإشعار القانوني",
-    legal_company: "KCC-EliteDriver — خدمة سائق خاص فاخرة. المقر الرئيسي: باريس، فرنسا. البريد الإلكتروني: contact@kcc-elitedriver.com. الهاتف: +33 1 23 45 67 89.",
+    legal_company: "KCC-EliteDriver — خدمة سائق خاص فاخرة. المقر الرئيسي: باريس، فرنسا. البريد الإلكتروني: contact@kccelitedriver.com. الهاتف: +33 1 23 45 67 89.",
     legal_hosting: "الموقع مستضاف بواسطة Lovable (lovable.dev). استضافة آمنة متوافقة مع المعايير الأوروبية.",
     legal_ip: "جميع محتويات هذا الموقع (نصوص، صور، شعارات، تصميم) هي ملكية حصرية لـ KCC-EliteDriver. يُحظر الاستنساخ بدون إذن.",
 

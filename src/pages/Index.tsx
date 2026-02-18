@@ -20,7 +20,7 @@ const Index = () => {
           "@type": "LocalBusiness",
           name: "KCC-EliteDriver",
           telephone: "+33123456789",
-          email: "contact@kcc-elitedriver.com",
+          email: "contact@kccelitedriver.com",
           url: "https://kcc-elitedriver.com",
           description: "Service de chauffeur privé haut de gamme au Caire et à Paris",
           address: {
