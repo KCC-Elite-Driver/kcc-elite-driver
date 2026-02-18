@@ -1,12 +1,10 @@
-import { useState, useCallback, lazy, Suspense } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { Calendar as CalendarIcon, Clock, Search, MapPin } from "lucide-react";
+import { Clock, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// Lazy-load heavy dependencies only when user interacts
-const GooglePlacesAutocomplete = lazy(() => import("@/components/GooglePlacesAutocomplete"));
-const CalendarPopover = lazy(() => import("./CalendarPopover"));
+import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
+import CalendarPopover from "./CalendarPopover";
 
 const BookingWidget = () => {
   const { t, language } = useTranslation();
@@ -17,11 +15,6 @@ const BookingWidget = () => {
   const [date, setDate] = useState<Date>();
   const [dateLabel, setDateLabel] = useState("");
   const [time, setTime] = useState("");
-  const [activated, setActivated] = useState(false);
-
-  const activate = useCallback(() => {
-    if (!activated) setActivated(true);
-  }, [activated]);
 
   return (
     <div className="w-full max-w-5xl mx-auto">
@@ -51,50 +44,32 @@ const BookingWidget = () => {
         </div>
 
         {/* Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4" onClick={activate} onFocus={activate}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Pickup */}
-          {activated ? (
-            <Suspense fallback={<PlaceholderInput icon={<MapPin size={16} className="text-primary" />} text={t.hero_pickup} />}>
-              <GooglePlacesAutocomplete
-                value={pickup}
-                onChange={setPickup}
-                placeholder={t.hero_pickup}
-                iconColor="text-primary"
-              />
-            </Suspense>
-          ) : (
-            <PlaceholderInput icon={<MapPin size={16} className="text-primary" />} text={t.hero_pickup} />
-          )}
+          <GooglePlacesAutocomplete
+            value={pickup}
+            onChange={setPickup}
+            placeholder={t.hero_pickup}
+            iconColor="text-primary"
+          />
 
           {/* Dropoff */}
           {mode === "oneway" && (
-            activated ? (
-              <Suspense fallback={<PlaceholderInput icon={<MapPin size={16} className="text-muted-foreground" />} text={t.hero_dropoff} />}>
-                <GooglePlacesAutocomplete
-                  value={dropoff}
-                  onChange={setDropoff}
-                  placeholder={t.hero_dropoff}
-                  iconColor="text-muted-foreground"
-                />
-              </Suspense>
-            ) : (
-              <PlaceholderInput icon={<MapPin size={16} className="text-muted-foreground" />} text={t.hero_dropoff} />
-            )
+            <GooglePlacesAutocomplete
+              value={dropoff}
+              onChange={setDropoff}
+              placeholder={t.hero_dropoff}
+              iconColor="text-muted-foreground"
+            />
           )}
 
           {/* Date */}
-          {activated ? (
-            <Suspense fallback={<PlaceholderInput icon={<CalendarIcon size={16} className="text-muted-foreground" />} text={t.hero_date} />}>
-              <CalendarPopover
-                date={date}
-                onSelect={(d, label) => { setDate(d); setDateLabel(label); }}
-                placeholder={t.hero_date}
-                language={language}
-              />
-            </Suspense>
-          ) : (
-            <PlaceholderInput icon={<CalendarIcon size={16} className="text-muted-foreground" />} text={t.hero_date} />
-          )}
+          <CalendarPopover
+            date={date}
+            onSelect={(d, label) => { setDate(d); setDateLabel(label); }}
+            placeholder={t.hero_date}
+            language={language}
+          />
 
           {/* Time */}
           <div className="relative w-full">
@@ -103,7 +78,6 @@ const BookingWidget = () => {
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              onFocus={activate}
               className={cn(
                 "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0",
                 time ? "text-foreground" : "text-transparent"
@@ -158,15 +132,5 @@ const BookingWidget = () => {
     </div>
   );
 };
-
-/** Lightweight placeholder that matches real input styling */
-const PlaceholderInput = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
-  <div className="relative w-full">
-    <span className="absolute left-3 top-1/2 -translate-y-1/2">{icon}</span>
-    <div className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-muted-foreground cursor-text">
-      {text}
-    </div>
-  </div>
-);
 
 export default BookingWidget;
