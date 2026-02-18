@@ -25,7 +25,7 @@ const BookingWidget = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      <div className="bg-card/80 backdrop-blur-md border border-border rounded-lg p-6 overflow-hidden">
+      <div className="bg-card/80 backdrop-blur-md border border-border rounded-lg p-6">
         {/* Toggle */}
         <div className="flex gap-1 bg-secondary rounded-md p-1 mb-6 w-fit">
           <button
