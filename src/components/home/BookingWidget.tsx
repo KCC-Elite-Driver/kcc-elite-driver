@@ -135,14 +135,14 @@ const BookingWidget = () => {
               if (mode === "oneway") {
                 params.set("service", "airport");
                 if (pickup && dropoff && date && time) {
-                  params.set("skipTo", "3");
+                  params.set("skipTo", "2");
                 } else if (pickup && date && time) {
                   params.set("skipTo", "1");
                 }
               } else if (mode === "hourly") {
                 params.set("service", "hourly");
                 if (pickup && date && time) {
-                  params.set("skipTo", "3");
+                  params.set("skipTo", "2");
                 }
               }
 
