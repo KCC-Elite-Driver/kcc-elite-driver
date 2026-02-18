@@ -100,10 +100,10 @@ const Footer = () => {
               <li className="flex items-center gap-2">
                 <Mail size={14} className="text-primary flex-shrink-0" />
                 <a
-                  href="mailto:contact@kcc-elitedriver.com"
+                  href="mailto:contact@kccelitedriver.com"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors font-sans"
                 >
-                  contact@kcc-elitedriver.com
+                  contact@kccelitedriver.com
                 </a>
               </li>
               <li className="flex items-center gap-2">

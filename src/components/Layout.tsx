@@ -21,7 +21,7 @@ const Layout = () => {
           contactPoint: {
             "@type": "ContactPoint",
             telephone: "+33123456789",
-            email: "contact@kcc-elitedriver.com",
+            email: "contact@kccelitedriver.com",
             contactType: "customer service",
           },
         }}
