@@ -76,7 +76,7 @@ const Fleet = () => {
 
   const vehicles = [
     {
-      name: t.fleet_suv, description: t.fleet_suv_desc, passengers: 7, luggage: 4, image: suvImage,
+      name: t.fleet_suv, description: t.fleet_suv_desc, passengers: 3, luggage: 4, image: suvImage,
       amenities: [{ icon: Wifi, label: t.fleet_wifi }, { icon: Droplets, label: t.fleet_water }, { icon: Plug, label: t.fleet_chargers }, { icon: ShieldCheck, label: t.fleet_disinfection }],
     },
     {
