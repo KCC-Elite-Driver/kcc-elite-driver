@@ -1,55 +1,73 @@
 
-## Diagnostic
 
-J'ai vérifié le flux de réservation (`src/pages/Booking.tsx`) et la fonction de calcul (`supabase/functions/calculate-distance/index.ts`).
+## Plan : Tarification Égypte (USD)
 
-### Ce qui existe aujourd'hui
-- **Pas de carte interactive** sur la page `/booking`. Le panneau de droite est uniquement un résumé textuel (icônes + adresses + distance + prix). Aucun composant Google Map n'est intégré.
-- Le calcul live (distance + durée + prix) **fonctionne correctement** via l'edge function `calculate-distance`, mais **uniquement** quand `pickupPlaceId` ET `dropoffPlaceId` sont tous les deux définis.
+Mise en place de la nouvelle grille tarifaire forfaitaire pour les départs Égypte. La logique actuelle (`calculate-distance` : 150 EGP/km) sera remplacée par des forfaits fixes quand `country === "EG"`.
 
-### Pourquoi rien ne s'affiche actuellement
-J'ai trouvé **2 bugs** qui expliquent le silence du calcul :
+### Grille appliquée
 
-1. **Bug critique — pré-remplissage depuis la home cassé** (`Booking.tsx` ligne 129) :
-   ```ts
-   supabase.functions.invoke("google-places", { body: { query: address } })
-   ```
-   L'edge function `google-places` attend `input`, pas `query`. Résultat : quand l'utilisateur arrive depuis le widget de la home avec pickup/dropoff déjà saisis, **aucun placeId n'est jamais résolu** → pas de calcul, pas de distance, pas de prix.
+**Transfert Aéroport — Le Caire ↔ Le Caire/environs** (forfait fixe)
+| Véhicule | Tarif | +Sphinx |
+|---|---|---|
+| SUV | 70 $ | +40 $ |
+| Class E | 150 $ | +40 $ |
+| VAN | 200 $ | +40 $ |
+| Class S | 300 $ | +40 $ |
 
-2. **Saisie libre sans sélection** : si l'utilisateur tape une adresse mais ne **clique pas** sur une suggestion du dropdown, `onPlaceSelect` n'est jamais appelé → `placeId` reste vide → pas de calcul.
+**Mise à disposition** (horaire, **min. 4 h**)
+| SUV | Class E | VAN | Class S |
+|---|---|---|---|
+| 45 $/h | 80 $/h | 90 $/h | 140 $/h |
 
-3. **Absence visuelle d'une carte** : l'utilisateur attend une carte interactive (probablement une attente UX), mais rien n'est codé pour l'afficher.
+**Forfait 12 h**
+| SUV | Class E | VAN | Class S |
+|---|---|---|---|
+| 250 $ | 400 $ | 500 $ | 650 $ |
 
----
-
-## Plan de correction
-
-### 1. Fix du pré-remplissage (urgent, 1 ligne)
-Dans `Booking.tsx` ligne 129, remplacer `{ query: address }` par `{ input: address }`. Cela débloque le calcul automatique pour tous les utilisateurs venant du widget home.
-
-### 2. Fallback de résolution placeId à la perte du focus
-Dans `GooglePlacesAutocomplete.tsx`, si l'utilisateur quitte le champ sans cliquer une suggestion mais que des prédictions existent, sélectionner automatiquement la première prédiction (et appeler `onPlaceSelect`). Garantit qu'un placeId est toujours fourni.
-
-### 3. Ajout d'une carte interactive Google Maps dans le résumé
-Créer un composant `<RouteMap pickup={pickupPlaceId} dropoff={dropoffPlaceId} />` affiché en haut du sidebar de résumé (Booking.tsx).
-
-Approche légère et sans clé exposée :
-- Utiliser **Google Maps Embed API** via une `<iframe>` avec mode `directions` :
-  ```
-  https://www.google.com/maps/embed/v1/directions?origin=place_id:...&destination=place_id:...&key=...
-  ```
-- L'iframe s'affiche uniquement quand les deux placeIds sont disponibles ; sinon, placeholder "Sélectionnez un départ et une destination".
-- La clé `VITE_GOOGLE_MAPS_API_KEY` étant restreinte côté Google Cloud, on peut soit l'exposer côté front (clé Embed publique standard chez Google), soit créer une mini edge function qui retourne l'URL signée. **Recommandation** : exposer la clé Embed côté front (c'est l'usage normal de l'API Embed), à condition d'ajouter une restriction de domaine HTTP dans Google Cloud pour cette clé. Si tu préfères ne rien exposer, on passe par une edge function qui renvoie l'URL.
-
-Carte affichée dans une box de ~180px de hauteur, arrondie, au-dessus du bloc Distance/Durée.
-
-### 4. Vérification end-to-end
-Après les changements : tester depuis la home (widget pré-rempli) ET en saisie directe sur `/booking` que distance, durée, prix et carte s'affichent.
+**Évènements VIP & Inter-cité** : "Sur devis" (pas de prix calculé, CTA contact).
 
 ---
 
-## Question de validation
+### Modifications techniques
 
-Pour la carte : préfères-tu (A) exposer la clé Google Maps Embed côté front avec restriction de domaine (simple, standard, recommandé), ou (B) passer par une edge function (plus sûr mais 1 round-trip de plus) ?
+**1. `supabase/functions/calculate-distance/index.ts`**
+- Étendre le payload : ajouter `serviceType` ("airport" | "hourly" | "daily12" | "vip" | "intercity") et `hours` (number).
+- Si `country === "EG"` :
+  - `airport` → forfait selon véhicule + détection Sphinx (+40 $).
+  - `hourly` → tarif horaire × max(hours, 4).
+  - `daily12` → forfait 12h fixe.
+  - `vip` / `intercity` → renvoyer `quote_only: true` sans prix.
+- Sinon : conserver la logique actuelle (sera remplacée à la livraison des tarifs France).
+- Réponse Égypte : `currency: "USD"`, `currency_symbol: "$"`.
+- Détection Sphinx : on lit le `name` retourné par Place Details (origine ET destination) ; si contient "Sphinx" → +40 $.
 
-Si tu valides "A" et le reste du plan, je passe en implémentation.
+**2. `src/pages/Booking.tsx`**
+- Passer `serviceType` et `hours` lors de l'appel à `calculate-distance`.
+- Si `serviceType === "hourly"` : sélecteur d'heures (min 4, défaut 4) + mention "Minimum 4 heures".
+- Ajouter le service "Forfait 12 h" dans la sélection des services.
+- Si `quote_only` → afficher "Sur devis" + bouton vers `/contact` pré-rempli (au lieu du prix).
+
+**3. `src/pages/Services.tsx`**
+- Mettre à jour la grille tarifaire publique Égypte avec les nouveaux montants en USD.
+- Mention "+40 $ depuis l'aéroport du Sphinx" sous Transfert Aéroport.
+- Mention "Minimum 4 heures" sous Mise à disposition.
+
+**4. `src/i18n/translations.ts`**
+- Ajouter clés : "Sur devis" / "Quote on request" / "بعرض سعر".
+- Ajouter "Forfait 12 h" / "12-hour package" / "باقة ١٢ ساعة".
+- Ajouter "Minimum 4 heures" / "Minimum 4 hours" / "٤ ساعات كحد أدنى".
+
+**5. Vérification end-to-end**
+Tester chaque combinaison véhicule × service depuis la home et depuis `/booking` (Le Caire, Sphinx, mise à dispo 4h/6h, forfait 12h, VIP).
+
+---
+
+### Points à clarifier avant implémentation
+
+1. **Forfait 12 h** : nouveau service distinct dans le sélecteur (à côté de Aéroport / Mise à dispo) — OK pour toi ?
+2. **Sphinx** : détection automatique par nom du lieu (contient "Sphinx") — OK ou tu préfères qu'on se base uniquement sur la sélection de l'option prédéfinie "Aéroport International du Sphinx" ?
+3. **VIP / Inter-cité** : afficher "Sur devis" + bouton qui ouvre `/contact` pré-rempli avec les infos de la course (date, lieux, véhicule) — OK ?
+4. **Devise** : tout en USD ($) uniquement pour l'Égypte, ou affichage parallèle EGP indicatif ?
+
+Réponds à ces 4 points et je passe en implémentation.
+
