@@ -691,7 +691,13 @@ const Booking = () => {
               <div className="lg:sticky lg:top-24">
                 <div className="rounded-lg border border-border bg-card p-5">
                   <h3 className="font-serif text-lg font-semibold text-foreground mb-4">{t.booking_summary || "Récapitulatif"}</h3>
-                  
+
+                  {/* Interactive route map */}
+                  <div className="mb-4">
+                    <RouteMap pickupPlaceId={pickupPlaceId} dropoffPlaceId={dropoffPlaceId} />
+                  </div>
+
+
                   <div className="space-y-3 text-sm font-sans">
                     {/* Service type */}
                     {data.service && (
