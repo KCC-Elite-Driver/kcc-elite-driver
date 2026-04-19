@@ -1,73 +1,62 @@
 
 
-## Plan : Tarification Égypte (USD)
+## Plan : Tarification Paris/France (EUR)
 
-Mise en place de la nouvelle grille tarifaire forfaitaire pour les départs Égypte. La logique actuelle (`calculate-distance` : 150 EGP/km) sera remplacée par des forfaits fixes quand `country === "EG"`.
+Mise en place de la grille tarifaire France pour les départs depuis Paris, en remplacement de la logique actuelle "3 EUR/km × multiplicateur".
 
 ### Grille appliquée
 
-**Transfert Aéroport — Le Caire ↔ Le Caire/environs** (forfait fixe)
-| Véhicule | Tarif | +Sphinx |
+**Transferts aéroports → centre Paris & environs** (forfait jusqu'à 25 km, puis surcharge/km)
+| Véhicule | Forfait base | Au-delà de 25 km |
 |---|---|---|
-| SUV | 70 $ | +40 $ |
-| Class E | 150 $ | +40 $ |
-| VAN | 200 $ | +40 $ |
-| Class S | 300 $ | +40 $ |
+| Class E (business) | 130 € | +3 €/km |
+| Class V / Van | 150 € | +3,50 €/km |
+| Class S (first) | 200 € | +4 €/km |
 
-**Mise à disposition** (horaire, **min. 4 h**)
-| SUV | Class E | VAN | Class S |
-|---|---|---|---|
-| 45 $/h | 80 $/h | 90 $/h | 140 $/h |
+**Mise à disposition** (horaire, min. 4 h)
+| Class E | Class V | Class S |
+|---|---|---|
+| 80 €/h | 90 €/h | 120 €/h |
 
-**Forfait 12 h**
-| SUV | Class E | VAN | Class S |
-|---|---|---|---|
-| 250 $ | 400 $ | 500 $ | 650 $ |
+**SUV** : non mentionné dans la grille Paris → je propose de **masquer le SUV pour les départs France** dans le sélecteur véhicule (uniquement Class E, Class V, Class S disponibles côté France). À confirmer dans les questions ci-dessous.
 
-**Évènements VIP & Inter-cité** : "Sur devis" (pas de prix calculé, CTA contact).
+**VIP & Inter-cité France** : "Sur devis" + WhatsApp (même comportement que l'Égypte).
 
 ---
 
 ### Modifications techniques
 
 **1. `supabase/functions/calculate-distance/index.ts`**
-- Étendre le payload : ajouter `serviceType` ("airport" | "hourly" | "daily12" | "vip" | "intercity") et `hours` (number).
-- Si `country === "EG"` :
-  - `airport` → forfait selon véhicule + détection Sphinx (+40 $).
-  - `hourly` → tarif horaire × max(hours, 4).
-  - `daily12` → forfait 12h fixe.
-  - `vip` / `intercity` → renvoyer `quote_only: true` sans prix.
-- Sinon : conserver la logique actuelle (sera remplacée à la livraison des tarifs France).
-- Réponse Égypte : `currency: "USD"`, `currency_symbol: "$"`.
-- Détection Sphinx : on lit le `name` retourné par Place Details (origine ET destination) ; si contient "Sphinx" → +40 $.
+- Ajouter une branche `country === "FR"` (avant le fallback générique).
+- `airport` : `prix = forfait_base + max(0, distance_km - 25) × tarif_km_supplémentaire`.
+- `hourly` : `tarif_horaire × max(hours, 4)`. Si `hours > 12` → `quote_only`.
+- `vip` / `intercity` → `quote_only: true`.
+- Réponse : `currency: "EUR"`, `currency_symbol: "€"`.
+- Conserver `distance_km` et `duration_min` dans la réponse pour l'affichage.
 
 **2. `src/pages/Booking.tsx`**
-- Passer `serviceType` et `hours` lors de l'appel à `calculate-distance`.
-- Si `serviceType === "hourly"` : sélecteur d'heures (min 4, défaut 4) + mention "Minimum 4 heures".
-- Ajouter le service "Forfait 12 h" dans la sélection des services.
-- Si `quote_only` → afficher "Sur devis" + bouton vers `/contact` pré-rempli (au lieu du prix).
+- Aucun changement structurel : la même UI gère déjà serviceType + hours + quote_only (mise en place pour l'Égypte).
+- (Optionnel) Filtrer la liste des véhicules : si la sidebar détecte un pickup en France, masquer SUV. Ou laisser le SUV partout et calculer en fallback (à clarifier).
 
 **3. `src/pages/Services.tsx`**
-- Mettre à jour la grille tarifaire publique Égypte avec les nouveaux montants en USD.
-- Mention "+40 $ depuis l'aéroport du Sphinx" sous Transfert Aéroport.
-- Mention "Minimum 4 heures" sous Mise à disposition.
+- Ajouter une section "Tarifs — Paris & Île-de-France" symétrique à celle du Caire avec la grille EUR.
+- Mention "Forfait inclus jusqu'à 25 km — au-delà : tarif au kilomètre".
+- Mention "Minimum 4 heures" pour la mise à dispo.
 
 **4. `src/i18n/translations.ts`**
-- Ajouter clés : "Sur devis" / "Quote on request" / "بعرض سعر".
-- Ajouter "Forfait 12 h" / "12-hour package" / "باقة ١٢ ساعة".
-- Ajouter "Minimum 4 heures" / "Minimum 4 hours" / "٤ ساعات كحد أدنى".
+- Ajouter clés : "Au-delà de 25 km" / "Beyond 25 km" / "بعد ٢٥ كم", "Forfait inclus jusqu'à 25 km" / "Package includes up to 25 km" / "تشمل الباقة حتى ٢٥ كم".
 
 **5. Vérification end-to-end**
-Tester chaque combinaison véhicule × service depuis la home et depuis `/booking` (Le Caire, Sphinx, mise à dispo 4h/6h, forfait 12h, VIP).
+Tester : CDG → Paris centre (≤25 km, forfait pur), CDG → Versailles (>25 km, forfait + km sup), mise à dispo 4h/8h, VIP.
 
 ---
 
-### Points à clarifier avant implémentation
+### Questions de cadrage avant implémentation
 
-1. **Forfait 12 h** : nouveau service distinct dans le sélecteur (à côté de Aéroport / Mise à dispo) — OK pour toi ?
-2. **Sphinx** : détection automatique par nom du lieu (contient "Sphinx") — OK ou tu préfères qu'on se base uniquement sur la sélection de l'option prédéfinie "Aéroport International du Sphinx" ?
-3. **VIP / Inter-cité** : afficher "Sur devis" + bouton qui ouvre `/contact` pré-rempli avec les infos de la course (date, lieux, véhicule) — OK ?
-4. **Devise** : tout en USD ($) uniquement pour l'Égypte, ou affichage parallèle EGP indicatif ?
+1. **SUV en France** : on le masque pour les pickups France, ou on le garde avec un tarif équivalent (ex. même que Class E) ?
+2. **Forfait 12 h France** : tu veux qu'on ajoute aussi un forfait journée 12 h pour Paris (comme en Égypte), ou on reste uniquement sur airport + hourly + VIP/inter-cité ?
+3. **Aéroports concernés** : le forfait s'applique pour CDG, Orly, Beauvais, Le Bourget — tous ces aéroports, ou uniquement CDG/Orly ?
+4. **"Centre et environs"** : on définit "environs" comme ≤ 25 km du point de départ (logique de seuil unique sur la distance Google), ou tu veux une zone géographique spécifique (Île-de-France / Paris intra-muros / etc.) ?
 
 Réponds à ces 4 points et je passe en implémentation.
 
