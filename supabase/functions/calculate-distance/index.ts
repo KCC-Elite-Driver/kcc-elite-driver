@@ -48,7 +48,7 @@ async function getPlaceMeta(placeId: string, apiKey: string): Promise<{ country:
 }
 
 function isSphinx(name: string): boolean {
-  return /sphinx/i.test(name);
+  return /sphinx|spx/i.test(name);
 }
 
 async function fetchRule(
