@@ -6,30 +6,62 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ====== EGYPT PRICING (USD) ======
+// Vehicle keys from front: business -> Class E, first -> Class S, van -> Van, suv -> SUV
+type VehicleKey = "suv" | "business" | "first" | "van";
+
+const EG_AIRPORT_FLAT: Record<VehicleKey, number> = {
+  suv: 70,
+  business: 150, // Class E
+  van: 200,
+  first: 300, // Class S
+};
+
+const EG_HOURLY_RATE: Record<VehicleKey, number> = {
+  suv: 45,
+  business: 80,
+  van: 90,
+  first: 140,
+};
+
+const EG_DAILY12: Record<VehicleKey, number> = {
+  suv: 250,
+  business: 400,
+  van: 500,
+  first: 650,
+};
+
+const SPHINX_SURCHARGE_USD = 40;
+
+// ====== Non-EG fallback (existing logic preserved) ======
 const VEHICLE_MULTIPLIERS: Record<string, number> = {
   suv: 1.0,
   business: 1.0,
   first: 1.5,
   van: 1.3,
 };
+const DEFAULT_RATE = { rate: 3, currency: "EUR", symbol: "€" };
 
-const RATES: Record<string, { rate: number; currency: string; symbol: string }> = {
-  EG: { rate: 150, currency: "EGP", symbol: "E£" },
-  DEFAULT: { rate: 3, currency: "EUR", symbol: "€" },
-};
-
-async function getCountryFromPlaceId(placeId: string, apiKey: string): Promise<string> {
-  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=address_components&key=${apiKey}`;
+async function getPlaceMeta(placeId: string, apiKey: string): Promise<{ country: string; name: string }> {
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=address_components,name&key=${apiKey}`;
   const res = await fetch(url);
   const data = await res.json();
-  if (data.status === "OK" && data.result?.address_components) {
-    for (const comp of data.result.address_components) {
+  let country = "FR";
+  let name = "";
+  if (data.status === "OK" && data.result) {
+    name = data.result.name || "";
+    for (const comp of data.result.address_components || []) {
       if (comp.types.includes("country")) {
-        return comp.short_name; // "FR", "EG", etc.
+        country = comp.short_name;
+        break;
       }
     }
   }
-  return "FR";
+  return { country, name };
+}
+
+function isSphinx(name: string): boolean {
+  return /sphinx/i.test(name);
 }
 
 Deno.serve(async (req) => {
@@ -46,52 +78,131 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { originPlaceId, destinationPlaceId, vehicle } = await req.json();
-    if (!originPlaceId || !destinationPlaceId) {
+    const {
+      originPlaceId,
+      destinationPlaceId,
+      vehicle = "business",
+      serviceType = "airport", // "airport" | "hourly" | "vip" | "intercity"
+      hours = 0,
+    } = await req.json();
+
+    if (!originPlaceId) {
       return new Response(
-        JSON.stringify({ error: "originPlaceId and destinationPlaceId required" }),
+        JSON.stringify({ error: "originPlaceId required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Parallel: Distance Matrix + country detection
-    const [distRes, country] = await Promise.all([
-      fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=place_id:${originPlaceId}&destinations=place_id:${destinationPlaceId}&key=${apiKey}&language=fr`
-      ).then((r) => r.json()),
-      getCountryFromPlaceId(originPlaceId, apiKey),
-    ]);
+    // We need destination only when not hourly/vip (vip can still have it but it's quote_only anyway)
+    const needsDistance = serviceType === "airport" || serviceType === "intercity";
 
-    // Debug logs
-    console.log("Distance Matrix raw response:", JSON.stringify(distRes));
-    console.log("Element status:", distRes.rows?.[0]?.elements?.[0]?.status);
+    // Fetch origin meta + (conditionally) destination meta + distance
+    const originMetaP = getPlaceMeta(originPlaceId, apiKey);
+    const destMetaP = destinationPlaceId
+      ? getPlaceMeta(destinationPlaceId, apiKey)
+      : Promise.resolve({ country: "", name: "" });
+    const distP =
+      needsDistance && destinationPlaceId
+        ? fetch(
+            `https://maps.googleapis.com/maps/api/distancematrix/json?origins=place_id:${originPlaceId}&destinations=place_id:${destinationPlaceId}&key=${apiKey}&language=fr`
+          ).then((r) => r.json())
+        : Promise.resolve(null);
 
-    if (
-      distRes.status !== "OK" ||
-      !distRes.rows?.[0]?.elements?.[0] ||
-      distRes.rows[0].elements[0].status !== "OK"
-    ) {
+    const [originMeta, destMeta, distRes] = await Promise.all([originMetaP, destMetaP, distP]);
+    const country = originMeta.country;
+
+    let distanceKm: number | null = null;
+    let durationMin: number | null = null;
+    if (distRes && distRes.rows?.[0]?.elements?.[0]?.status === "OK") {
+      const el = distRes.rows[0].elements[0];
+      distanceKm = Math.round((el.distance.value / 1000) * 10) / 10;
+      durationMin = Math.round(el.duration.value / 60);
+    }
+
+    // ====== EGYPT (USD flat-rate grid) ======
+    if (country === "EG") {
+      const v = (vehicle as VehicleKey) in EG_AIRPORT_FLAT ? (vehicle as VehicleKey) : "business";
+      const sphinxTouched = isSphinx(originMeta.name) || isSphinx(destMeta.name);
+
+      // VIP & intercity → quote only
+      if (serviceType === "vip" || serviceType === "intercity") {
+        return new Response(
+          JSON.stringify({
+            quote_only: true,
+            currency: "USD",
+            currency_symbol: "$",
+            country,
+            distance_km: distanceKm,
+            duration_min: durationMin,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Hourly: min 4h. > 12h → quote only. = 12h → forfait 12h.
+      if (serviceType === "hourly") {
+        const h = Math.max(4, Number(hours) || 4);
+        if (h > 12) {
+          return new Response(
+            JSON.stringify({
+              quote_only: true,
+              currency: "USD",
+              currency_symbol: "$",
+              country,
+              hours: h,
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        const price = h === 12 ? EG_DAILY12[v] : EG_HOURLY_RATE[v] * h;
+        return new Response(
+          JSON.stringify({
+            price,
+            currency: "USD",
+            currency_symbol: "$",
+            country,
+            hours: h,
+            service_type: serviceType,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Airport (default)
+      const base = EG_AIRPORT_FLAT[v];
+      const price = base + (sphinxTouched ? SPHINX_SURCHARGE_USD : 0);
       return new Response(
-        JSON.stringify({ error: "Cannot calculate distance", details: distRes.status, elementStatus: distRes.rows?.[0]?.elements?.[0]?.status }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({
+          price,
+          currency: "USD",
+          currency_symbol: "$",
+          country,
+          distance_km: distanceKm,
+          duration_min: durationMin,
+          sphinx_surcharge: sphinxTouched ? SPHINX_SURCHARGE_USD : 0,
+          service_type: serviceType,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const element = distRes.rows[0].elements[0];
-    const distanceKm = Math.round((element.distance.value / 1000) * 10) / 10;
-    const durationMin = Math.round(element.duration.value / 60);
-
-    const rateInfo = RATES[country] || RATES.DEFAULT;
+    // ====== Non-EG fallback (existing per-km logic) ======
+    if (!distanceKm) {
+      return new Response(
+        JSON.stringify({ error: "Cannot calculate distance" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     const multiplier = VEHICLE_MULTIPLIERS[vehicle] || 1.0;
-    const price = Math.round(distanceKm * rateInfo.rate * multiplier);
+    const price = Math.round(distanceKm * DEFAULT_RATE.rate * multiplier);
 
     return new Response(
       JSON.stringify({
         distance_km: distanceKm,
         duration_min: durationMin,
         price,
-        currency: rateInfo.currency,
-        currency_symbol: rateInfo.symbol,
+        currency: DEFAULT_RATE.currency,
+        currency_symbol: DEFAULT_RATE.symbol,
         country,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
