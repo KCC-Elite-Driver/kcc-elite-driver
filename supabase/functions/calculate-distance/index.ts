@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,61 +7,25 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// ====== EGYPT PRICING (USD) ======
-// Vehicle keys from front: business -> Class E, first -> Class S, van -> Van, suv -> SUV
 type VehicleKey = "suv" | "business" | "first" | "van";
 
-const EG_AIRPORT_FLAT: Record<VehicleKey, number> = {
-  suv: 70,
-  business: 150, // Class E
-  van: 200,
-  first: 300, // Class S
-};
+interface PricingRule {
+  country: string;
+  service_type: string;
+  vehicle: string;
+  base_price: number | null;
+  per_km_over_threshold: number | null;
+  hourly_rate: number | null;
+  threshold_km: number | null;
+  sphinx_surcharge: number | null;
+  currency: string;
+  currency_symbol: string;
+  quote_only: boolean;
+}
 
-const EG_HOURLY_RATE: Record<VehicleKey, number> = {
-  suv: 45,
-  business: 80,
-  van: 90,
-  first: 140,
-};
-
-const EG_DAILY12: Record<VehicleKey, number> = {
-  suv: 250,
-  business: 400,
-  van: 500,
-  first: 650,
-};
-
-const SPHINX_SURCHARGE_USD = 40;
-
-// ====== FRANCE PRICING (EUR) ======
-// Class E = business, Class V = van, Class S = first
-const FR_AIRPORT_BASE: Record<VehicleKey, number> = {
-  suv: 130, // fallback (SUV hidden in UI for FR)
-  business: 130, // Class E
-  van: 150, // Class V
-  first: 200, // Class S
-};
-const FR_AIRPORT_PER_KM_OVER_25: Record<VehicleKey, number> = {
-  suv: 3,
-  business: 3,
-  van: 3.5,
-  first: 4,
-};
-const FR_HOURLY_RATE: Record<VehicleKey, number> = {
-  suv: 80,
-  business: 80, // Class E
-  van: 90, // Class V
-  first: 120, // Class S
-};
-const FR_AIRPORT_THRESHOLD_KM = 25;
-
-// ====== Non-FR/EG fallback (legacy per-km) ======
+// ====== Legacy fallback (only used if DB lookup fails) ======
 const VEHICLE_MULTIPLIERS: Record<string, number> = {
-  suv: 1.0,
-  business: 1.0,
-  first: 1.5,
-  van: 1.3,
+  suv: 1.0, business: 1.0, first: 1.5, van: 1.3,
 };
 const DEFAULT_RATE = { rate: 3, currency: "EUR", symbol: "€" };
 
@@ -86,6 +51,22 @@ function isSphinx(name: string): boolean {
   return /sphinx/i.test(name);
 }
 
+async function fetchRule(
+  supabase: ReturnType<typeof createClient>,
+  country: string,
+  serviceType: string,
+  vehicle: string
+): Promise<PricingRule | null> {
+  const { data } = await supabase
+    .from("pricing_rules")
+    .select("*")
+    .eq("country", country)
+    .eq("service_type", serviceType)
+    .eq("vehicle", vehicle)
+    .maybeSingle();
+  return data as PricingRule | null;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -100,11 +81,15 @@ Deno.serve(async (req) => {
       });
     }
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const {
       originPlaceId,
       destinationPlaceId,
       vehicle = "business",
-      serviceType = "airport", // "airport" | "hourly" | "vip" | "intercity"
+      serviceType = "airport",
       hours = 0,
     } = await req.json();
 
@@ -115,10 +100,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    // We need destination only when not hourly/vip (vip can still have it but it's quote_only anyway)
     const needsDistance = serviceType === "airport" || serviceType === "intercity";
 
-    // Fetch origin meta + (conditionally) destination meta + distance
     const originMetaP = getPlaceMeta(originPlaceId, apiKey);
     const destMetaP = destinationPlaceId
       ? getPlaceMeta(destinationPlaceId, apiKey)
@@ -141,18 +124,18 @@ Deno.serve(async (req) => {
       durationMin = Math.round(el.duration.value / 60);
     }
 
-    // ====== EGYPT (USD flat-rate grid) ======
-    if (country === "EG") {
-      const v = (vehicle as VehicleKey) in EG_AIRPORT_FLAT ? (vehicle as VehicleKey) : "business";
-      const sphinxTouched = isSphinx(originMeta.name) || isSphinx(destMeta.name);
+    // ====== DB-driven pricing (EG / FR with rules in pricing_rules) ======
+    const v = (["suv", "business", "first", "van"].includes(vehicle) ? vehicle : "business") as VehicleKey;
+    const rule = await fetchRule(supabase, country, serviceType, v);
 
-      // VIP & intercity → quote only
-      if (serviceType === "vip" || serviceType === "intercity") {
+    if (rule) {
+      // VIP / intercity / explicit quote_only
+      if (rule.quote_only || serviceType === "vip" || serviceType === "intercity") {
         return new Response(
           JSON.stringify({
             quote_only: true,
-            currency: "USD",
-            currency_symbol: "$",
+            currency: rule.currency,
+            currency_symbol: rule.currency_symbol,
             country,
             distance_km: distanceKm,
             duration_min: durationMin,
@@ -161,27 +144,28 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Hourly: min 4h. > 12h → quote only. = 12h → forfait 12h.
+      // Hourly
       if (serviceType === "hourly") {
         const h = Math.max(4, Number(hours) || 4);
         if (h > 12) {
           return new Response(
             JSON.stringify({
               quote_only: true,
-              currency: "USD",
-              currency_symbol: "$",
+              currency: rule.currency,
+              currency_symbol: rule.currency_symbol,
               country,
               hours: h,
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-        const price = h === 12 ? EG_DAILY12[v] : EG_HOURLY_RATE[v] * h;
+        const hourly = Number(rule.hourly_rate) || 0;
+        const price = Math.round(hourly * h);
         return new Response(
           JSON.stringify({
             price,
-            currency: "USD",
-            currency_symbol: "$",
+            currency: rule.currency,
+            currency_symbol: rule.currency_symbol,
             country,
             hours: h,
             service_type: serviceType,
@@ -190,110 +174,84 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Airport (default)
-      const base = EG_AIRPORT_FLAT[v];
-      const price = base + (sphinxTouched ? SPHINX_SURCHARGE_USD : 0);
-      return new Response(
-        JSON.stringify({
-          price,
-          currency: "USD",
-          currency_symbol: "$",
-          country,
-          distance_km: distanceKm,
-          duration_min: durationMin,
-          sphinx_surcharge: sphinxTouched ? SPHINX_SURCHARGE_USD : 0,
-          service_type: serviceType,
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // ====== FRANCE (EUR forfait + km supplémentaire) ======
-    if (country === "FR") {
-      const v = (vehicle as VehicleKey) in FR_AIRPORT_BASE ? (vehicle as VehicleKey) : "business";
-
-      // VIP & intercity → quote only
-      if (serviceType === "vip" || serviceType === "intercity") {
+      // Daily12 (forfait fixe)
+      if (serviceType === "daily12") {
+        const price = Number(rule.base_price) || 0;
         return new Response(
           JSON.stringify({
-            quote_only: true,
-            currency: "EUR",
-            currency_symbol: "€",
+            price,
+            currency: rule.currency,
+            currency_symbol: rule.currency_symbol,
+            country,
+            service_type: serviceType,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Airport
+      if (serviceType === "airport") {
+        const base = Number(rule.base_price) || 0;
+        const threshold = Number(rule.threshold_km) || 0;
+        const perKm = Number(rule.per_km_over_threshold) || 0;
+        const sphinxFee = Number(rule.sphinx_surcharge) || 0;
+
+        // EG: forfait + Sphinx surcharge
+        if (country === "EG") {
+          const sphinxTouched = isSphinx(originMeta.name) || isSphinx(destMeta.name);
+          const price = base + (sphinxTouched ? sphinxFee : 0);
+          return new Response(
+            JSON.stringify({
+              price,
+              currency: rule.currency,
+              currency_symbol: rule.currency_symbol,
+              country,
+              distance_km: distanceKm,
+              duration_min: durationMin,
+              sphinx_surcharge: sphinxTouched ? sphinxFee : 0,
+              service_type: serviceType,
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // FR (and others): forfait + km surcharge over threshold
+        if (!distanceKm) {
+          return new Response(
+            JSON.stringify({ error: "Cannot calculate distance" }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        const extraKm = threshold > 0 ? Math.max(0, distanceKm - threshold) : 0;
+        const surcharge = Math.round(extraKm * perKm);
+        const price = Math.round(base + surcharge);
+        return new Response(
+          JSON.stringify({
+            price,
+            currency: rule.currency,
+            currency_symbol: rule.currency_symbol,
             country,
             distance_km: distanceKm,
             duration_min: durationMin,
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      // Hourly: min 4h, > 12h → quote only.
-      if (serviceType === "hourly") {
-        const h = Math.max(4, Number(hours) || 4);
-        if (h > 12) {
-          return new Response(
-            JSON.stringify({
-              quote_only: true,
-              currency: "EUR",
-              currency_symbol: "€",
-              country,
-              hours: h,
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        const price = FR_HOURLY_RATE[v] * h;
-        return new Response(
-          JSON.stringify({
-            price,
-            currency: "EUR",
-            currency_symbol: "€",
-            country,
-            hours: h,
+            base_price: base,
+            km_surcharge: surcharge,
+            threshold_km: threshold,
             service_type: serviceType,
           }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-
-      // Airport (default) — forfait jusqu'à 25 km, surcharge au-delà
-      if (!distanceKm) {
-        return new Response(
-          JSON.stringify({ error: "Cannot calculate distance" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const base = FR_AIRPORT_BASE[v];
-      const extraKm = Math.max(0, distanceKm - FR_AIRPORT_THRESHOLD_KM);
-      const surcharge = Math.round(extraKm * FR_AIRPORT_PER_KM_OVER_25[v]);
-      const price = base + surcharge;
-      return new Response(
-        JSON.stringify({
-          price,
-          currency: "EUR",
-          currency_symbol: "€",
-          country,
-          distance_km: distanceKm,
-          duration_min: durationMin,
-          base_price: base,
-          km_surcharge: surcharge,
-          threshold_km: FR_AIRPORT_THRESHOLD_KM,
-          service_type: serviceType,
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
     }
 
-    // ====== Other countries fallback (legacy per-km) ======
+    // ====== Fallback per-km legacy (no rule found in DB) ======
     if (!distanceKm) {
       return new Response(
-        JSON.stringify({ error: "Cannot calculate distance" }),
+        JSON.stringify({ error: "No pricing rule available for this country/service/vehicle" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
     const multiplier = VEHICLE_MULTIPLIERS[vehicle] || 1.0;
     const price = Math.round(distanceKm * DEFAULT_RATE.rate * multiplier);
-
     return new Response(
       JSON.stringify({
         distance_km: distanceKm,
