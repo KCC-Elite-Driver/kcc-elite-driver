@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { CalendarDays, Users, Truck, ClipboardList, LogOut } from "lucide-react";
+import { CalendarDays, Users, Truck, ClipboardList, LogOut, Tag } from "lucide-react";
 
 const AdminDashboard = () => {
   const { signOut } = useAuth();
@@ -33,7 +33,8 @@ const AdminDashboard = () => {
     { label: t.admin_pending, value: counts.pending, icon: CalendarDays, link: "/admin/bookings", color: "text-amber-500" },
     { label: t.admin_providers, value: counts.providers, icon: Truck, link: "/admin/providers", color: "text-emerald-500" },
     { label: t.admin_drivers, value: counts.drivers, icon: Users, link: "/admin/drivers", color: "text-violet-500" },
-  ];
+    { label: "Tarifs", value: "—", icon: Tag, link: "/admin/pricing", color: "text-primary" },
+  ] as Array<{ label: string; value: number | string; icon: typeof ClipboardList; link: string; color: string }>;
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,6 +46,7 @@ const AdminDashboard = () => {
               <Link to="/admin/bookings" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">{t.admin_bookings}</Link>
               <Link to="/admin/providers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">{t.admin_providers}</Link>
               <Link to="/admin/drivers" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">{t.admin_drivers}</Link>
+              <Link to="/admin/pricing" className="font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">Tarifs</Link>
             </nav>
             <button onClick={signOut} className="flex items-center gap-1.5 font-sans text-sm text-muted-foreground hover:text-foreground transition-colors">
               <LogOut size={16} /> {t.auth_logout}
