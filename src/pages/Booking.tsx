@@ -229,7 +229,14 @@ const Booking = () => {
   const canProceed = () => {
     switch (step) {
       case 0: return data.service !== null;
-      case 1: return data.pickup.trim() !== "" && data.date !== "" && data.time !== "";
+      case 1: {
+        const baseOk = data.pickup.trim() !== "" && data.date !== "" && data.time !== "";
+        // For airport/intercity we require dropoff; hourly/event do not
+        if (data.service === "airport" || data.service === "city") {
+          return baseOk && data.dropoff.trim() !== "";
+        }
+        return baseOk;
+      }
       case 2: return data.firstname.trim() !== "" && data.lastname.trim() !== "" && data.email.trim() !== "" && data.phone.trim() !== "";
       case 3: return data.vehicle !== null;
       case 4: return true;
