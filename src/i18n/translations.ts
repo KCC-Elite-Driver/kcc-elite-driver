@@ -282,6 +282,14 @@ export type TranslationKeys = {
   booking_payment_card: string;
   booking_payment_cash: string;
   booking_payment_method: string;
+  booking_hours_label: string;
+  booking_hours_helper: string;
+  booking_hours_more: string;
+  booking_quote_only: string;
+  booking_quote_whatsapp_cta: string;
+  booking_quote_whatsapp_prefix: string;
+  booking_sphinx_surcharge: string;
+  booking_price_label: string;
 
   // Booking - service descriptions (step 1)
   booking_service_airport_desc: string;
@@ -706,6 +714,14 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_payment_card: "Carte bancaire",
     booking_payment_cash: "Paiement en espèces",
     booking_payment_method: "Mode de paiement",
+    booking_hours_label: "Durée (heures)",
+    booking_hours_helper: "Minimum 4 heures. Forfait à 12 heures. Au-delà, sur devis.",
+    booking_hours_more: "12h+ (sur devis)",
+    booking_quote_only: "Sur devis",
+    booking_quote_whatsapp_cta: "Demander un devis sur WhatsApp",
+    booking_quote_whatsapp_prefix: "Demande de devis",
+    booking_sphinx_surcharge: "Supplément Aéroport du Sphinx",
+    booking_price_label: "Prix trajet",
 
     // Booking - service descriptions
     booking_service_airport_desc: "Transferts entre les aéroports et vos destinations.",
@@ -1177,6 +1193,14 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_payment_card: "Credit Card",
     booking_payment_cash: "Cash Payment",
     booking_payment_method: "Payment Method",
+    booking_hours_label: "Duration (hours)",
+    booking_hours_helper: "Minimum 4 hours. 12-hour package. Beyond that, on request.",
+    booking_hours_more: "12h+ (on request)",
+    booking_quote_only: "Quote on request",
+    booking_quote_whatsapp_cta: "Request a quote on WhatsApp",
+    booking_quote_whatsapp_prefix: "Quote request",
+    booking_sphinx_surcharge: "Sphinx Airport surcharge",
+    booking_price_label: "Trip price",
 
     // Booking - service descriptions
     booking_service_airport_desc: "Transfers between airports and your destinations.",
@@ -1645,6 +1669,14 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_payment_card: "بطاقة ائتمان",
     booking_payment_cash: "الدفع نقداً",
     booking_payment_method: "طريقة الدفع",
+    booking_hours_label: "المدة (ساعات)",
+    booking_hours_helper: "٤ ساعات كحد أدنى. باقة ١٢ ساعة. بعد ذلك بعرض سعر.",
+    booking_hours_more: "أكثر من ١٢ ساعة (بعرض سعر)",
+    booking_quote_only: "بعرض سعر",
+    booking_quote_whatsapp_cta: "اطلب عرض سعر عبر واتساب",
+    booking_quote_whatsapp_prefix: "طلب عرض سعر",
+    booking_sphinx_surcharge: "رسوم إضافية لمطار سفنكس",
+    booking_price_label: "سعر الرحلة",
 
     // Booking - service descriptions
     booking_service_airport_desc: "تنقلات بين المطارات ووجهاتك.",
