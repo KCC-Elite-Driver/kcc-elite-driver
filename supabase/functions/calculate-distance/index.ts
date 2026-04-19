@@ -198,8 +198,9 @@ Deno.serve(async (req) => {
 
         // EG: forfait + Sphinx surcharge
         if (country === "EG") {
-          const sphinxTouched = isSphinx(originMeta.name) || isSphinx(destMeta.name);
-          const price = base + (sphinxTouched ? sphinxFee : 0);
+          // Surcharge Sphinx appliquée UNIQUEMENT au départ de l'aéroport du Sphinx
+          const sphinxDeparture = isSphinx(originMeta.name);
+          const price = base + (sphinxDeparture ? sphinxFee : 0);
           return new Response(
             JSON.stringify({
               price,
@@ -208,7 +209,7 @@ Deno.serve(async (req) => {
               country,
               distance_km: distanceKm,
               duration_min: durationMin,
-              sphinx_surcharge: sphinxTouched ? sphinxFee : 0,
+              sphinx_surcharge: sphinxDeparture ? sphinxFee : 0,
               service_type: serviceType,
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
