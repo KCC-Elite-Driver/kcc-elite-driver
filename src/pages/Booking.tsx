@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import PageMeta from "@/components/PageMeta";
 import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
+import RouteMap from "@/components/RouteMap";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg?format=webp&w=800";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg?format=webp&w=800";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg?format=webp&w=800";
