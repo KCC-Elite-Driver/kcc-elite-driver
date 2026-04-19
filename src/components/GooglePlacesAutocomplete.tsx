@@ -194,6 +194,10 @@ const GooglePlacesAutocomplete = ({
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         onFocus={handleFocus}
+        onBlur={() => {
+          // Delay so click on dropdown items still registers
+          setTimeout(() => autoPickIfNeeded(), 200);
+        }}
         placeholder={placeholder}
         className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 text-base font-sans text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
         autoComplete="off"
