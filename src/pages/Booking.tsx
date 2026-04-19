@@ -18,6 +18,7 @@ import RouteMap from "@/components/RouteMap";
 import mercedesEClass from "@/assets/mercedes-e-class.jpg?format=webp&w=800";
 import mercedesSClass from "@/assets/mercedes-s-class.jpg?format=webp&w=800";
 import mercedesVClass from "@/assets/mercedes-v-class.jpg?format=webp&w=800";
+import soueastSuv from "@/assets/soueast-s07-suv.jpg?format=webp&w=800";
 import heroImage from "@/assets/booking-interior-night.jpg?format=webp&w=1920";
 
 type ServiceType = "airport" | "hourly" | "event" | "city";
@@ -216,7 +217,7 @@ const Booking = () => {
   ];
 
   const vehicles = [
-    { key: "suv", name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: mercedesEClass },
+    { key: "suv", name: t.fleet_suv, desc: t.fleet_suv_desc, passengers: 5, luggage: 4, image: soueastSuv },
     { key: "business", name: t.fleet_business, desc: t.fleet_business_desc, passengers: 3, luggage: 2, image: mercedesEClass },
     { key: "first", name: t.fleet_first, desc: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass },
     { key: "van", name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
