@@ -24,6 +24,7 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminBookings = lazy(() => import("./pages/admin/AdminBookings"));
 const AdminProviders = lazy(() => import("./pages/admin/AdminProviders"));
 const AdminDrivers = lazy(() => import("./pages/admin/AdminDrivers"));
+const AdminPricing = lazy(() => import("./pages/admin/AdminPricing"));
 const ClientLogin = lazy(() => import("./pages/client/ClientLogin"));
 const ClientRegister = lazy(() => import("./pages/client/ClientRegister"));
 const ClientBookings = lazy(() => import("./pages/client/ClientBookings"));
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="/admin/bookings" element={<ProtectedRoute requiredRole="admin"><AdminBookings /></ProtectedRoute>} />
               <Route path="/admin/providers" element={<ProtectedRoute requiredRole="admin"><AdminProviders /></ProtectedRoute>} />
               <Route path="/admin/drivers" element={<ProtectedRoute requiredRole="admin"><AdminDrivers /></ProtectedRoute>} />
+              <Route path="/admin/pricing" element={<ProtectedRoute requiredRole="admin"><AdminPricing /></ProtectedRoute>} />
 
               {/* Client */}
               <Route path="/client/login" element={<ClientLogin />} />
