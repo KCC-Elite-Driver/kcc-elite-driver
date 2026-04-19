@@ -126,7 +126,7 @@ const Booking = () => {
     // Resolve placeIds for pre-filled addresses
     const resolvePlace = async (address: string, setter: (id: string) => void) => {
       try {
-        const { data: res } = await supabase.functions.invoke("google-places", { body: { query: address } });
+        const { data: res } = await supabase.functions.invoke("google-places", { body: { input: address } });
         if (res?.predictions?.[0]?.place_id) setter(res.predictions[0].place_id);
       } catch {}
     };
