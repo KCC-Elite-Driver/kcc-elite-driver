@@ -847,18 +847,44 @@ const Booking = () => {
                       </div>
                     )}
 
+                    {/* Quote-only block (VIP / Intercity / 12h+) */}
+                    {quoteOnly && (
+                      <div className="pt-2 border-t border-border space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">{t.booking_price_label || "Tarif"}</span>
+                          <span className="font-semibold text-primary">{t.booking_quote_only || "Sur devis"}</span>
+                        </div>
+                        <a
+                          href={`https://wa.me/33123456789?text=${encodeURIComponent(
+                            `${t.booking_quote_whatsapp_prefix || "Demande de devis"} — ${data.service ? getServiceLabel(data.service) : ""} | ${data.pickup}${data.dropoff ? " → " + data.dropoff : ""} | ${data.date} ${data.time}${data.vehicle ? " | " + getVehicleName(data.vehicle) : ""}${data.service === "hourly" ? ` | ${hours}h` : ""}`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full text-center gradient-gold text-primary-foreground font-sans text-xs font-semibold px-3 py-2 rounded-md hover:opacity-90 transition-opacity"
+                        >
+                          {t.booking_quote_whatsapp_cta || "Demander un devis sur WhatsApp"}
+                        </a>
+                      </div>
+                    )}
+
                     {/* Price + Extras + Total */}
-                    {estimatedPrice != null && (
+                    {!quoteOnly && estimatedPrice != null && (
                       <div className="pt-2 border-t border-border space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Prix trajet</span>
+                          <span className="text-muted-foreground">{t.booking_price_label || "Prix trajet"}</span>
                           <span className="text-foreground font-medium">{estimatedPrice} {priceCurrencySymbol}</span>
                         </div>
+                        {sphinxSurcharge > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground text-xs">{t.booking_sphinx_surcharge || "Supplément Aéroport du Sphinx"}</span>
+                            <span className="text-foreground text-xs">incl. +{sphinxSurcharge} {priceCurrencySymbol}</span>
+                          </div>
+                        )}
                         {/* Meet & Greet extra */}
                         {data.meetGreet && isAirportOrStation && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground flex items-center gap-1"><Shield size={12} className="text-primary" /> VIP Meet & Greet</span>
-                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? "500 E£" : "30 €"}</span>
+                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? "500 E£" : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
                           </div>
                         )}
                         <div className="flex justify-between pt-2 mt-2 border-t border-border">
