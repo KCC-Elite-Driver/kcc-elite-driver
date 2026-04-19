@@ -74,13 +74,27 @@ const GooglePlacesAutocomplete = ({
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const sessionTokenRef = useRef(crypto.randomUUID());
 
+  // Auto-pick first prediction if user typed something but never selected from dropdown
+  const autoPickIfNeeded = useCallback(() => {
+    if (!onPlaceSelect) return;
+    if (!value || value.trim().length < 2) return;
+    if (predictions.length > 0) {
+      const first = predictions[0];
+      onPlaceSelect(first.place_id, first.description);
+      sessionTokenRef.current = crypto.randomUUID();
+    }
+  }, [value, predictions, onPlaceSelect]);
+
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        autoPickIfNeeded();
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  }, [autoPickIfNeeded]);
 
   const fetchPredictions = useCallback(async (input: string) => {
     if (input.trim().length < 2) {
