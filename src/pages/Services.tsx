@@ -235,6 +235,81 @@ const Services = () => {
         </div>
       </section>
 
+      {/* Egypt Pricing Grid */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <ScrollReveal variant="fade-up">
+            <div className="text-center mb-12">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Tarifs — Le Caire & environs
+              </h2>
+              <p className="font-sans text-muted-foreground text-sm max-w-xl mx-auto">
+                Tarification forfaitaire transparente en USD. VIP et inter-cités sur devis.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Airport */}
+            <ScrollReveal variant="fade-up" delay={0}>
+              <div className="bg-card border border-border rounded-lg p-6 h-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <Plane size={20} className="text-primary" />
+                  <h3 className="font-serif text-lg font-semibold text-foreground">Transfert Aéroport</h3>
+                </div>
+                <ul className="space-y-2 text-sm font-sans text-secondary-foreground">
+                  <li className="flex justify-between"><span>SUV</span><span className="text-primary font-semibold">70 $</span></li>
+                  <li className="flex justify-between"><span>Class E</span><span className="text-primary font-semibold">150 $</span></li>
+                  <li className="flex justify-between"><span>Van</span><span className="text-primary font-semibold">200 $</span></li>
+                  <li className="flex justify-between"><span>Class S</span><span className="text-primary font-semibold">300 $</span></li>
+                </ul>
+                <p className="mt-4 text-xs text-muted-foreground italic">+40 $ depuis l'Aéroport du Sphinx</p>
+              </div>
+            </ScrollReveal>
+
+            {/* Hourly */}
+            <ScrollReveal variant="fade-up" delay={0.1}>
+              <div className="bg-card border border-border rounded-lg p-6 h-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <Clock size={20} className="text-primary" />
+                  <h3 className="font-serif text-lg font-semibold text-foreground">Mise à disposition</h3>
+                </div>
+                <ul className="space-y-2 text-sm font-sans text-secondary-foreground">
+                  <li className="flex justify-between"><span>SUV</span><span className="text-primary font-semibold">45 $/h</span></li>
+                  <li className="flex justify-between"><span>Class E</span><span className="text-primary font-semibold">80 $/h</span></li>
+                  <li className="flex justify-between"><span>Van</span><span className="text-primary font-semibold">90 $/h</span></li>
+                  <li className="flex justify-between"><span>Class S</span><span className="text-primary font-semibold">140 $/h</span></li>
+                </ul>
+                <p className="mt-4 text-xs text-muted-foreground italic">Minimum 4 heures</p>
+              </div>
+            </ScrollReveal>
+
+            {/* 12h Package */}
+            <ScrollReveal variant="fade-up" delay={0.2}>
+              <div className="bg-card border border-border rounded-lg p-6 h-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <Timer size={20} className="text-primary" />
+                  <h3 className="font-serif text-lg font-semibold text-foreground">Forfait 12 h</h3>
+                </div>
+                <ul className="space-y-2 text-sm font-sans text-secondary-foreground">
+                  <li className="flex justify-between"><span>SUV</span><span className="text-primary font-semibold">250 $</span></li>
+                  <li className="flex justify-between"><span>Class E</span><span className="text-primary font-semibold">400 $</span></li>
+                  <li className="flex justify-between"><span>Van</span><span className="text-primary font-semibold">500 $</span></li>
+                  <li className="flex justify-between"><span>Class S</span><span className="text-primary font-semibold">650 $</span></li>
+                </ul>
+                <p className="mt-4 text-xs text-muted-foreground italic">Au-delà de 12 h, sur devis</p>
+              </div>
+            </ScrollReveal>
+          </div>
+
+          <ScrollReveal variant="fade-up" delay={0.3}>
+            <p className="text-center font-sans text-xs text-muted-foreground mt-8 max-w-xl mx-auto">
+              Évènements VIP & transferts inter-cités : tarification personnalisée sur devis. Contactez-nous via WhatsApp.
+            </p>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* Why KCC-EliteDriver */}
       <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">
