@@ -145,6 +145,101 @@ export type Database = {
           },
         ]
       }
+      pricing_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          country: string
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+          rule_id: string | null
+          service_type: string
+          vehicle: string
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          country: string
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          rule_id?: string | null
+          service_type: string
+          vehicle: string
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          country?: string
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          rule_id?: string | null
+          service_type?: string
+          vehicle?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_history_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "pricing_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_rules: {
+        Row: {
+          base_price: number | null
+          country: string
+          created_at: string
+          currency: string
+          currency_symbol: string
+          hourly_rate: number | null
+          id: string
+          per_km_over_threshold: number | null
+          quote_only: boolean
+          service_type: string
+          sphinx_surcharge: number | null
+          threshold_km: number | null
+          updated_at: string
+          vehicle: string
+        }
+        Insert: {
+          base_price?: number | null
+          country: string
+          created_at?: string
+          currency: string
+          currency_symbol: string
+          hourly_rate?: number | null
+          id?: string
+          per_km_over_threshold?: number | null
+          quote_only?: boolean
+          service_type: string
+          sphinx_surcharge?: number | null
+          threshold_km?: number | null
+          updated_at?: string
+          vehicle: string
+        }
+        Update: {
+          base_price?: number | null
+          country?: string
+          created_at?: string
+          currency?: string
+          currency_symbol?: string
+          hourly_rate?: number | null
+          id?: string
+          per_km_over_threshold?: number | null
+          quote_only?: boolean
+          service_type?: string
+          sphinx_surcharge?: number | null
+          threshold_km?: number | null
+          updated_at?: string
+          vehicle?: string
+        }
+        Relationships: []
+      }
       providers: {
         Row: {
           created_at: string
