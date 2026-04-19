@@ -433,10 +433,28 @@ const Booking = () => {
                           <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_pickup_field}</label>
                           <GooglePlacesAutocomplete value={data.pickup} onChange={(v) => setData({ ...data, pickup: v })} onPlaceSelect={(id) => setPickupPlaceId(id)} placeholder={t.hero_pickup} iconColor="text-primary" />
                         </div>
-                        <div>
-                          <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_destination_field}</label>
-                          <GooglePlacesAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} onPlaceSelect={(id) => setDropoffPlaceId(id)} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
-                        </div>
+                        {data.service !== "hourly" && (
+                          <div>
+                            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_destination_field}</label>
+                            <GooglePlacesAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} onPlaceSelect={(id) => setDropoffPlaceId(id)} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
+                          </div>
+                        )}
+                        {data.service === "hourly" && (
+                          <div>
+                            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_hours_label || "Durée"}</label>
+                            <select
+                              value={hours}
+                              onChange={(e) => setHours(Number(e.target.value))}
+                              className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            >
+                              {[4,5,6,7,8,9,10,11,12].map(h => (
+                                <option key={h} value={h}>{h}h{h === 12 ? " (forfait)" : ""}</option>
+                              ))}
+                              <option value={13}>{t.booking_hours_more || "12h+ (sur devis)"}</option>
+                            </select>
+                            <HelperText>{t.booking_hours_helper || "Minimum 4 heures"}</HelperText>
+                          </div>
+                        )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_date_field}</label>
