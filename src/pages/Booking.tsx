@@ -72,6 +72,9 @@ const Booking = () => {
   const [distanceKm, setDistanceKm] = useState<number | null>(null);
   const [durationMin, setDurationMin] = useState<number | null>(null);
   const [priceLoading, setPriceLoading] = useState(false);
+  const [quoteOnly, setQuoteOnly] = useState(false);
+  const [hours, setHours] = useState<number>(4);
+  const [sphinxSurcharge, setSphinxSurcharge] = useState<number>(0);
   const [data, setData] = useState<BookingData>({
     service: null,
     pickup: "",
