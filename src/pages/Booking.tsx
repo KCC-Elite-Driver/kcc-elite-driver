@@ -72,6 +72,9 @@ const Booking = () => {
   const [distanceKm, setDistanceKm] = useState<number | null>(null);
   const [durationMin, setDurationMin] = useState<number | null>(null);
   const [priceLoading, setPriceLoading] = useState(false);
+  const [quoteOnly, setQuoteOnly] = useState(false);
+  const [hours, setHours] = useState<number>(4);
+  const [sphinxSurcharge, setSphinxSurcharge] = useState<number>(0);
   const [data, setData] = useState<BookingData>({
     service: null,
     pickup: "",
@@ -142,34 +145,53 @@ const Booking = () => {
     }
   }, [user]);
 
-  // Calculate price when pickup + dropoff are set
+  // Map UI service key -> backend serviceType
+  const mapServiceType = (svc: ServiceType | null): string => {
+    if (svc === "event") return "vip";
+    if (svc === "city") return "intercity";
+    return svc || "airport";
+  };
+
+  // Calculate price when pickup (and dropoff if needed) are set
   const calculatePrice = useCallback(async (vehicle?: string) => {
-    if (!pickupPlaceId || !dropoffPlaceId) return;
+    if (!pickupPlaceId) return;
+    const svcType = mapServiceType(data.service);
+    // Airport / intercity require dropoff; hourly / vip do not
+    if ((svcType === "airport" || svcType === "intercity") && !dropoffPlaceId) return;
     setPriceLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("calculate-distance", {
-        body: { originPlaceId: pickupPlaceId, destinationPlaceId: dropoffPlaceId, vehicle: vehicle || "business" },
+      const { data: res, error } = await supabase.functions.invoke("calculate-distance", {
+        body: {
+          originPlaceId: pickupPlaceId,
+          destinationPlaceId: dropoffPlaceId || undefined,
+          vehicle: vehicle || "business",
+          serviceType: svcType,
+          hours: svcType === "hourly" ? hours : 0,
+        },
       });
-      if (!error && data?.price != null) {
-        setEstimatedPrice(data.price);
-        setPriceCurrency(data.currency);
-        setPriceCurrencySymbol(data.currency_symbol);
-        setDistanceKm(data.distance_km);
-        setDurationMin(data.duration_min);
+      if (!error && res) {
+        setQuoteOnly(!!res.quote_only);
+        setEstimatedPrice(res.price ?? null);
+        setPriceCurrency(res.currency ?? "");
+        setPriceCurrencySymbol(res.currency_symbol ?? "");
+        setDistanceKm(res.distance_km ?? null);
+        setDurationMin(res.duration_min ?? null);
+        setSphinxSurcharge(res.sphinx_surcharge ?? 0);
       }
     } catch (err) {
       console.error("Price calc error:", err);
     } finally {
       setPriceLoading(false);
     }
-  }, [pickupPlaceId, dropoffPlaceId]);
+  }, [pickupPlaceId, dropoffPlaceId, data.service, hours]);
 
-  // Auto-calculate when both placeIds are ready
+  // Auto-calculate when relevant inputs change
   useEffect(() => {
-    if (pickupPlaceId && dropoffPlaceId) {
-      calculatePrice(data.vehicle || undefined);
-    }
-  }, [pickupPlaceId, dropoffPlaceId, data.vehicle, calculatePrice]);
+    if (!pickupPlaceId) return;
+    const svcType = mapServiceType(data.service);
+    if ((svcType === "airport" || svcType === "intercity") && !dropoffPlaceId) return;
+    calculatePrice(data.vehicle || undefined);
+  }, [pickupPlaceId, dropoffPlaceId, data.vehicle, data.service, hours, calculatePrice]);
 
   const steps = [
     t.booking_step_service,
@@ -207,7 +229,14 @@ const Booking = () => {
   const canProceed = () => {
     switch (step) {
       case 0: return data.service !== null;
-      case 1: return data.pickup.trim() !== "" && data.date !== "" && data.time !== "";
+      case 1: {
+        const baseOk = data.pickup.trim() !== "" && data.date !== "" && data.time !== "";
+        // For airport/intercity we require dropoff; hourly/event do not
+        if (data.service === "airport" || data.service === "city") {
+          return baseOk && data.dropoff.trim() !== "";
+        }
+        return baseOk;
+      }
       case 2: return data.firstname.trim() !== "" && data.lastname.trim() !== "" && data.email.trim() !== "" && data.phone.trim() !== "";
       case 3: return data.vehicle !== null;
       case 4: return true;
@@ -411,10 +440,28 @@ const Booking = () => {
                           <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_pickup_field}</label>
                           <GooglePlacesAutocomplete value={data.pickup} onChange={(v) => setData({ ...data, pickup: v })} onPlaceSelect={(id) => setPickupPlaceId(id)} placeholder={t.hero_pickup} iconColor="text-primary" />
                         </div>
-                        <div>
-                          <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_destination_field}</label>
-                          <GooglePlacesAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} onPlaceSelect={(id) => setDropoffPlaceId(id)} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
-                        </div>
+                        {data.service !== "hourly" && (
+                          <div>
+                            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_destination_field}</label>
+                            <GooglePlacesAutocomplete value={data.dropoff} onChange={(v) => setData({ ...data, dropoff: v })} onPlaceSelect={(id) => setDropoffPlaceId(id)} placeholder={t.hero_dropoff} iconColor="text-muted-foreground" />
+                          </div>
+                        )}
+                        {data.service === "hourly" && (
+                          <div>
+                            <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_hours_label || "Durée"}</label>
+                            <select
+                              value={hours}
+                              onChange={(e) => setHours(Number(e.target.value))}
+                              className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            >
+                              {[4,5,6,7,8,9,10,11,12].map(h => (
+                                <option key={h} value={h}>{h}h{h === 12 ? " (forfait)" : ""}</option>
+                              ))}
+                              <option value={13}>{t.booking_hours_more || "12h+ (sur devis)"}</option>
+                            </select>
+                            <HelperText>{t.booking_hours_helper || "Minimum 4 heures"}</HelperText>
+                          </div>
+                        )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_date_field}</label>
@@ -800,18 +847,44 @@ const Booking = () => {
                       </div>
                     )}
 
+                    {/* Quote-only block (VIP / Intercity / 12h+) */}
+                    {quoteOnly && (
+                      <div className="pt-2 border-t border-border space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">{t.booking_price_label || "Tarif"}</span>
+                          <span className="font-semibold text-primary">{t.booking_quote_only || "Sur devis"}</span>
+                        </div>
+                        <a
+                          href={`https://wa.me/33123456789?text=${encodeURIComponent(
+                            `${t.booking_quote_whatsapp_prefix || "Demande de devis"} — ${data.service ? getServiceLabel(data.service) : ""} | ${data.pickup}${data.dropoff ? " → " + data.dropoff : ""} | ${data.date} ${data.time}${data.vehicle ? " | " + getVehicleName(data.vehicle) : ""}${data.service === "hourly" ? ` | ${hours}h` : ""}`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full text-center gradient-gold text-primary-foreground font-sans text-xs font-semibold px-3 py-2 rounded-md hover:opacity-90 transition-opacity"
+                        >
+                          {t.booking_quote_whatsapp_cta || "Demander un devis sur WhatsApp"}
+                        </a>
+                      </div>
+                    )}
+
                     {/* Price + Extras + Total */}
-                    {estimatedPrice != null && (
+                    {!quoteOnly && estimatedPrice != null && (
                       <div className="pt-2 border-t border-border space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Prix trajet</span>
+                          <span className="text-muted-foreground">{t.booking_price_label || "Prix trajet"}</span>
                           <span className="text-foreground font-medium">{estimatedPrice} {priceCurrencySymbol}</span>
                         </div>
+                        {sphinxSurcharge > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground text-xs">{t.booking_sphinx_surcharge || "Supplément Aéroport du Sphinx"}</span>
+                            <span className="text-foreground text-xs">incl. +{sphinxSurcharge} {priceCurrencySymbol}</span>
+                          </div>
+                        )}
                         {/* Meet & Greet extra */}
                         {data.meetGreet && isAirportOrStation && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground flex items-center gap-1"><Shield size={12} className="text-primary" /> VIP Meet & Greet</span>
-                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? "500 E£" : "30 €"}</span>
+                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? "500 E£" : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
                           </div>
                         )}
                         <div className="flex justify-between pt-2 mt-2 border-t border-border">
