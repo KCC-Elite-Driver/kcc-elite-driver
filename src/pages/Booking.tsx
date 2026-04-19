@@ -145,34 +145,53 @@ const Booking = () => {
     }
   }, [user]);
 
-  // Calculate price when pickup + dropoff are set
+  // Map UI service key -> backend serviceType
+  const mapServiceType = (svc: ServiceType | null): string => {
+    if (svc === "event") return "vip";
+    if (svc === "city") return "intercity";
+    return svc || "airport";
+  };
+
+  // Calculate price when pickup (and dropoff if needed) are set
   const calculatePrice = useCallback(async (vehicle?: string) => {
-    if (!pickupPlaceId || !dropoffPlaceId) return;
+    if (!pickupPlaceId) return;
+    const svcType = mapServiceType(data.service);
+    // Airport / intercity require dropoff; hourly / vip do not
+    if ((svcType === "airport" || svcType === "intercity") && !dropoffPlaceId) return;
     setPriceLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("calculate-distance", {
-        body: { originPlaceId: pickupPlaceId, destinationPlaceId: dropoffPlaceId, vehicle: vehicle || "business" },
+      const { data: res, error } = await supabase.functions.invoke("calculate-distance", {
+        body: {
+          originPlaceId: pickupPlaceId,
+          destinationPlaceId: dropoffPlaceId || undefined,
+          vehicle: vehicle || "business",
+          serviceType: svcType,
+          hours: svcType === "hourly" ? hours : 0,
+        },
       });
-      if (!error && data?.price != null) {
-        setEstimatedPrice(data.price);
-        setPriceCurrency(data.currency);
-        setPriceCurrencySymbol(data.currency_symbol);
-        setDistanceKm(data.distance_km);
-        setDurationMin(data.duration_min);
+      if (!error && res) {
+        setQuoteOnly(!!res.quote_only);
+        setEstimatedPrice(res.price ?? null);
+        setPriceCurrency(res.currency ?? "");
+        setPriceCurrencySymbol(res.currency_symbol ?? "");
+        setDistanceKm(res.distance_km ?? null);
+        setDurationMin(res.duration_min ?? null);
+        setSphinxSurcharge(res.sphinx_surcharge ?? 0);
       }
     } catch (err) {
       console.error("Price calc error:", err);
     } finally {
       setPriceLoading(false);
     }
-  }, [pickupPlaceId, dropoffPlaceId]);
+  }, [pickupPlaceId, dropoffPlaceId, data.service, hours]);
 
-  // Auto-calculate when both placeIds are ready
+  // Auto-calculate when relevant inputs change
   useEffect(() => {
-    if (pickupPlaceId && dropoffPlaceId) {
-      calculatePrice(data.vehicle || undefined);
-    }
-  }, [pickupPlaceId, dropoffPlaceId, data.vehicle, calculatePrice]);
+    if (!pickupPlaceId) return;
+    const svcType = mapServiceType(data.service);
+    if ((svcType === "airport" || svcType === "intercity") && !dropoffPlaceId) return;
+    calculatePrice(data.vehicle || undefined);
+  }, [pickupPlaceId, dropoffPlaceId, data.vehicle, data.service, hours, calculatePrice]);
 
   const steps = [
     t.booking_step_service,
