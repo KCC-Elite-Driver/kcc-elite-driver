@@ -33,7 +33,29 @@ const EG_DAILY12: Record<VehicleKey, number> = {
 
 const SPHINX_SURCHARGE_USD = 40;
 
-// ====== Non-EG fallback (existing logic preserved) ======
+// ====== FRANCE PRICING (EUR) ======
+// Class E = business, Class V = van, Class S = first
+const FR_AIRPORT_BASE: Record<VehicleKey, number> = {
+  suv: 130, // fallback (SUV hidden in UI for FR)
+  business: 130, // Class E
+  van: 150, // Class V
+  first: 200, // Class S
+};
+const FR_AIRPORT_PER_KM_OVER_25: Record<VehicleKey, number> = {
+  suv: 3,
+  business: 3,
+  van: 3.5,
+  first: 4,
+};
+const FR_HOURLY_RATE: Record<VehicleKey, number> = {
+  suv: 80,
+  business: 80, // Class E
+  van: 90, // Class V
+  first: 120, // Class S
+};
+const FR_AIRPORT_THRESHOLD_KM = 25;
+
+// ====== Non-FR/EG fallback (legacy per-km) ======
 const VEHICLE_MULTIPLIERS: Record<string, number> = {
   suv: 1.0,
   business: 1.0,
@@ -186,7 +208,83 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ====== Non-EG fallback (existing per-km logic) ======
+    // ====== FRANCE (EUR forfait + km supplémentaire) ======
+    if (country === "FR") {
+      const v = (vehicle as VehicleKey) in FR_AIRPORT_BASE ? (vehicle as VehicleKey) : "business";
+
+      // VIP & intercity → quote only
+      if (serviceType === "vip" || serviceType === "intercity") {
+        return new Response(
+          JSON.stringify({
+            quote_only: true,
+            currency: "EUR",
+            currency_symbol: "€",
+            country,
+            distance_km: distanceKm,
+            duration_min: durationMin,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Hourly: min 4h, > 12h → quote only.
+      if (serviceType === "hourly") {
+        const h = Math.max(4, Number(hours) || 4);
+        if (h > 12) {
+          return new Response(
+            JSON.stringify({
+              quote_only: true,
+              currency: "EUR",
+              currency_symbol: "€",
+              country,
+              hours: h,
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        const price = FR_HOURLY_RATE[v] * h;
+        return new Response(
+          JSON.stringify({
+            price,
+            currency: "EUR",
+            currency_symbol: "€",
+            country,
+            hours: h,
+            service_type: serviceType,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Airport (default) — forfait jusqu'à 25 km, surcharge au-delà
+      if (!distanceKm) {
+        return new Response(
+          JSON.stringify({ error: "Cannot calculate distance" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const base = FR_AIRPORT_BASE[v];
+      const extraKm = Math.max(0, distanceKm - FR_AIRPORT_THRESHOLD_KM);
+      const surcharge = Math.round(extraKm * FR_AIRPORT_PER_KM_OVER_25[v]);
+      const price = base + surcharge;
+      return new Response(
+        JSON.stringify({
+          price,
+          currency: "EUR",
+          currency_symbol: "€",
+          country,
+          distance_km: distanceKm,
+          duration_min: durationMin,
+          base_price: base,
+          km_surcharge: surcharge,
+          threshold_km: FR_AIRPORT_THRESHOLD_KM,
+          service_type: serviceType,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ====== Other countries fallback (legacy per-km) ======
     if (!distanceKm) {
       return new Response(
         JSON.stringify({ error: "Cannot calculate distance" }),
