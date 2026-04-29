@@ -17,7 +17,7 @@ const DirectContact = () => {
         {/* WhatsApp */}
         <div>
           <a
-            href={`https://wa.me/33123456789?text=${encodeURIComponent("Bonjour, je souhaiterais discuter d'une demande personnalisée KCC-EliteDriver.")}`}
+            href={`https://wa.me/201507040949?text=${encodeURIComponent("Bonjour, je souhaiterais discuter d'une demande personnalisée KCC-EliteDriver.")}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 w-full bg-[hsl(142,70%,35%)] text-white font-sans text-sm font-medium px-4 py-3 rounded-md hover:opacity-90 transition-opacity duration-200"

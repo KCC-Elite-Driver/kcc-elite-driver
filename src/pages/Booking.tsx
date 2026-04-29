@@ -916,7 +916,7 @@ const Booking = () => {
                           <span className="font-semibold text-primary">{t.booking_quote_only || "Sur devis"}</span>
                         </div>
                         <a
-                          href={`https://wa.me/33123456789?text=${encodeURIComponent(
+                          href={`https://wa.me/201507040949?text=${encodeURIComponent(
                             `${t.booking_quote_whatsapp_prefix || "Demande de devis"} — ${data.service ? getServiceLabel(data.service) : ""} | ${data.pickup}${data.dropoff ? " → " + data.dropoff : ""} | ${data.date} ${data.time}${data.vehicle ? " | " + getVehicleName(data.vehicle) : ""}${data.service === "hourly" ? ` | ${hours}h` : ""}`
                           )}`}
                           target="_blank"
