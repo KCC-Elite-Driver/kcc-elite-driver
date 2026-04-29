@@ -55,6 +55,13 @@ const HelperText = ({ children }: { children: React.ReactNode }) => (
   <p className="font-sans text-xs text-muted-foreground mt-1.5">{children}</p>
 );
 
+// Format price: "EGP 3 500" for EGP, "150 €" for others.
+const formatPrice = (amount: number, symbol: string): string => {
+  const isCode = /^[A-Z]{3}$/.test(symbol); // EGP, USD, etc.
+  const formatted = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(amount);
+  return isCode ? `${symbol} ${formatted}` : `${formatted} ${symbol}`;
+};
+
 const dateLocales = { fr, en: enGB, ar } as const;
 
 const Booking = () => {
