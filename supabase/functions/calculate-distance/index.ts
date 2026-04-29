@@ -29,6 +29,63 @@ const VEHICLE_MULTIPLIERS: Record<string, number> = {
 };
 const DEFAULT_RATE = { rate: 3, currency: "EUR", symbol: "€" };
 
+// ====== Live USD->EGP rate (cached 1h) ======
+const FALLBACK_USD_TO_EGP = 50;
+let cachedRate: { value: number; ts: number } | null = null;
+const RATE_TTL_MS = 60 * 60 * 1000; // 1h
+
+async function fetchWithTimeout(url: string, ms = 3000): Promise<Response> {
+  const ctrl = new AbortController();
+  const tid = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { signal: ctrl.signal });
+  } finally {
+    clearTimeout(tid);
+  }
+}
+
+async function getUsdToEgp(): Promise<number> {
+  const now = Date.now();
+  if (cachedRate && now - cachedRate.ts < RATE_TTL_MS) return cachedRate.value;
+  try {
+    const res = await fetchWithTimeout("https://open.er-api.com/v6/latest/USD", 3000);
+    const data = await res.json();
+    const rate = Number(data?.rates?.EGP);
+    if (rate && rate > 0) {
+      cachedRate = { value: rate, ts: now };
+      return rate;
+    }
+  } catch (e) {
+    console.warn("USD->EGP rate fetch failed, using fallback:", e);
+  }
+  if (cachedRate) return cachedRate.value;
+  return FALLBACK_USD_TO_EGP;
+}
+
+function isPublicIp(ip: string): boolean {
+  if (!ip) return false;
+  if (ip === "127.0.0.1" || ip === "::1") return false;
+  if (ip.startsWith("10.") || ip.startsWith("192.168.")) return false;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(ip)) return false;
+  if (ip.startsWith("fc") || ip.startsWith("fd")) return false;
+  return true;
+}
+
+async function getClientCountry(req: Request): Promise<string | null> {
+  const fwd = req.headers.get("x-forwarded-for") || "";
+  const ip = (fwd.split(",")[0] || req.headers.get("cf-connecting-ip") || "").trim();
+  if (!isPublicIp(ip)) return null;
+  try {
+    const res = await fetchWithTimeout(`https://ipapi.co/${ip}/country/`, 3000);
+    if (!res.ok) return null;
+    const text = (await res.text()).trim();
+    if (/^[A-Z]{2}$/.test(text)) return text;
+  } catch (e) {
+    console.warn("IP geo lookup failed:", e);
+  }
+  return null;
+}
+
 async function getPlaceMeta(placeId: string, apiKey: string): Promise<{ country: string; name: string }> {
   const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=address_components,name&key=${apiKey}`;
   const res = await fetch(url);
@@ -93,6 +150,9 @@ Deno.serve(async (req) => {
       hours = 0,
     } = await req.json();
 
+    // Detect client country via IP (for currency display)
+    const clientCountryP = getClientCountry(req);
+
     if (!originPlaceId) {
       return new Response(
         JSON.stringify({ error: "originPlaceId required" }),
@@ -113,8 +173,32 @@ Deno.serve(async (req) => {
           ).then((r) => r.json())
         : Promise.resolve(null);
 
-    const [originMeta, destMeta, distRes] = await Promise.all([originMetaP, destMetaP, distP]);
+    const [originMeta, destMeta, distRes, clientCountry] = await Promise.all([
+      originMetaP, destMetaP, distP, clientCountryP,
+    ]);
     const country = originMeta.country;
+
+    // Display currency: based on client IP location, falls back to pickup country.
+    // EG-resident clients see EGP (live converted from USD).
+    const displayCountry = clientCountry || country;
+    const useEgp = displayCountry === "EG";
+    const usdToEgp = useEgp ? await getUsdToEgp() : 1;
+    const egpFmt = (usd: number) => Math.round(usd * usdToEgp);
+
+    // Apply EGP conversion to a payload when source rule is in USD and client is in EG.
+    // Only converts numeric monetary fields; leaves distance/duration/etc untouched.
+    const MONEY_FIELDS = ["price", "sphinx_surcharge", "base_price", "km_surcharge"] as const;
+    const localizePayload = (payload: Record<string, unknown>, sourceCurrency: string) => {
+      if (!useEgp || sourceCurrency !== "USD") return payload;
+      const out: Record<string, unknown> = { ...payload };
+      for (const f of MONEY_FIELDS) {
+        if (typeof out[f] === "number") out[f] = egpFmt(out[f] as number);
+      }
+      out.currency = "EGP";
+      out.currency_symbol = "EGP";
+      out.fx_rate_usd_egp = usdToEgp;
+      return out;
+    };
 
     let distanceKm: number | null = null;
     let durationMin: number | null = null;
@@ -132,14 +216,14 @@ Deno.serve(async (req) => {
       // VIP / intercity / explicit quote_only
       if (rule.quote_only || serviceType === "vip" || serviceType === "intercity") {
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             quote_only: true,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
             country,
             distance_km: distanceKm,
             duration_min: durationMin,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -149,27 +233,27 @@ Deno.serve(async (req) => {
         const h = Math.max(4, Number(hours) || 4);
         if (h > 12) {
           return new Response(
-            JSON.stringify({
+            JSON.stringify(localizePayload({
               quote_only: true,
               currency: rule.currency,
               currency_symbol: rule.currency_symbol,
               country,
               hours: h,
-            }),
+            }, rule.currency)),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
         const hourly = Number(rule.hourly_rate) || 0;
         const price = Math.round(hourly * h);
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             price,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
             country,
             hours: h,
             service_type: serviceType,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -178,13 +262,13 @@ Deno.serve(async (req) => {
       if (serviceType === "daily12") {
         const price = Number(rule.base_price) || 0;
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             price,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
             country,
             service_type: serviceType,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -202,7 +286,7 @@ Deno.serve(async (req) => {
           const sphinxDeparture = isSphinx(originMeta.name);
           const price = base + (sphinxDeparture ? sphinxFee : 0);
           return new Response(
-            JSON.stringify({
+            JSON.stringify(localizePayload({
               price,
               currency: rule.currency,
               currency_symbol: rule.currency_symbol,
@@ -211,7 +295,7 @@ Deno.serve(async (req) => {
               duration_min: durationMin,
               sphinx_surcharge: sphinxDeparture ? sphinxFee : 0,
               service_type: serviceType,
-            }),
+            }, rule.currency)),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
@@ -227,7 +311,7 @@ Deno.serve(async (req) => {
         const surcharge = Math.round(extraKm * perKm);
         const price = Math.round(base + surcharge);
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             price,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
@@ -238,7 +322,7 @@ Deno.serve(async (req) => {
             km_surcharge: surcharge,
             threshold_km: threshold,
             service_type: serviceType,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }

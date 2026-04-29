@@ -55,6 +55,13 @@ const HelperText = ({ children }: { children: React.ReactNode }) => (
   <p className="font-sans text-xs text-muted-foreground mt-1.5">{children}</p>
 );
 
+// Format price: "EGP 3 500" for EGP, "150 €" for others.
+const formatPrice = (amount: number, symbol: string): string => {
+  const isCode = /^[A-Z]{3}$/.test(symbol); // EGP, USD, etc.
+  const formatted = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(amount);
+  return isCode ? `${symbol} ${formatted}` : `${formatted} ${symbol}`;
+};
+
 const dateLocales = { fr, en: enGB, ar } as const;
 
 const Booking = () => {
@@ -629,7 +636,7 @@ const Booking = () => {
                                     <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans"><Loader2 size={12} className="animate-spin" /> Calcul...</span>
                                   ) : estimatedPrice !== null && data.vehicle === vehicle.key ? (
                                     <span className="font-sans text-sm font-semibold text-primary">
-                                      {estimatedPrice} {priceCurrencySymbol}
+                                      {formatPrice(estimatedPrice, priceCurrencySymbol)}
                                       {distanceKm && <span className="text-xs text-muted-foreground font-normal ml-2">({distanceKm} km · ~{durationMin} min)</span>}
                                     </span>
                                   ) : null}
@@ -664,7 +671,7 @@ const Booking = () => {
                         <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
                         <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
                         {estimatedPrice !== null && (
-                          <SummaryRow label="Prix estimé" value={`${estimatedPrice} ${priceCurrencySymbol}`} />
+                          <SummaryRow label="Prix estimé" value={formatPrice(estimatedPrice, priceCurrencySymbol)} />
                         )}
                         {distanceKm !== null && (
                           <SummaryRow label="Distance / Durée" value={`${distanceKm} km · ~${durationMin} min`} />
@@ -874,25 +881,25 @@ const Booking = () => {
                       <div className="pt-2 border-t border-border space-y-1">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">{t.booking_price_label || "Prix trajet"}</span>
-                          <span className="text-foreground font-medium">{estimatedPrice} {priceCurrencySymbol}</span>
+                          <span className="text-foreground font-medium">{formatPrice(estimatedPrice, priceCurrencySymbol)}</span>
                         </div>
                         {sphinxSurcharge > 0 && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground text-xs">{t.booking_sphinx_surcharge || "Supplément Aéroport du Sphinx"}</span>
-                            <span className="text-foreground text-xs">incl. +{sphinxSurcharge} {priceCurrencySymbol}</span>
+                            <span className="text-foreground text-xs">incl. +{formatPrice(sphinxSurcharge, priceCurrencySymbol)}</span>
                           </div>
                         )}
                         {/* Meet & Greet extra */}
                         {data.meetGreet && isAirportOrStation && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground flex items-center gap-1"><Shield size={12} className="text-primary" /> VIP Meet & Greet</span>
-                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? "500 E£" : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
+                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? formatPrice(500, "EGP") : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
                           </div>
                         )}
                         <div className="flex justify-between pt-2 mt-2 border-t border-border">
                           <span className="font-semibold text-foreground">TOTAL</span>
                           <span className="font-bold text-primary text-base">
-                            {(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 500 : 30) : 0))} {priceCurrencySymbol}
+                            {formatPrice(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 500 : 30) : 0), priceCurrencySymbol)}
                           </span>
                         </div>
                       </div>
