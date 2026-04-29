@@ -881,25 +881,25 @@ const Booking = () => {
                       <div className="pt-2 border-t border-border space-y-1">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">{t.booking_price_label || "Prix trajet"}</span>
-                          <span className="text-foreground font-medium">{estimatedPrice} {priceCurrencySymbol}</span>
+                          <span className="text-foreground font-medium">{formatPrice(estimatedPrice, priceCurrencySymbol)}</span>
                         </div>
                         {sphinxSurcharge > 0 && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground text-xs">{t.booking_sphinx_surcharge || "Supplément Aéroport du Sphinx"}</span>
-                            <span className="text-foreground text-xs">incl. +{sphinxSurcharge} {priceCurrencySymbol}</span>
+                            <span className="text-foreground text-xs">incl. +{formatPrice(sphinxSurcharge, priceCurrencySymbol)}</span>
                           </div>
                         )}
                         {/* Meet & Greet extra */}
                         {data.meetGreet && isAirportOrStation && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground flex items-center gap-1"><Shield size={12} className="text-primary" /> VIP Meet & Greet</span>
-                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? "500 E£" : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
+                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? formatPrice(500, "EGP") : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
                           </div>
                         )}
                         <div className="flex justify-between pt-2 mt-2 border-t border-border">
                           <span className="font-semibold text-foreground">TOTAL</span>
                           <span className="font-bold text-primary text-base">
-                            {(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 500 : 30) : 0))} {priceCurrencySymbol}
+                            {formatPrice(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 500 : 30) : 0), priceCurrencySymbol)}
                           </span>
                         </div>
                       </div>
