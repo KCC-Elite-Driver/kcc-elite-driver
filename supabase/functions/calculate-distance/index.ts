@@ -185,6 +185,21 @@ Deno.serve(async (req) => {
     const usdToEgp = useEgp ? await getUsdToEgp() : 1;
     const egpFmt = (usd: number) => Math.round(usd * usdToEgp);
 
+    // Apply EGP conversion to a payload when source rule is in USD and client is in EG.
+    // Only converts numeric monetary fields; leaves distance/duration/etc untouched.
+    const MONEY_FIELDS = ["price", "sphinx_surcharge", "base_price", "km_surcharge"] as const;
+    const localizePayload = (payload: Record<string, unknown>, sourceCurrency: string) => {
+      if (!useEgp || sourceCurrency !== "USD") return payload;
+      const out: Record<string, unknown> = { ...payload };
+      for (const f of MONEY_FIELDS) {
+        if (typeof out[f] === "number") out[f] = egpFmt(out[f] as number);
+      }
+      out.currency = "EGP";
+      out.currency_symbol = "EGP";
+      out.fx_rate_usd_egp = usdToEgp;
+      return out;
+    };
+
     let distanceKm: number | null = null;
     let durationMin: number | null = null;
     if (distRes && distRes.rows?.[0]?.elements?.[0]?.status === "OK") {
