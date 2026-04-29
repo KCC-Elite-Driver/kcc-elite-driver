@@ -256,7 +256,13 @@ const Booking = () => {
   const handleConfirm = async () => {
     setSubmitting(true);
     try {
+      const id = crypto.randomUUID();
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+      const rand = String(Math.floor(Math.random() * 900) + 100);
+      const resId = `RES-${dateStr}-${rand}`;
       const bookingPayload = {
+        id,
         client_id: user?.id || null,
         service_type: data.service,
         pickup: data.pickup,
@@ -277,6 +283,52 @@ const Booking = () => {
         status: "pending" as const,
       };
       await supabase.from("bookings").insert(bookingPayload);
+
+      const serviceLabel = getServiceLabel(data.service);
+      const vehicleLabel = data.vehicle ? getVehicleName(data.vehicle) : "";
+      const priceLabel = estimatedPrice != null
+        ? formatPrice(estimatedPrice, priceCurrencySymbol)
+        : undefined;
+
+      const sharedTrip = {
+        reservationId: resId,
+        firstname: data.firstname,
+        service: serviceLabel,
+        pickup: data.pickup,
+        dropoff: data.dropoff || undefined,
+        date: data.date,
+        time: data.time,
+        vehicle: vehicleLabel,
+      };
+
+      // Fire-and-forget: confirmation to client + notification to admin
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "booking-received",
+          recipientEmail: data.email,
+          idempotencyKey: `booking-received-${id}`,
+          templateData: sharedTrip,
+        },
+      }).catch((e) => console.error("client email failed", e));
+
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "admin-booking-notification",
+          idempotencyKey: `admin-booking-${id}`,
+          templateData: {
+            ...sharedTrip,
+            lastname: data.lastname,
+            email: data.email,
+            phone: `${data.phoneCode} ${data.phone}`,
+            passengers: data.passengers,
+            luggage: data.luggage,
+            flightNumber: data.flightNumber || undefined,
+            notes: data.notes || undefined,
+            estimatedPrice: priceLabel,
+          },
+        },
+      }).catch((e) => console.error("admin email failed", e));
+
       setCompleted(true);
     } catch (err) {
       console.error("Booking error:", err);
