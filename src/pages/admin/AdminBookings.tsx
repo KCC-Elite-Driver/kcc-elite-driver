@@ -48,6 +48,33 @@ const AdminBookings = () => {
 
   const updateBooking = async (id: string, updates: Record<string, any>) => {
     await supabase.from("bookings").update(updates as any).eq("id", id);
+
+    // Send confirmation email to client when status changes to "confirmed"
+    if (updates.status === "confirmed") {
+      const b = bookings.find((x) => x.id === id);
+      if (b && b.status !== "confirmed") {
+        const driver = drivers.find((d) => d.id === (updates.driver_id ?? b.driver_id));
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "booking-confirmed",
+            recipientEmail: b.email,
+            idempotencyKey: `booking-confirmed-${id}`,
+            templateData: {
+              firstname: b.firstname,
+              reservationId: id.slice(0, 8).toUpperCase(),
+              service: b.service_type ?? undefined,
+              pickup: b.pickup,
+              dropoff: b.dropoff || undefined,
+              date: b.date,
+              time: b.time,
+              vehicle: b.vehicle ?? undefined,
+              driverName: driver ? `${driver.firstname} ${driver.lastname}` : undefined,
+            },
+          },
+        }).catch((e) => console.error("confirmation email failed", e));
+      }
+    }
+
     load();
     setEditId(null);
   };
