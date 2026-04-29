@@ -150,6 +150,9 @@ Deno.serve(async (req) => {
       hours = 0,
     } = await req.json();
 
+    // Detect client country via IP (for currency display)
+    const clientCountryP = getClientCountry(req);
+
     if (!originPlaceId) {
       return new Response(
         JSON.stringify({ error: "originPlaceId required" }),
@@ -170,8 +173,17 @@ Deno.serve(async (req) => {
           ).then((r) => r.json())
         : Promise.resolve(null);
 
-    const [originMeta, destMeta, distRes] = await Promise.all([originMetaP, destMetaP, distP]);
+    const [originMeta, destMeta, distRes, clientCountry] = await Promise.all([
+      originMetaP, destMetaP, distP, clientCountryP,
+    ]);
     const country = originMeta.country;
+
+    // Display currency: based on client IP location, falls back to pickup country.
+    // EG-resident clients see EGP (live converted from USD).
+    const displayCountry = clientCountry || country;
+    const useEgp = displayCountry === "EG";
+    const usdToEgp = useEgp ? await getUsdToEgp() : 1;
+    const egpFmt = (usd: number) => Math.round(usd * usdToEgp);
 
     let distanceKm: number | null = null;
     let durationMin: number | null = null;
