@@ -30,6 +30,7 @@ const ClientRegister = lazy(() => import("./pages/client/ClientRegister"));
 const ClientBookings = lazy(() => import("./pages/client/ClientBookings"));
 const ClientBookingDetail = lazy(() => import("./pages/client/ClientBookingDetail"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1 } },
@@ -62,6 +63,8 @@ const App = () => (
                 <Route path="/cancellation-policy" element={<CancellationPolicy />} />
                 <Route path="/legal" element={<Legal />} />
               </Route>
+
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
 
               {/* Admin */}
               <Route path="/admin/login" element={<AdminLogin />} />
