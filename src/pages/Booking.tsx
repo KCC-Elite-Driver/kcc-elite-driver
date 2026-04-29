@@ -636,7 +636,7 @@ const Booking = () => {
                                     <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans"><Loader2 size={12} className="animate-spin" /> Calcul...</span>
                                   ) : estimatedPrice !== null && data.vehicle === vehicle.key ? (
                                     <span className="font-sans text-sm font-semibold text-primary">
-                                      {estimatedPrice} {priceCurrencySymbol}
+                                      {formatPrice(estimatedPrice, priceCurrencySymbol)}
                                       {distanceKm && <span className="text-xs text-muted-foreground font-normal ml-2">({distanceKm} km · ~{durationMin} min)</span>}
                                     </span>
                                   ) : null}
@@ -671,7 +671,7 @@ const Booking = () => {
                         <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
                         <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
                         {estimatedPrice !== null && (
-                          <SummaryRow label="Prix estimé" value={`${estimatedPrice} ${priceCurrencySymbol}`} />
+                          <SummaryRow label="Prix estimé" value={formatPrice(estimatedPrice, priceCurrencySymbol)} />
                         )}
                         {distanceKm !== null && (
                           <SummaryRow label="Distance / Durée" value={`${distanceKm} km · ~${durationMin} min`} />
