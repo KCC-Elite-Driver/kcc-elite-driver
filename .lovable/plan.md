@@ -1,41 +1,51 @@
+## Objectif
 
+Adapter automatiquement la devise affichée selon le pays du client (via IP), avec un taux de change USD→EGP **récupéré en direct** sur le marché à chaque fois (devise égyptienne volatile).
 
-## Contexte
+## Approche
 
-Utilisateur demande deux choses :
-1. **Vérifier que SUV est accessible en réservation depuis l'Égypte** (côté UI booking).
-2. **Appliquer la surcharge Sphinx de 40$ uniquement au départ de l'aéroport du Sphinx** (pas à l'arrivée).
+Toute la logique reste côté **edge function** `calculate-distance` — aucune modif UI nécessaire (le composant `Booking.tsx` affiche déjà dynamiquement `currency_symbol` + `price`).
 
-## Investigation nécessaire
+### 1. Géolocalisation IP du client
 
-Avant de modifier, je dois lire :
-- `src/pages/Booking.tsx` — voir comment les véhicules sont filtrés par pays (SUV peut-être exclu pour EG ?).
-- `supabase/functions/calculate-distance/index.ts` — logique Sphinx actuelle (déjà visible : `isSphinx(originMeta.name) || isSphinx(destMeta.name)` → s'applique aussi à l'arrivée, à corriger).
-- `pricing_rules` table — vérifier la règle EG/airport/suv et la valeur de `sphinx_surcharge` (40 USD ? ou stockée en EGP/EUR ?).
+L'edge function lit l'IP depuis les headers de la requête (`x-forwarded-for` ou `cf-connecting-ip`), puis interroge un service gratuit sans clé API :
+- **API utilisée** : `https://ipapi.co/{ip}/country/` (gratuit, 30k req/mois, retourne le code pays ISO en texte brut)
+- **Fallback** : si la géoloc échoue → pays = pays du lieu de pickup (logique actuelle)
 
-## Changements prévus
+### 2. Taux de change live USD→EGP
 
-### 1. Edge function `calculate-distance`
-Ligne actuelle :
-```ts
-const sphinxTouched = isSphinx(originMeta.name) || isSphinx(destMeta.name);
-```
-À remplacer par :
-```ts
-const sphinxDeparture = isSphinx(originMeta.name); // origine = pickup uniquement
-const price = base + (sphinxDeparture ? sphinxFee : 0);
-```
-Renommer le champ retour `sphinx_surcharge` (sémantique conservée, valeur 0 si pas de départ Sphinx).
+À chaque calcul (uniquement si pays détecté = EG), appel à :
+- **API utilisée** : `https://open.er-api.com/v6/latest/USD` (gratuit, sans clé, mis à jour quotidiennement)
+- Récupération de `rates.EGP`
+- **Cache mémoire** dans l'edge function : 1 heure (évite de spammer l'API à chaque requête de prix)
+- **Fallback** : si l'API échoue → taux par défaut codé en dur (50 EGP/USD), avec log d'avertissement
 
-Vérifier aussi que la détection `isSphinx` matche bien le nom Google Places de l'aéroport du Sphinx (SPX / Sphinx International Airport). Si besoin, élargir la regex : `/sphinx|spx/i`.
+### 3. Mapping pays → devise
 
-### 2. Booking UI — accès SUV en EG
-Lire `Booking.tsx` pour voir si le SUV est conditionnellement masqué selon le pays détecté. Si oui, autoriser SUV pour EG (la règle existe en BDD probablement). Si non, vérifier qu'aucun filtre frontend ne bloque.
+| Pays détecté (IP) | Devise affichée | Conversion appliquée |
+|---|---|---|
+| EG (Égypte) | **EGP** (format "EGP 3 500") | USD × taux live |
+| FR | EUR (€) | aucune (déjà en EUR en BDD) |
+| Autre | EUR par défaut | aucune |
 
-### 3. Vérification BDD
-Lire `pricing_rules` pour EG/airport/suv : confirmer que la ligne existe, que `sphinx_surcharge` vaut bien l'équivalent de 40 USD dans la devise stockée (probablement EGP). Si la valeur diffère, proposer un UPDATE via l'outil insert.
+**Note importante** : la BDD garde les prix EG en USD (référentiel stable pour l'admin). La conversion EGP est uniquement à l'affichage côté client.
 
-## Question avant exécution
+### 4. Format d'affichage
 
-La surcharge est mentionnée à **40 $ (USD)** mais `pricing_rules` stocke en devise locale (EGP probable pour l'Égypte). Je dois savoir comment la stocker :
+"EGP 3 500" comme tu l'as choisi (code ISO devant, séparateur de milliers).
 
+## Fichier modifié
+
+- `supabase/functions/calculate-distance/index.ts` uniquement
+- Déploiement automatique après modification
+
+## Garde-fous
+
+- Si l'IP est privée/locale (dev) → fallback sur pays du pickup
+- Si l'API de taux ne répond pas → utilisation du dernier taux en cache, sinon fallback 50 EGP/USD
+- Tous les appels externes ont un timeout de 3s pour ne pas ralentir la page
+
+## Hors scope (à traiter plus tard si besoin)
+
+- Le SUV n'a toujours pas de tarif en France (BDD vide pour FR/SUV)
+- Système d'envoi d'emails de confirmation (point 3 de la conversation précédente)

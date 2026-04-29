@@ -29,6 +29,63 @@ const VEHICLE_MULTIPLIERS: Record<string, number> = {
 };
 const DEFAULT_RATE = { rate: 3, currency: "EUR", symbol: "€" };
 
+// ====== Live USD->EGP rate (cached 1h) ======
+const FALLBACK_USD_TO_EGP = 50;
+let cachedRate: { value: number; ts: number } | null = null;
+const RATE_TTL_MS = 60 * 60 * 1000; // 1h
+
+async function fetchWithTimeout(url: string, ms = 3000): Promise<Response> {
+  const ctrl = new AbortController();
+  const tid = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { signal: ctrl.signal });
+  } finally {
+    clearTimeout(tid);
+  }
+}
+
+async function getUsdToEgp(): Promise<number> {
+  const now = Date.now();
+  if (cachedRate && now - cachedRate.ts < RATE_TTL_MS) return cachedRate.value;
+  try {
+    const res = await fetchWithTimeout("https://open.er-api.com/v6/latest/USD", 3000);
+    const data = await res.json();
+    const rate = Number(data?.rates?.EGP);
+    if (rate && rate > 0) {
+      cachedRate = { value: rate, ts: now };
+      return rate;
+    }
+  } catch (e) {
+    console.warn("USD->EGP rate fetch failed, using fallback:", e);
+  }
+  if (cachedRate) return cachedRate.value;
+  return FALLBACK_USD_TO_EGP;
+}
+
+function isPublicIp(ip: string): boolean {
+  if (!ip) return false;
+  if (ip === "127.0.0.1" || ip === "::1") return false;
+  if (ip.startsWith("10.") || ip.startsWith("192.168.")) return false;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(ip)) return false;
+  if (ip.startsWith("fc") || ip.startsWith("fd")) return false;
+  return true;
+}
+
+async function getClientCountry(req: Request): Promise<string | null> {
+  const fwd = req.headers.get("x-forwarded-for") || "";
+  const ip = (fwd.split(",")[0] || req.headers.get("cf-connecting-ip") || "").trim();
+  if (!isPublicIp(ip)) return null;
+  try {
+    const res = await fetchWithTimeout(`https://ipapi.co/${ip}/country/`, 3000);
+    if (!res.ok) return null;
+    const text = (await res.text()).trim();
+    if (/^[A-Z]{2}$/.test(text)) return text;
+  } catch (e) {
+    console.warn("IP geo lookup failed:", e);
+  }
+  return null;
+}
+
 async function getPlaceMeta(placeId: string, apiKey: string): Promise<{ country: string; name: string }> {
   const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=address_components,name&key=${apiKey}`;
   const res = await fetch(url);
