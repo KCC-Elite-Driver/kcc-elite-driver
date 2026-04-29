@@ -216,14 +216,14 @@ Deno.serve(async (req) => {
       // VIP / intercity / explicit quote_only
       if (rule.quote_only || serviceType === "vip" || serviceType === "intercity") {
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             quote_only: true,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
             country,
             distance_km: distanceKm,
             duration_min: durationMin,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -233,27 +233,27 @@ Deno.serve(async (req) => {
         const h = Math.max(4, Number(hours) || 4);
         if (h > 12) {
           return new Response(
-            JSON.stringify({
+            JSON.stringify(localizePayload({
               quote_only: true,
               currency: rule.currency,
               currency_symbol: rule.currency_symbol,
               country,
               hours: h,
-            }),
+            }, rule.currency)),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
         const hourly = Number(rule.hourly_rate) || 0;
         const price = Math.round(hourly * h);
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             price,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
             country,
             hours: h,
             service_type: serviceType,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -262,13 +262,13 @@ Deno.serve(async (req) => {
       if (serviceType === "daily12") {
         const price = Number(rule.base_price) || 0;
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             price,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
             country,
             service_type: serviceType,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -286,7 +286,7 @@ Deno.serve(async (req) => {
           const sphinxDeparture = isSphinx(originMeta.name);
           const price = base + (sphinxDeparture ? sphinxFee : 0);
           return new Response(
-            JSON.stringify({
+            JSON.stringify(localizePayload({
               price,
               currency: rule.currency,
               currency_symbol: rule.currency_symbol,
@@ -295,7 +295,7 @@ Deno.serve(async (req) => {
               duration_min: durationMin,
               sphinx_surcharge: sphinxDeparture ? sphinxFee : 0,
               service_type: serviceType,
-            }),
+            }, rule.currency)),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
@@ -311,7 +311,7 @@ Deno.serve(async (req) => {
         const surcharge = Math.round(extraKm * perKm);
         const price = Math.round(base + surcharge);
         return new Response(
-          JSON.stringify({
+          JSON.stringify(localizePayload({
             price,
             currency: rule.currency,
             currency_symbol: rule.currency_symbol,
@@ -322,7 +322,7 @@ Deno.serve(async (req) => {
             km_surcharge: surcharge,
             threshold_km: threshold,
             service_type: serviceType,
-          }),
+          }, rule.currency)),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
