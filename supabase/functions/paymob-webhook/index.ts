@@ -139,31 +139,20 @@ Deno.serve(async (req) => {
       vehicle: booking.vehicle ?? undefined,
     };
 
-    const fnUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-transactional-email`;
-    const headers = {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
-    };
-
-    // Await both sends — fire-and-forget would be killed by the Deno
-    // worker shutdown before the request is even sent.
+    // Use supabase.functions.invoke — handles auth correctly with the
+    // new signing-keys system (the raw service-role key is no longer a
+    // valid JWT for direct fetch Authorization headers).
     const results = await Promise.allSettled([
-      fetch(fnUrl, {
-        method: "POST", headers,
-        body: JSON.stringify({
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
           templateName: "booking-received",
           recipientEmail: booking.email,
           idempotencyKey: `booking-received-${bookingId}`,
           templateData: sharedTrip,
-        }),
-      }).then(async (r) => {
-        const body = await r.text();
-        if (!r.ok) throw new Error(`client email ${r.status}: ${body}`);
-        return body;
+        },
       }),
-      fetch(fnUrl, {
-        method: "POST", headers,
-        body: JSON.stringify({
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
           templateName: "admin-booking-notification",
           idempotencyKey: `admin-booking-${bookingId}`,
           templateData: {
@@ -177,16 +166,15 @@ Deno.serve(async (req) => {
             notes: booking.notes || undefined,
             estimatedPrice: `${booking.currency_display} ${booking.amount_display}`,
           },
-        }),
-      }).then(async (r) => {
-        const body = await r.text();
-        if (!r.ok) throw new Error(`admin email ${r.status}: ${body}`);
-        return body;
+        },
       }),
     ]);
     results.forEach((r, i) => {
+      const label = i === 0 ? "client" : "admin";
       if (r.status === "rejected") {
-        console.error(`email ${i === 0 ? "client" : "admin"} failed`, r.reason);
+        console.error(`email ${label} invoke threw`, r.reason);
+      } else if (r.value.error) {
+        console.error(`email ${label} returned error`, r.value.error);
       }
     });
   }
