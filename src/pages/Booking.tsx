@@ -773,25 +773,21 @@ const Booking = () => {
                       {/* Payment method */}
                       <div className="mb-6">
                         <h3 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">{t.booking_payment_method}</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <button onClick={() => setData({ ...data, paymentMethod: "card" })}
-                            className={`flex flex-col gap-2 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "card" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
-                            <div className="flex items-center gap-3">
-                              <CreditCard size={20} className="text-primary" />
-                              <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_card}</span>
+                        <div className="p-4 rounded-lg border border-primary bg-primary/5 flex items-start gap-3">
+                          <CreditCard size={20} className="text-primary mt-0.5 shrink-0" />
+                          <div className="flex-1">
+                            <div className="font-sans text-sm font-medium text-foreground mb-1">
+                              {t.booking_payment_card}
                             </div>
-                            <p className="font-sans text-xs text-muted-foreground">{t.booking_payment_card_desc}</p>
-                            {data.paymentMethod === "card" && <HelperText>{t.booking_payment_card_helper}</HelperText>}
-                          </button>
-                          <button onClick={() => setData({ ...data, paymentMethod: "cash" })}
-                            className={`flex flex-col gap-2 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "cash" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
-                            <div className="flex items-center gap-3">
-                              <Banknote size={20} className="text-primary" />
-                              <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_cash}</span>
-                            </div>
-                            <p className="font-sans text-xs text-muted-foreground">{t.booking_payment_cash_desc}</p>
-                            {data.paymentMethod === "cash" && <HelperText>{t.booking_payment_cash_helper}</HelperText>}
-                          </button>
+                            <p className="font-sans text-xs text-muted-foreground">
+                              Paiement sécurisé par carte bancaire (Visa, Mastercard). Vous serez redirigé vers notre prestataire de paiement.
+                            </p>
+                            {priceCurrency === "EUR" && estimatedPrice != null && (
+                              <p className="font-sans text-xs text-muted-foreground mt-2 italic">
+                                Débité en EGP au taux du jour.
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
 
