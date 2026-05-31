@@ -16,21 +16,31 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          amount_charged: number | null
+          amount_display: number | null
           client_id: string | null
           created_at: string
+          currency_charged: string | null
+          currency_display: string | null
           date: string
           driver_id: string | null
           dropoff: string
           email: string
           firstname: string
           flight_number: string | null
+          fx_rate: number | null
           id: string
           lastname: string
           luggage: number | null
           meet_greet: boolean | null
           notes: string | null
           passengers: number | null
+          payment_intent_id: string | null
           payment_method: string | null
+          payment_order_id: string | null
+          payment_provider: string | null
+          payment_status: string
+          payment_transaction_id: string | null
           phone: string
           pickup: string
           provider_id: string | null
@@ -41,21 +51,31 @@ export type Database = {
           vehicle: string | null
         }
         Insert: {
+          amount_charged?: number | null
+          amount_display?: number | null
           client_id?: string | null
           created_at?: string
+          currency_charged?: string | null
+          currency_display?: string | null
           date: string
           driver_id?: string | null
           dropoff: string
           email: string
           firstname: string
           flight_number?: string | null
+          fx_rate?: number | null
           id?: string
           lastname: string
           luggage?: number | null
           meet_greet?: boolean | null
           notes?: string | null
           passengers?: number | null
+          payment_intent_id?: string | null
           payment_method?: string | null
+          payment_order_id?: string | null
+          payment_provider?: string | null
+          payment_status?: string
+          payment_transaction_id?: string | null
           phone: string
           pickup: string
           provider_id?: string | null
@@ -66,21 +86,31 @@ export type Database = {
           vehicle?: string | null
         }
         Update: {
+          amount_charged?: number | null
+          amount_display?: number | null
           client_id?: string | null
           created_at?: string
+          currency_charged?: string | null
+          currency_display?: string | null
           date?: string
           driver_id?: string | null
           dropoff?: string
           email?: string
           firstname?: string
           flight_number?: string | null
+          fx_rate?: number | null
           id?: string
           lastname?: string
           luggage?: number | null
           meet_greet?: boolean | null
           notes?: string | null
           passengers?: number | null
+          payment_intent_id?: string | null
           payment_method?: string | null
+          payment_order_id?: string | null
+          payment_provider?: string | null
+          payment_status?: string
+          payment_transaction_id?: string | null
           phone?: string
           pickup?: string
           provider_id?: string | null
@@ -231,6 +261,62 @@ export type Database = {
           used_at?: string | null
         }
         Relationships: []
+      }
+      payment_events: {
+        Row: {
+          amount: number | null
+          booking_id: string | null
+          created_at: string
+          currency: string | null
+          event_type: string
+          hmac_valid: boolean | null
+          id: string
+          intent_id: string | null
+          order_id: string | null
+          provider: string
+          raw_payload: Json
+          success: boolean | null
+          transaction_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          booking_id?: string | null
+          created_at?: string
+          currency?: string | null
+          event_type: string
+          hmac_valid?: boolean | null
+          id?: string
+          intent_id?: string | null
+          order_id?: string | null
+          provider: string
+          raw_payload: Json
+          success?: boolean | null
+          transaction_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          booking_id?: string | null
+          created_at?: string
+          currency?: string | null
+          event_type?: string
+          hmac_valid?: boolean | null
+          id?: string
+          intent_id?: string | null
+          order_id?: string | null
+          provider?: string
+          raw_payload?: Json
+          success?: boolean | null
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_events_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pricing_history: {
         Row: {
