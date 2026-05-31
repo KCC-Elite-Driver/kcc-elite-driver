@@ -256,80 +256,112 @@ const Booking = () => {
   const handleConfirm = async () => {
     setSubmitting(true);
     try {
-      const id = crypto.randomUUID();
-      const now = new Date();
-      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
-      const rand = String(Math.floor(Math.random() * 900) + 100);
-      const resId = `RES-${dateStr}-${rand}`;
-      const bookingPayload = {
-        id,
-        client_id: user?.id || null,
-        service_type: data.service,
-        pickup: data.pickup,
-        dropoff: data.dropoff || "",
-        date: data.date,
-        time: data.time,
-        firstname: data.firstname,
-        lastname: data.lastname,
-        email: data.email,
-        phone: `${data.phoneCode} ${data.phone}`,
-        passengers: data.passengers,
-        luggage: data.luggage,
-        notes: data.notes || null,
-        flight_number: data.flightNumber || null,
-        meet_greet: data.meetGreet,
-        vehicle: data.vehicle,
-        payment_method: data.paymentMethod,
-        status: "pending" as const,
-      };
-      await supabase.from("bookings").insert(bookingPayload);
+      if (estimatedPrice == null || quoteOnly) {
+        // Quote-only services: no online payment, fall back to legacy flow (booking insert + emails).
+        const id = crypto.randomUUID();
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+        const rand = String(Math.floor(Math.random() * 900) + 100);
+        const resId = `RES-${dateStr}-${rand}`;
+        const bookingPayload = {
+          id,
+          client_id: user?.id || null,
+          service_type: data.service,
+          pickup: data.pickup,
+          dropoff: data.dropoff || "",
+          date: data.date,
+          time: data.time,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          email: data.email,
+          phone: `${data.phoneCode} ${data.phone}`,
+          passengers: data.passengers,
+          luggage: data.luggage,
+          notes: data.notes || null,
+          flight_number: data.flightNumber || null,
+          meet_greet: data.meetGreet,
+          vehicle: data.vehicle,
+          payment_method: "quote",
+          status: "pending" as const,
+        };
+        await supabase.from("bookings").insert(bookingPayload);
 
-      const serviceLabel = getServiceLabel(data.service);
-      const vehicleLabel = data.vehicle ? getVehicleName(data.vehicle) : "";
-      const priceLabel = estimatedPrice != null
-        ? formatPrice(estimatedPrice, priceCurrencySymbol)
-        : undefined;
+        const serviceLabel = getServiceLabel(data.service);
+        const vehicleLabel = data.vehicle ? getVehicleName(data.vehicle) : "";
+        const sharedTrip = {
+          reservationId: resId,
+          firstname: data.firstname,
+          service: serviceLabel,
+          pickup: data.pickup,
+          dropoff: data.dropoff || undefined,
+          date: data.date,
+          time: data.time,
+          vehicle: vehicleLabel,
+        };
 
-      const sharedTrip = {
-        reservationId: resId,
-        firstname: data.firstname,
-        service: serviceLabel,
-        pickup: data.pickup,
-        dropoff: data.dropoff || undefined,
-        date: data.date,
-        time: data.time,
-        vehicle: vehicleLabel,
-      };
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "booking-received",
+            recipientEmail: data.email,
+            idempotencyKey: `booking-received-${id}`,
+            templateData: sharedTrip,
+          },
+        }).catch((e) => console.error("client email failed", e));
 
-      // Fire-and-forget: confirmation to client + notification to admin
-      supabase.functions.invoke("send-transactional-email", {
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "admin-booking-notification",
+            idempotencyKey: `admin-booking-${id}`,
+            templateData: {
+              ...sharedTrip,
+              lastname: data.lastname,
+              email: data.email,
+              phone: `${data.phoneCode} ${data.phone}`,
+              passengers: data.passengers,
+              luggage: data.luggage,
+              flightNumber: data.flightNumber || undefined,
+              notes: data.notes || undefined,
+            },
+          },
+        }).catch((e) => console.error("admin email failed", e));
+
+        setCompleted(true);
+        return;
+      }
+
+      // Standard flow: create Paymob intention and redirect to checkout.
+      const returnUrl = `${window.location.origin}/booking/return`;
+      const { data: resp, error } = await supabase.functions.invoke("create-paymob-intent", {
         body: {
-          templateName: "booking-received",
-          recipientEmail: data.email,
-          idempotencyKey: `booking-received-${id}`,
-          templateData: sharedTrip,
-        },
-      }).catch((e) => console.error("client email failed", e));
-
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "admin-booking-notification",
-          idempotencyKey: `admin-booking-${id}`,
-          templateData: {
-            ...sharedTrip,
+          booking: {
+            client_id: user?.id || null,
+            service_type: data.service,
+            pickup: data.pickup,
+            dropoff: data.dropoff || "",
+            date: data.date,
+            time: data.time,
+            firstname: data.firstname,
             lastname: data.lastname,
             email: data.email,
-            phone: `${data.phoneCode} ${data.phone}`,
+            phone: `${data.phoneCode}${data.phone}`,
             passengers: data.passengers,
             luggage: data.luggage,
-            flightNumber: data.flightNumber || undefined,
-            notes: data.notes || undefined,
-            estimatedPrice: priceLabel,
+            notes: data.notes || null,
+            flight_number: data.flightNumber || null,
+            meet_greet: data.meetGreet,
+            vehicle: data.vehicle,
           },
+          displayAmount: estimatedPrice,
+          displayCurrency: priceCurrency || (priceCurrencySymbol === "€" ? "EUR" : "EGP"),
+          returnUrl,
         },
-      }).catch((e) => console.error("admin email failed", e));
-
-      setCompleted(true);
+      });
+      if (error || !resp?.checkoutUrl) {
+        console.error("Paymob intent failed", error, resp);
+        alert("Le paiement n'a pas pu être initialisé. Merci de réessayer.");
+        return;
+      }
+      window.location.href = resp.checkoutUrl;
     } catch (err) {
       console.error("Booking error:", err);
     } finally {
