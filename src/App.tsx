@@ -31,6 +31,7 @@ const ClientBookings = lazy(() => import("./pages/client/ClientBookings"));
 const ClientBookingDetail = lazy(() => import("./pages/client/ClientBookingDetail"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const BookingReturn = lazy(() => import("./pages/BookingReturn"));
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1 } },
@@ -65,6 +66,7 @@ const App = () => (
               </Route>
 
               <Route path="/unsubscribe" element={<Unsubscribe />} />
+              <Route path="/booking/return" element={<BookingReturn />} />
 
               {/* Admin */}
               <Route path="/admin/login" element={<AdminLogin />} />
