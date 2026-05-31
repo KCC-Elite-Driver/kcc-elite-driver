@@ -256,80 +256,112 @@ const Booking = () => {
   const handleConfirm = async () => {
     setSubmitting(true);
     try {
-      const id = crypto.randomUUID();
-      const now = new Date();
-      const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
-      const rand = String(Math.floor(Math.random() * 900) + 100);
-      const resId = `RES-${dateStr}-${rand}`;
-      const bookingPayload = {
-        id,
-        client_id: user?.id || null,
-        service_type: data.service,
-        pickup: data.pickup,
-        dropoff: data.dropoff || "",
-        date: data.date,
-        time: data.time,
-        firstname: data.firstname,
-        lastname: data.lastname,
-        email: data.email,
-        phone: `${data.phoneCode} ${data.phone}`,
-        passengers: data.passengers,
-        luggage: data.luggage,
-        notes: data.notes || null,
-        flight_number: data.flightNumber || null,
-        meet_greet: data.meetGreet,
-        vehicle: data.vehicle,
-        payment_method: data.paymentMethod,
-        status: "pending" as const,
-      };
-      await supabase.from("bookings").insert(bookingPayload);
+      if (estimatedPrice == null || quoteOnly) {
+        // Quote-only services: no online payment, fall back to legacy flow (booking insert + emails).
+        const id = crypto.randomUUID();
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+        const rand = String(Math.floor(Math.random() * 900) + 100);
+        const resId = `RES-${dateStr}-${rand}`;
+        const bookingPayload = {
+          id,
+          client_id: user?.id || null,
+          service_type: data.service,
+          pickup: data.pickup,
+          dropoff: data.dropoff || "",
+          date: data.date,
+          time: data.time,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          email: data.email,
+          phone: `${data.phoneCode} ${data.phone}`,
+          passengers: data.passengers,
+          luggage: data.luggage,
+          notes: data.notes || null,
+          flight_number: data.flightNumber || null,
+          meet_greet: data.meetGreet,
+          vehicle: data.vehicle,
+          payment_method: "quote",
+          status: "pending" as const,
+        };
+        await supabase.from("bookings").insert(bookingPayload);
 
-      const serviceLabel = getServiceLabel(data.service);
-      const vehicleLabel = data.vehicle ? getVehicleName(data.vehicle) : "";
-      const priceLabel = estimatedPrice != null
-        ? formatPrice(estimatedPrice, priceCurrencySymbol)
-        : undefined;
+        const serviceLabel = getServiceLabel(data.service);
+        const vehicleLabel = data.vehicle ? getVehicleName(data.vehicle) : "";
+        const sharedTrip = {
+          reservationId: resId,
+          firstname: data.firstname,
+          service: serviceLabel,
+          pickup: data.pickup,
+          dropoff: data.dropoff || undefined,
+          date: data.date,
+          time: data.time,
+          vehicle: vehicleLabel,
+        };
 
-      const sharedTrip = {
-        reservationId: resId,
-        firstname: data.firstname,
-        service: serviceLabel,
-        pickup: data.pickup,
-        dropoff: data.dropoff || undefined,
-        date: data.date,
-        time: data.time,
-        vehicle: vehicleLabel,
-      };
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "booking-received",
+            recipientEmail: data.email,
+            idempotencyKey: `booking-received-${id}`,
+            templateData: sharedTrip,
+          },
+        }).catch((e) => console.error("client email failed", e));
 
-      // Fire-and-forget: confirmation to client + notification to admin
-      supabase.functions.invoke("send-transactional-email", {
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "admin-booking-notification",
+            idempotencyKey: `admin-booking-${id}`,
+            templateData: {
+              ...sharedTrip,
+              lastname: data.lastname,
+              email: data.email,
+              phone: `${data.phoneCode} ${data.phone}`,
+              passengers: data.passengers,
+              luggage: data.luggage,
+              flightNumber: data.flightNumber || undefined,
+              notes: data.notes || undefined,
+            },
+          },
+        }).catch((e) => console.error("admin email failed", e));
+
+        setCompleted(true);
+        return;
+      }
+
+      // Standard flow: create Paymob intention and redirect to checkout.
+      const returnUrl = `${window.location.origin}/booking/return`;
+      const { data: resp, error } = await supabase.functions.invoke("create-paymob-intent", {
         body: {
-          templateName: "booking-received",
-          recipientEmail: data.email,
-          idempotencyKey: `booking-received-${id}`,
-          templateData: sharedTrip,
-        },
-      }).catch((e) => console.error("client email failed", e));
-
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "admin-booking-notification",
-          idempotencyKey: `admin-booking-${id}`,
-          templateData: {
-            ...sharedTrip,
+          booking: {
+            client_id: user?.id || null,
+            service_type: data.service,
+            pickup: data.pickup,
+            dropoff: data.dropoff || "",
+            date: data.date,
+            time: data.time,
+            firstname: data.firstname,
             lastname: data.lastname,
             email: data.email,
-            phone: `${data.phoneCode} ${data.phone}`,
+            phone: `${data.phoneCode}${data.phone}`,
             passengers: data.passengers,
             luggage: data.luggage,
-            flightNumber: data.flightNumber || undefined,
-            notes: data.notes || undefined,
-            estimatedPrice: priceLabel,
+            notes: data.notes || null,
+            flight_number: data.flightNumber || null,
+            meet_greet: data.meetGreet,
+            vehicle: data.vehicle,
           },
+          displayAmount: estimatedPrice,
+          displayCurrency: priceCurrency || (priceCurrencySymbol === "€" ? "EUR" : "EGP"),
+          returnUrl,
         },
-      }).catch((e) => console.error("admin email failed", e));
-
-      setCompleted(true);
+      });
+      if (error || !resp?.checkoutUrl) {
+        console.error("Paymob intent failed", error, resp);
+        alert("Le paiement n'a pas pu être initialisé. Merci de réessayer.");
+        return;
+      }
+      window.location.href = resp.checkoutUrl;
     } catch (err) {
       console.error("Booking error:", err);
     } finally {
@@ -741,25 +773,21 @@ const Booking = () => {
                       {/* Payment method */}
                       <div className="mb-6">
                         <h3 className="font-sans text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">{t.booking_payment_method}</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <button onClick={() => setData({ ...data, paymentMethod: "card" })}
-                            className={`flex flex-col gap-2 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "card" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
-                            <div className="flex items-center gap-3">
-                              <CreditCard size={20} className="text-primary" />
-                              <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_card}</span>
+                        <div className="p-4 rounded-lg border border-primary bg-primary/5 flex items-start gap-3">
+                          <CreditCard size={20} className="text-primary mt-0.5 shrink-0" />
+                          <div className="flex-1">
+                            <div className="font-sans text-sm font-medium text-foreground mb-1">
+                              {t.booking_payment_card}
                             </div>
-                            <p className="font-sans text-xs text-muted-foreground">{t.booking_payment_card_desc}</p>
-                            {data.paymentMethod === "card" && <HelperText>{t.booking_payment_card_helper}</HelperText>}
-                          </button>
-                          <button onClick={() => setData({ ...data, paymentMethod: "cash" })}
-                            className={`flex flex-col gap-2 p-4 rounded-lg border transition-all duration-200 ${data.paymentMethod === "cash" ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
-                            <div className="flex items-center gap-3">
-                              <Banknote size={20} className="text-primary" />
-                              <span className="font-sans text-sm font-medium text-foreground">{t.booking_payment_cash}</span>
-                            </div>
-                            <p className="font-sans text-xs text-muted-foreground">{t.booking_payment_cash_desc}</p>
-                            {data.paymentMethod === "cash" && <HelperText>{t.booking_payment_cash_helper}</HelperText>}
-                          </button>
+                            <p className="font-sans text-xs text-muted-foreground">
+                              Paiement sécurisé par carte bancaire (Visa, Mastercard). Vous serez redirigé vers notre prestataire de paiement.
+                            </p>
+                            {priceCurrency === "EUR" && estimatedPrice != null && (
+                              <p className="font-sans text-xs text-muted-foreground mt-2 italic">
+                                Débité en EGP au taux du jour.
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -788,7 +816,7 @@ const Booking = () => {
                 ) : (
                   <button onClick={handleConfirm} disabled={submitting}
                     className="flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-8 py-3 rounded-md hover:opacity-90 transition-opacity duration-200 disabled:opacity-50">
-                    <Check size={14} /> {submitting ? "Envoi..." : t.booking_confirm}
+                    <Check size={14} /> {submitting ? "Redirection..." : (estimatedPrice != null && !quoteOnly ? "Procéder au paiement" : t.booking_confirm)}
                   </button>
                 )}
               </div>
