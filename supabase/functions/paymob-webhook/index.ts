@@ -145,36 +145,50 @@ Deno.serve(async (req) => {
       "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
     };
 
-    // Client receipt
-    fetch(fnUrl, {
-      method: "POST", headers,
-      body: JSON.stringify({
-        templateName: "booking-received",
-        recipientEmail: booking.email,
-        idempotencyKey: `booking-received-${bookingId}`,
-        templateData: sharedTrip,
+    // Await both sends — fire-and-forget would be killed by the Deno
+    // worker shutdown before the request is even sent.
+    const results = await Promise.allSettled([
+      fetch(fnUrl, {
+        method: "POST", headers,
+        body: JSON.stringify({
+          templateName: "booking-received",
+          recipientEmail: booking.email,
+          idempotencyKey: `booking-received-${bookingId}`,
+          templateData: sharedTrip,
+        }),
+      }).then(async (r) => {
+        const body = await r.text();
+        if (!r.ok) throw new Error(`client email ${r.status}: ${body}`);
+        return body;
       }),
-    }).catch((e) => console.error("client email failed", e));
-
-    // Admin notification
-    fetch(fnUrl, {
-      method: "POST", headers,
-      body: JSON.stringify({
-        templateName: "admin-booking-notification",
-        idempotencyKey: `admin-booking-${bookingId}`,
-        templateData: {
-          ...sharedTrip,
-          lastname: booking.lastname,
-          email: booking.email,
-          phone: booking.phone,
-          passengers: booking.passengers,
-          luggage: booking.luggage,
-          flightNumber: booking.flight_number || undefined,
-          notes: booking.notes || undefined,
-          estimatedPrice: `${booking.currency_display} ${booking.amount_display}`,
-        },
+      fetch(fnUrl, {
+        method: "POST", headers,
+        body: JSON.stringify({
+          templateName: "admin-booking-notification",
+          idempotencyKey: `admin-booking-${bookingId}`,
+          templateData: {
+            ...sharedTrip,
+            lastname: booking.lastname,
+            email: booking.email,
+            phone: booking.phone,
+            passengers: booking.passengers,
+            luggage: booking.luggage,
+            flightNumber: booking.flight_number || undefined,
+            notes: booking.notes || undefined,
+            estimatedPrice: `${booking.currency_display} ${booking.amount_display}`,
+          },
+        }),
+      }).then(async (r) => {
+        const body = await r.text();
+        if (!r.ok) throw new Error(`admin email ${r.status}: ${body}`);
+        return body;
       }),
-    }).catch((e) => console.error("admin email failed", e));
+    ]);
+    results.forEach((r, i) => {
+      if (r.status === "rejected") {
+        console.error(`email ${i === 0 ? "client" : "admin"} failed`, r.reason);
+      }
+    });
   }
 
   return new Response("ok", { status: 200, headers: corsHeaders });
