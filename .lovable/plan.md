@@ -1,30 +1,35 @@
-# Correction de l'envoi d'emails après paiement Paymob
+## Diagnostic
 
-## Problème
-Après un paiement réussi, les emails de confirmation (client + admin) ne sont jamais envoyés, même si :
-- Le webhook Paymob est bien reçu
-- La signature HMAC est validée
-- La réservation passe correctement à `payment_status = paid`
+Le paiement fonctionne bien : les dernières réservations sont marquées `paid` et les webhooks Paymob ont une signature valide.
 
-## Cause racine
-Dans `supabase/functions/paymob-webhook/index.ts`, les appels à `send-transactional-email` sont en *fire-and-forget* :
-```ts
-fetch(fnUrl, { … }).catch(e => console.error(…))
-return new Response("ok", …)
-```
-Deno arrête le worker dès le `return`. Les promesses `fetch()` non awaited sont tuées avant l'envoi → aucun email n'arrive et aucune ligne n'est créée dans `email_send_log`.
+Le blocage est ailleurs : aucune ligne d’envoi email n’est créée pour les réservations Paymob récentes (`Yanis`). Le domaine email est vérifié, la file email existe, et le traitement email fonctionne sur l’ancien test du 3 mai. Le problème vient donc du déclenchement de l’email après paiement.
 
-## Correction
-Dans `paymob-webhook/index.ts`, remplacer les deux `fetch(...).catch(...)` par un `await Promise.allSettled([...])` avant le `return`. Comme ça :
-- Les deux requêtes (email client + email admin) partent réellement
-- Si l'une échoue, l'autre part quand même
-- On loggue les erreurs individuelles
-- On répond toujours `200 ok` à Paymob (jamais bloquer l'ACK webhook)
+Cause probable : le webhook n’envoie l’email que si la réservation passe de `awaiting` à `paid`. Si la réservation est déjà marquée `paid` avant ou pendant le traitement, le webhook considère que c’est déjà fait et ne crée pas l’email. Les webhooks rejoués ne peuvent donc pas réparer l’absence d’email.
 
-## Test après déploiement
-1. Renvoyer un webhook test via le dashboard Paymob (ou nouveau paiement sandbox)
-2. Vérifier `email_send_log` → 2 nouvelles lignes (`booking-received` + `admin-booking-notification`)
-3. Vérifier réception dans la boîte du client et `admin@kccelitedriver.com`
+## Plan de correction
 
-## Bonus (optionnel, à valider)
-Aussi rattraper la réservation déjà payée `35cd52b5-2d69-4466-94f8-95d6cdbc24c4` en relançant manuellement l'envoi des 2 emails, pour ne pas perdre ce test.
+1. Rendre l’envoi email idempotent sur les logs email, pas uniquement sur `payment_status`
+   - Avant d’envoyer, vérifier si un email `booking-received` existe déjà pour la réservation via sa clé d’idempotence.
+   - Si aucun email n’existe, envoyer la confirmation client même si la réservation est déjà `paid`.
+   - Faire pareil pour la notification admin.
+
+2. Garder la protection anti-doublon
+   - Ne pas renvoyer d’email si un envoi `pending`, `sent`, `failed`, `dlq` ou `suppressed` existe déjà pour cette réservation.
+   - Conserver les clés : `booking-received-{bookingId}` et `admin-booking-{bookingId}`.
+
+3. Ajouter un fallback de récupération
+   - Si un paiement est confirmé et qu’aucun email n’a été créé, le webhook doit créer les emails même lors d’un replay Paymob.
+   - Cela permettra de rejouer les trois réservations déjà payées pour générer les confirmations manquantes.
+
+4. Déployer les fonctions concernées
+   - Déployer `paymob-webhook` après modification.
+   - Si nécessaire, redéployer aussi `send-transactional-email` et `process-email-queue` pour s’assurer que la version active est cohérente.
+
+5. Vérifier après correction
+   - Rejouer le webhook Paymob pour une réservation récente.
+   - Vérifier que `email_send_log` contient `booking-received` pour le client et `admin-booking-notification` pour l’admin.
+   - Vérifier que les statuts passent de `pending` à `sent`.
+
+## Résultat attendu
+
+Après paiement, le client recevra la confirmation de réservation en plus de la confirmation de paiement, et l’admin recevra la notification de nouvelle réservation.

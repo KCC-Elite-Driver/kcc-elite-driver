@@ -122,6 +122,11 @@ Deno.serve(async (req) => {
     )
   }
 
+  const emailMetadata = {
+    idempotency_key: idempotencyKey,
+    booking_id: templateData.bookingId || templateData.booking_id || null,
+  }
+
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -153,6 +158,7 @@ Deno.serve(async (req) => {
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
+      metadata: emailMetadata,
     })
 
     console.log('Email suppressed', { effectiveRecipient, templateName })
@@ -187,6 +193,7 @@ Deno.serve(async (req) => {
       recipient_email: effectiveRecipient,
       status: 'failed',
       error_message: 'Failed to look up unsubscribe token',
+      metadata: emailMetadata,
     })
     return new Response(
       JSON.stringify({ error: 'Failed to prepare email' }),
@@ -220,6 +227,7 @@ Deno.serve(async (req) => {
         recipient_email: effectiveRecipient,
         status: 'failed',
         error_message: 'Failed to create unsubscribe token',
+        metadata: emailMetadata,
       })
       return new Response(
         JSON.stringify({ error: 'Failed to prepare email' }),
