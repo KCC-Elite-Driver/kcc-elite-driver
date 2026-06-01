@@ -30,9 +30,11 @@ function generateToken(): string {
     .join('')
 }
 
-// Auth note: this function uses verify_jwt = true in config.toml, so Supabase's
-// gateway validates the caller's JWT (anon or service_role) before the request
-// reaches this code. No in-function auth check is needed.
+const bookingTriggeredTemplates = new Set([
+  'booking-received',
+  'admin-booking-notification',
+  'booking-confirmed',
+])
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -89,6 +91,12 @@ Deno.serve(async (req) => {
     )
   }
 
+  // Create Supabase client with service role (bypasses RLS)
+  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+  const authHeader = req.headers.get('Authorization') || ''
+  const isServiceRoleRequest = authHeader === `Bearer ${supabaseServiceKey}`
+
   // 1. Look up template from registry (early — needed to resolve recipient)
   const template = TEMPLATES[templateName]
 
@@ -127,8 +135,48 @@ Deno.serve(async (req) => {
     booking_id: templateData.bookingId || templateData.booking_id || null,
   }
 
-  // Create Supabase client with service role (bypasses RLS)
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  if (bookingTriggeredTemplates.has(templateName)) {
+    const bookingId = emailMetadata.booking_id
+    if (!bookingId || typeof bookingId !== 'string' || !idempotencyKey.includes(bookingId)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid booking email request' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const { data: booking, error: bookingError } = await supabase
+      .from('bookings')
+      .select('id, email')
+      .eq('id', bookingId)
+      .maybeSingle()
+
+    if (bookingError || !booking) {
+      return new Response(
+        JSON.stringify({ error: 'Booking not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (templateName === 'booking-received' && booking.email !== effectiveRecipient) {
+      return new Response(
+        JSON.stringify({ error: 'Recipient does not match booking' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (templateName === 'booking-confirmed' && !isServiceRoleRequest) {
+      const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const { data: isAdmin } = await userClient.rpc('is_admin')
+      if (!isAdmin) {
+        return new Response(
+          JSON.stringify({ error: 'Forbidden' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+  }
 
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
   const { data: suppressed, error: suppressionError } = await supabase
