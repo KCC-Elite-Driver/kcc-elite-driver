@@ -257,6 +257,7 @@ Deno.serve(async (req) => {
         recipient_email: effectiveRecipient,
         status: 'failed',
         error_message: 'Failed to confirm unsubscribe token storage',
+        metadata: emailMetadata,
       })
       return new Response(
         JSON.stringify({ error: 'Failed to prepare email' }),
@@ -280,6 +281,7 @@ Deno.serve(async (req) => {
       status: 'suppressed',
       error_message:
         'Unsubscribe token used but email missing from suppressed list',
+      metadata: emailMetadata,
     })
     return new Response(
       JSON.stringify({ success: false, reason: 'email_suppressed' }),
@@ -314,6 +316,7 @@ Deno.serve(async (req) => {
     template_name: templateName,
     recipient_email: effectiveRecipient,
     status: 'pending',
+    metadata: emailMetadata,
   })
 
   const { error: enqueueError } = await supabase.rpc('enqueue_email', {
@@ -347,6 +350,7 @@ Deno.serve(async (req) => {
       recipient_email: effectiveRecipient,
       status: 'failed',
       error_message: 'Failed to enqueue email',
+      metadata: emailMetadata,
     })
 
     return new Response(JSON.stringify({ error: 'Failed to enqueue email' }), {
