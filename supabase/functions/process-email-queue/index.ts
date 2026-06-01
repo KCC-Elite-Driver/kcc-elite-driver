@@ -109,14 +109,6 @@ Deno.serve(async (req) => {
       { status: 403, headers: { 'Content-Type': 'application/json' } }
     )
   }
-  const claims = parseJwtClaims(token)
-  if (claims?.role !== 'service_role') {
-    return new Response(
-      JSON.stringify({ error: 'Forbidden' }),
-      { status: 403, headers: { 'Content-Type': 'application/json' } }
-    )
-  }
-
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
   // 1. Check rate-limit cooldown and read queue config
