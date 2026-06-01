@@ -159,7 +159,10 @@ Deno.serve(async (req) => {
     };
     const shouldSendClientEmail = !(await emailLogExists(clientEmailKey));
     const shouldSendAdminEmail = !(await emailLogExists(adminEmailKey));
-    const emailInvocations = [];
+    const emailInvocations: Array<{
+      label: "client" | "admin";
+      promise: ReturnType<typeof supabase.functions.invoke>;
+    }> = [];
 
     // Use supabase.functions.invoke — handles auth correctly with the
     // new signing-keys system (the raw service-role key is no longer a
@@ -168,35 +171,35 @@ Deno.serve(async (req) => {
       emailInvocations.push({
         label: "client",
         promise: supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "booking-received",
-          recipientEmail: booking.email,
-          idempotencyKey: clientEmailKey,
-          templateData: sharedTrip,
-        },
-      }),
+          body: {
+            templateName: "booking-received",
+            recipientEmail: booking.email,
+            idempotencyKey: clientEmailKey,
+            templateData: sharedTrip,
+          },
+        }),
       });
     }
     if (shouldSendAdminEmail) {
       emailInvocations.push({
         label: "admin",
         promise: supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "admin-booking-notification",
-          idempotencyKey: adminEmailKey,
-          templateData: {
-            ...sharedTrip,
-            lastname: booking.lastname,
-            email: booking.email,
-            phone: booking.phone,
-            passengers: booking.passengers,
-            luggage: booking.luggage,
-            flightNumber: booking.flight_number || undefined,
-            notes: booking.notes || undefined,
-            estimatedPrice: `${booking.currency_display} ${booking.amount_display}`,
+          body: {
+            templateName: "admin-booking-notification",
+            idempotencyKey: adminEmailKey,
+            templateData: {
+              ...sharedTrip,
+              lastname: booking.lastname,
+              email: booking.email,
+              phone: booking.phone,
+              passengers: booking.passengers,
+              luggage: booking.luggage,
+              flightNumber: booking.flight_number || undefined,
+              notes: booking.notes || undefined,
+              estimatedPrice: `${booking.currency_display} ${booking.amount_display}`,
+            },
           },
-        },
-      }),
+        }),
       });
     }
     const results = await Promise.allSettled(emailInvocations.map((item) => item.promise));
