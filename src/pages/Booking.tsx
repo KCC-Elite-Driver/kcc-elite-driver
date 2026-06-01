@@ -289,6 +289,7 @@ const Booking = () => {
         const serviceLabel = getServiceLabel(data.service);
         const vehicleLabel = data.vehicle ? getVehicleName(data.vehicle) : "";
         const sharedTrip = {
+          bookingId: id,
           reservationId: resId,
           firstname: data.firstname,
           service: serviceLabel,
