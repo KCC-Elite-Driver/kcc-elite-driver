@@ -60,6 +60,7 @@ const AdminBookings = () => {
             recipientEmail: b.email,
             idempotencyKey: `booking-confirmed-${id}`,
             templateData: {
+              bookingId: id,
               firstname: b.firstname,
               reservationId: id.slice(0, 8).toUpperCase(),
               service: b.service_type ?? undefined,

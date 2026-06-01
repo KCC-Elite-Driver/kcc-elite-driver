@@ -49,6 +49,21 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
+  const emailLogExists = async (idempotencyKey: string): Promise<boolean> => {
+    const { data, error } = await supabase
+      .from("email_send_log")
+      .select("id")
+      .contains("metadata", { idempotency_key: idempotencyKey })
+      .limit(1);
+
+    if (error) {
+      console.error("email log lookup failed", { idempotencyKey, error });
+      return true;
+    }
+
+    return Boolean(data?.length);
+  };
+
   let payload: any;
   try {
     payload = await req.json();
@@ -122,13 +137,17 @@ Deno.serve(async (req) => {
     return new Response("ok", { status: 200, headers: corsHeaders });
   }
 
-  // Idempotency: only fire emails on first successful transition.
-  const alreadyPaid = booking.payment_status === "paid";
+  // Idempotency is handled by email_send_log, not only by payment_status.
+  // This lets a replayed Paymob webhook recover missing reservation emails
+  // even when the booking is already marked paid.
   await supabase.from("bookings").update(updates).eq("id", bookingId);
 
-  if (success && !alreadyPaid) {
+  if (success) {
     const resId = `RES-${String(booking.date).replace(/-/g, "")}-${bookingId.slice(0, 4).toUpperCase()}`;
+    const clientEmailKey = `booking-received-${bookingId}`;
+    const adminEmailKey = `admin-booking-${bookingId}`;
     const sharedTrip = {
+      bookingId,
       reservationId: resId,
       firstname: booking.firstname,
       service: booking.service_type ?? undefined,
@@ -138,39 +157,54 @@ Deno.serve(async (req) => {
       time: booking.time,
       vehicle: booking.vehicle ?? undefined,
     };
+    const shouldSendClientEmail = !(await emailLogExists(clientEmailKey));
+    const shouldSendAdminEmail = !(await emailLogExists(adminEmailKey));
+    const emailInvocations: Array<{
+      label: "client" | "admin";
+      promise: ReturnType<typeof supabase.functions.invoke>;
+    }> = [];
 
     // Use supabase.functions.invoke — handles auth correctly with the
     // new signing-keys system (the raw service-role key is no longer a
     // valid JWT for direct fetch Authorization headers).
-    const results = await Promise.allSettled([
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "booking-received",
-          recipientEmail: booking.email,
-          idempotencyKey: `booking-received-${bookingId}`,
-          templateData: sharedTrip,
-        },
-      }),
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "admin-booking-notification",
-          idempotencyKey: `admin-booking-${bookingId}`,
-          templateData: {
-            ...sharedTrip,
-            lastname: booking.lastname,
-            email: booking.email,
-            phone: booking.phone,
-            passengers: booking.passengers,
-            luggage: booking.luggage,
-            flightNumber: booking.flight_number || undefined,
-            notes: booking.notes || undefined,
-            estimatedPrice: `${booking.currency_display} ${booking.amount_display}`,
+    if (shouldSendClientEmail) {
+      emailInvocations.push({
+        label: "client",
+        promise: supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "booking-received",
+            recipientEmail: booking.email,
+            idempotencyKey: clientEmailKey,
+            templateData: sharedTrip,
           },
-        },
-      }),
-    ]);
+        }),
+      });
+    }
+    if (shouldSendAdminEmail) {
+      emailInvocations.push({
+        label: "admin",
+        promise: supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "admin-booking-notification",
+            idempotencyKey: adminEmailKey,
+            templateData: {
+              ...sharedTrip,
+              lastname: booking.lastname,
+              email: booking.email,
+              phone: booking.phone,
+              passengers: booking.passengers,
+              luggage: booking.luggage,
+              flightNumber: booking.flight_number || undefined,
+              notes: booking.notes || undefined,
+              estimatedPrice: `${booking.currency_display} ${booking.amount_display}`,
+            },
+          },
+        }),
+      });
+    }
+    const results = await Promise.allSettled(emailInvocations.map((item) => item.promise));
     results.forEach((r, i) => {
-      const label = i === 0 ? "client" : "admin";
+      const label = emailInvocations[i]?.label ?? `email-${i}`;
       if (r.status === "rejected") {
         console.error(`email ${label} invoke threw`, r.reason);
       } else if (r.value.error) {
