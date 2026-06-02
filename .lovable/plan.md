@@ -1,35 +1,85 @@
-## Diagnostic
+## Objectif
 
-Le paiement fonctionne bien : les dernières réservations sont marquées `paid` et les webhooks Paymob ont une signature valide.
+1. Sur la page retour Paymob, afficher immédiatement un récapitulatif complet de la réservation + un bouton « Renvoyer l'email de confirmation ».
+2. Mettre en place un test E2E automatisé (paiement → réservation → 2 emails) pour détecter toute régression.
 
-Le blocage est ailleurs : aucune ligne d’envoi email n’est créée pour les réservations Paymob récentes (`Yanis`). Le domaine email est vérifié, la file email existe, et le traitement email fonctionne sur l’ancien test du 3 mai. Le problème vient donc du déclenchement de l’email après paiement.
+---
 
-Cause probable : le webhook n’envoie l’email que si la réservation passe de `awaiting` à `paid`. Si la réservation est déjà marquée `paid` avant ou pendant le traitement, le webhook considère que c’est déjà fait et ne crée pas l’email. Les webhooks rejoués ne peuvent donc pas réparer l’absence d’email.
+## Partie 1 — Page de confirmation enrichie (`src/pages/BookingReturn.tsx`)
 
-## Plan de correction
+### Récapitulatif visible
+Une fois `payment_status = paid` détecté, charger le booking complet et afficher :
+- Référence (RES-YYYYMMDD-XXXX)
+- Service, véhicule
+- Trajet : pickup → dropoff
+- Date / heure (formatées selon la locale active)
+- Passagers, bagages, n° de vol (si présent)
+- Client : prénom nom, email (masqué partiellement), téléphone
+- Montant payé + devise affichée + devise débitée (EGP) si différente
+- Bloc « Prochaines étapes » (checklist déjà utilisée dans la confirmation email)
 
-1. Rendre l’envoi email idempotent sur les logs email, pas uniquement sur `payment_status`
-   - Avant d’envoyer, vérifier si un email `booking-received` existe déjà pour la réservation via sa clé d’idempotence.
-   - Si aucun email n’existe, envoyer la confirmation client même si la réservation est déjà `paid`.
-   - Faire pareil pour la notification admin.
+### Bouton « Renvoyer la confirmation par email »
+- Visible uniquement quand `status === "paid"`.
+- État local : `idle | sending | sent | error` + cooldown 30 s.
+- Action : `supabase.functions.invoke("send-transactional-email", { ... })` avec :
+  - `templateName: "booking-received"`
+  - `recipientEmail: booking.email`
+  - `idempotencyKey: booking-received-resend-{bookingId}-{timestamp}` (différent de la clé webhook pour autoriser le renvoi)
+  - `templateData` identique à celui envoyé par le webhook
+- Feedback via `toast` (succès / erreur) + message inline.
 
-2. Garder la protection anti-doublon
-   - Ne pas renvoyer d’email si un envoi `pending`, `sent`, `failed`, `dlq` ou `suppressed` existe déjà pour cette réservation.
-   - Conserver les clés : `booking-received-{bookingId}` et `admin-booking-{bookingId}`.
+### i18n
+Ajouter les clés dans `src/i18n/translations.ts` pour EN-GB, FR, AR :
+`bookingReturn.summary.*`, `bookingReturn.resend.*` (idle/sending/sent/cooldown/error).
 
-3. Ajouter un fallback de récupération
-   - Si un paiement est confirmé et qu’aucun email n’a été créé, le webhook doit créer les emails même lors d’un replay Paymob.
-   - Cela permettra de rejouer les trois réservations déjà payées pour générer les confirmations manquantes.
+### Style
+Respecter Obsidian Black + Signature Gold, Playfair pour titre récap, cartes en glassmorphism existantes.
 
-4. Déployer les fonctions concernées
-   - Déployer `paymob-webhook` après modification.
-   - Si nécessaire, redéployer aussi `send-transactional-email` et `process-email-queue` pour s’assurer que la version active est cohérente.
+---
 
-5. Vérifier après correction
-   - Rejouer le webhook Paymob pour une réservation récente.
-   - Vérifier que `email_send_log` contient `booking-received` pour le client et `admin-booking-notification` pour l’admin.
-   - Vérifier que les statuts passent de `pending` à `sent`.
+## Partie 2 — Test E2E automatisé
 
-## Résultat attendu
+### Approche
+Test Deno côté Edge Functions (cohérent avec `supabase/functions/*`), exécutable via `supabase--test_edge_functions`. Pas de test UI Vitest pour le flux paiement car nécessite Paymob réel.
 
-Après paiement, le client recevra la confirmation de réservation en plus de la confirmation de paiement, et l’admin recevra la notification de nouvelle réservation.
+### Fichier : `supabase/functions/paymob-webhook/e2e_test.ts`
+Scénario en un seul `Deno.test` :
+
+1. **Setup** : créer un booking de test en DB via service-role client (`payment_status = awaiting`).
+2. **Forger un payload Paymob valide** :
+   - Construire l'objet `obj` avec tous les champs HMAC.
+   - Calculer le HMAC SHA-512 avec `PAYMOB_HMAC_SECRET` du `.env`.
+   - `special_reference = bookingId` et `success = true`.
+3. **Appeler `paymob-webhook`** via `fetch` direct (HMAC en query string).
+4. **Assertions** :
+   - Réponse 200.
+   - `bookings.payment_status === "paid"`.
+   - `payment_events` contient une ligne avec `hmac_valid = true`.
+   - `email_send_log` contient une ligne `template_name = booking-received` avec `metadata.idempotency_key = booking-received-{bookingId}`.
+   - `email_send_log` contient une ligne `template_name = admin-booking-notification`.
+5. **Idempotence** : rappeler le webhook → vérifier qu'aucune ligne dupliquée n'est créée dans `email_send_log` (toujours 1 + 1).
+6. **Cleanup** : supprimer booking + events + email logs créés.
+
+### Loader d'env
+Ajouter en tête : `import "https://deno.land/std@0.224.0/dotenv/load.ts";`
+Variables lues : `VITE_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (ou `SUPABASE_PUBLISHABLE_KEY` + service via secrets), `PAYMOB_HMAC_SECRET`.
+
+### CI hook
+Documenter dans `README.md` (section Tests) que le test tourne via `supabase--test_edge_functions` ; pas d'intégration CI externe demandée.
+
+---
+
+## Fichiers touchés
+
+| Fichier | Changement |
+|---|---|
+| `src/pages/BookingReturn.tsx` | Récap complet + bouton renvoi email |
+| `src/i18n/translations.ts` | Nouvelles clés EN/FR/AR |
+| `supabase/functions/paymob-webhook/e2e_test.ts` | Nouveau test E2E |
+| `README.md` | Note sur l'exécution du test E2E |
+
+---
+
+## Hors scope (à confirmer si souhaité)
+- Test UI Vitest de `BookingReturn` (mock Supabase) — peut être ajouté si tu veux une couverture front aussi.
+- Tests pour `create-paymob-intent` (insertion booking pré-paiement).
