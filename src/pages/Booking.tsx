@@ -722,7 +722,7 @@ const Booking = () => {
                       <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_vehicle_title}</h2>
                       <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_vehicle_desc}</p>
                       <div className="space-y-4">
-                        {vehicles.map((vehicle) => (
+                        {availableVehicles.map((vehicle) => (
                           <button key={vehicle.key} onClick={() => setData({ ...data, vehicle: vehicle.key })}
                             className={`w-full flex items-center gap-5 p-4 rounded-lg border transition-all duration-200 text-left ${data.vehicle === vehicle.key ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
                             <div className="w-24 h-16 rounded-md overflow-hidden shrink-0">
