@@ -83,6 +83,7 @@ const Booking = () => {
   const [quoteOnly, setQuoteOnly] = useState(false);
   const [hours, setHours] = useState<number>(4);
   const [sphinxSurcharge, setSphinxSurcharge] = useState<number>(0);
+  const [priceCountry, setPriceCountry] = useState<string | null>(null);
   const [data, setData] = useState<BookingData>({
     service: null,
     pickup: "",
@@ -117,6 +118,11 @@ const Booking = () => {
     const lastname = searchParams.get("lastname");
     const email = searchParams.get("email");
     const phone = searchParams.get("phone");
+    const hoursParam = searchParams.get("hours");
+    if (hoursParam) {
+      const h = Number(hoursParam);
+      if (Number.isFinite(h) && h >= 4 && h <= 13) setHours(h);
+    }
     if (service || pickup || firstname) {
       setData(prev => ({
         ...prev,
@@ -185,6 +191,7 @@ const Booking = () => {
         setDistanceKm(res.distance_km ?? null);
         setDurationMin(res.duration_min ?? null);
         setSphinxSurcharge(res.sphinx_surcharge ?? 0);
+        setPriceCountry(res.country ?? null);
       }
     } catch (err) {
       console.error("Price calc error:", err);
@@ -229,6 +236,19 @@ const Booking = () => {
     { key: "first", name: t.fleet_first, desc: t.fleet_first_desc, passengers: 3, luggage: 3, image: mercedesSClass },
     { key: "van", name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
   ];
+
+  // SUV is offered only in Egypt. While country is unknown (no pickup yet), show all.
+  const availableVehicles = vehicles.filter(
+    (v) => v.key !== "suv" || priceCountry === null || priceCountry === "EG"
+  );
+
+  // If the user had pre-selected SUV but the resolved country is not EG, clear it.
+  useEffect(() => {
+    if (data.vehicle === "suv" && priceCountry && priceCountry !== "EG") {
+      setData((prev) => ({ ...prev, vehicle: null }));
+      setEstimatedPrice(null);
+    }
+  }, [priceCountry, data.vehicle]);
 
   const isAirportOrStation = useMemo(() => {
     const lower = data.pickup.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -702,7 +722,7 @@ const Booking = () => {
                       <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_vehicle_title}</h2>
                       <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_vehicle_desc}</p>
                       <div className="space-y-4">
-                        {vehicles.map((vehicle) => (
+                        {availableVehicles.map((vehicle) => (
                           <button key={vehicle.key} onClick={() => setData({ ...data, vehicle: vehicle.key })}
                             className={`w-full flex items-center gap-5 p-4 rounded-lg border transition-all duration-200 text-left ${data.vehicle === vehicle.key ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/30"}`}>
                             <div className="w-24 h-16 rounded-md overflow-hidden shrink-0">

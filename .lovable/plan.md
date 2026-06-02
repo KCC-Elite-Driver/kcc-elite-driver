@@ -1,85 +1,50 @@
 ## Objectif
 
-1. Sur la page retour Paymob, afficher immédiatement un récapitulatif complet de la réservation + un bouton « Renvoyer l'email de confirmation ».
-2. Mettre en place un test E2E automatisé (paiement → réservation → 2 emails) pour détecter toute régression.
+Deux corrections ciblées, sans toucher au reste du code :
+
+1. Permettre de choisir le nombre d'heures dans le widget de réservation de la page d'accueil (mode "Mise à disposition").
+2. Ne proposer le SUV qu'en Égypte (pas en France) dans le tunnel de réservation.
+
+Plus une passe de vérification rapide avant/après pour s'assurer qu'aucune régression n'est introduite.
 
 ---
 
-## Partie 1 — Page de confirmation enrichie (`src/pages/BookingReturn.tsx`)
+## 1. Widget d'accueil — sélecteur d'heures (`src/components/home/BookingWidget.tsx`)
 
-### Récapitulatif visible
-Une fois `payment_status = paid` détecté, charger le booking complet et afficher :
-- Référence (RES-YYYYMMDD-XXXX)
-- Service, véhicule
-- Trajet : pickup → dropoff
-- Date / heure (formatées selon la locale active)
-- Passagers, bagages, n° de vol (si présent)
-- Client : prénom nom, email (masqué partiellement), téléphone
-- Montant payé + devise affichée + devise débitée (EGP) si différente
-- Bloc « Prochaines étapes » (checklist déjà utilisée dans la confirmation email)
+- Ajouter un état local `hours` (défaut `4`).
+- Quand `mode === "hourly"`, remplacer le champ "Destination" par un `<select>` `4h → 12h` + option `12h+ (sur devis)`, aligné avec le style des autres champs (mêmes classes Tailwind, icône `Clock`).
+- À la soumission, si `mode === "hourly"`, ajouter `params.set("hours", String(hours))`.
+- Aucun changement de logique `skipTo` ni des autres modes.
 
-### Bouton « Renvoyer la confirmation par email »
-- Visible uniquement quand `status === "paid"`.
-- État local : `idle | sending | sent | error` + cooldown 30 s.
-- Action : `supabase.functions.invoke("send-transactional-email", { ... })` avec :
-  - `templateName: "booking-received"`
-  - `recipientEmail: booking.email`
-  - `idempotencyKey: booking-received-resend-{bookingId}-{timestamp}` (différent de la clé webhook pour autoriser le renvoi)
-  - `templateData` identique à celui envoyé par le webhook
-- Feedback via `toast` (succès / erreur) + message inline.
+## 2. Tunnel de réservation — pré-remplissage `hours` (`src/pages/Booking.tsx`)
 
-### i18n
-Ajouter les clés dans `src/i18n/translations.ts` pour EN-GB, FR, AR :
-`bookingReturn.summary.*`, `bookingReturn.resend.*` (idle/sending/sent/cooldown/error).
+- Dans le `useEffect` qui lit `searchParams`, lire `hours` et faire `setHours(Number(...))` si présent et valide (4–13).
+- Aucune autre modification.
 
-### Style
-Respecter Obsidian Black + Signature Gold, Playfair pour titre récap, cartes en glassmorphism existantes.
+## 3. SUV réservé à l'Égypte (`src/pages/Booking.tsx`)
 
----
+- Ajouter un état `priceCountry` (string | null) alimenté par la réponse de `calculate-distance` (champ `country` déjà renvoyé).
+- Construire `availableVehicles` = `vehicles.filter(v => v.key !== "suv" || priceCountry === "EG" || priceCountry === null)`.
+  - Tant que le pays n'est pas connu (pas encore de `pickupPlaceId`), on n'enlève rien pour éviter un flash.
+- Dans le `useEffect` de calcul de prix, si `priceCountry !== "EG"` et `data.vehicle === "suv"`, réinitialiser `data.vehicle = null` (et le prix), pour éviter qu'un SUV pré-sélectionné reste avec un prix vide en France.
+- L'étape 3 (`vehicles.map`) utilise `availableVehicles` à la place de `vehicles`.
 
-## Partie 2 — Test E2E automatisé
+Aucune autre logique (pricing, paiement, emails) n'est touchée.
 
-### Approche
-Test Deno côté Edge Functions (cohérent avec `supabase/functions/*`), exécutable via `supabase--test_edge_functions`. Pas de test UI Vitest pour le flux paiement car nécessite Paymob réel.
+## 4. Double-check avant / après
 
-### Fichier : `supabase/functions/paymob-webhook/e2e_test.ts`
-Scénario en un seul `Deno.test` :
+Avant patch :
+- Relire `BookingWidget.tsx` et la portion `step === 1` / `step === 3` de `Booking.tsx` pour repérer les classes et props existantes.
+- Vérifier que `calculate-distance` renvoie déjà `country` (déjà confirmé).
 
-1. **Setup** : créer un booking de test en DB via service-role client (`payment_status = awaiting`).
-2. **Forger un payload Paymob valide** :
-   - Construire l'objet `obj` avec tous les champs HMAC.
-   - Calculer le HMAC SHA-512 avec `PAYMOB_HMAC_SECRET` du `.env`.
-   - `special_reference = bookingId` et `success = true`.
-3. **Appeler `paymob-webhook`** via `fetch` direct (HMAC en query string).
-4. **Assertions** :
-   - Réponse 200.
-   - `bookings.payment_status === "paid"`.
-   - `payment_events` contient une ligne avec `hmac_valid = true`.
-   - `email_send_log` contient une ligne `template_name = booking-received` avec `metadata.idempotency_key = booking-received-{bookingId}`.
-   - `email_send_log` contient une ligne `template_name = admin-booking-notification`.
-5. **Idempotence** : rappeler le webhook → vérifier qu'aucune ligne dupliquée n'est créée dans `email_send_log` (toujours 1 + 1).
-6. **Cleanup** : supprimer booking + events + email logs créés.
-
-### Loader d'env
-Ajouter en tête : `import "https://deno.land/std@0.224.0/dotenv/load.ts";`
-Variables lues : `VITE_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (ou `SUPABASE_PUBLISHABLE_KEY` + service via secrets), `PAYMOB_HMAC_SECRET`.
-
-### CI hook
-Documenter dans `README.md` (section Tests) que le test tourne via `supabase--test_edge_functions` ; pas d'intégration CI externe demandée.
-
----
+Après patch :
+- `bunx tsc --noEmit` pour s'assurer qu'aucune erreur TypeScript n'est introduite.
+- Vérification manuelle du flux : page d'accueil → hourly → choisir 6h → arrivée step 2 du booking avec `hours=6` pré-rempli.
+- Vérification : pickup à Paris → SUV n'apparaît plus à l'étape véhicule ; pickup au Caire → SUV présent.
 
 ## Fichiers touchés
 
-| Fichier | Changement |
-|---|---|
-| `src/pages/BookingReturn.tsx` | Récap complet + bouton renvoi email |
-| `src/i18n/translations.ts` | Nouvelles clés EN/FR/AR |
-| `supabase/functions/paymob-webhook/e2e_test.ts` | Nouveau test E2E |
-| `README.md` | Note sur l'exécution du test E2E |
+- `src/components/home/BookingWidget.tsx` — ajout sélecteur heures + param URL.
+- `src/pages/Booking.tsx` — lecture de `hours` URL, état `priceCountry`, filtre SUV.
 
----
-
-## Hors scope (à confirmer si souhaité)
-- Test UI Vitest de `BookingReturn` (mock Supabase) — peut être ajouté si tu veux une couverture front aussi.
-- Tests pour `create-paymob-intent` (insertion booking pré-paiement).
+Aucun changement aux edge functions, à la DB, aux emails ou au paiement.
