@@ -251,54 +251,98 @@ const BookingReturn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <PageMeta title="Confirmation de réservation" description="Retour paiement KCC EliteDriver" />
-      <div className="max-w-md w-full rounded-lg border border-border bg-card p-8 text-center">
+    <div className="min-h-screen bg-background flex items-start justify-center px-4 py-10">
+      <PageMeta title={c.title} description="KCC EliteDriver" />
+      <div className="max-w-2xl w-full">
         {status === "loading" && (
-          <>
+          <div className="rounded-lg border border-border bg-card p-8 text-center">
             <Loader2 className="mx-auto mb-4 text-primary animate-spin" size={48} />
-            <h1 className="font-serif text-2xl text-foreground mb-2">Vérification du paiement</h1>
-            <p className="font-sans text-sm text-muted-foreground">Merci de patienter quelques instants…</p>
-          </>
+            <h1 className="font-serif text-2xl text-foreground mb-2">{c.verifying}</h1>
+            <p className="font-sans text-sm text-muted-foreground">{c.wait}</p>
+          </div>
         )}
+
         {status === "paid" && (
-          <>
-            <CheckCircle className="mx-auto mb-4 text-emerald-500" size={48} />
-            <h1 className="font-serif text-2xl text-foreground mb-2">Paiement confirmé</h1>
-            <p className="font-sans text-sm text-muted-foreground mb-2">
-              Votre réservation est enregistrée. Un email de confirmation vous a été envoyé.
-            </p>
-            {reservationId && (
-              <p className="font-sans text-xs text-muted-foreground mb-6">Référence : <span className="text-primary">{reservationId}</span></p>
+          <div className="space-y-6">
+            <div className="rounded-lg border border-border bg-card p-8 text-center">
+              <CheckCircle className="mx-auto mb-4 text-emerald-500" size={48} />
+              <h1 className="font-serif text-3xl text-foreground mb-2">{c.title}</h1>
+              <p className="font-sans text-sm text-muted-foreground mb-3">{c.subtitle}</p>
+              {reservationId && (
+                <p className="font-sans text-xs text-muted-foreground">
+                  {c.reference} : <span className="text-primary font-semibold">{reservationId}</span>
+                </p>
+              )}
+            </div>
+
+            {booking && (
+              <div className="rounded-lg border border-border bg-card p-6">
+                <h2 className="font-serif text-xl text-foreground mb-4">{c.summary}</h2>
+                <Row icon={Car} label={c.service} value={booking.service_type} />
+                <Row icon={Car} label={c.vehicle} value={booking.vehicle} />
+                <Row icon={MapPin} label={c.pickup} value={booking.pickup} />
+                <Row icon={MapPin} label={c.dropoff} value={booking.dropoff} />
+                <Row icon={Calendar} label={c.date} value={booking.date} />
+                <Row icon={Clock} label={c.time} value={booking.time} />
+                <Row icon={Users} label={c.passengers} value={booking.passengers} />
+                <Row icon={Briefcase} label={c.luggage} value={booking.luggage} />
+                <Row icon={Plane} label={c.flight} value={booking.flight_number} />
+                <Row icon={Mail} label={c.contact} value={`${booking.firstname} ${booking.lastname} · ${booking.email} · ${booking.phone}`} />
+                {amount && <Row icon={CheckCircle} label={c.amount} value={amount} />}
+              </div>
             )}
-            <Link to="/" className="inline-flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md">
-              <Home size={14} /> Retour à l'accueil
-            </Link>
-          </>
+
+            <div className="rounded-lg border border-border bg-card p-6">
+              <h2 className="font-serif text-xl text-foreground mb-3">{c.nextSteps}</h2>
+              <ul className="space-y-2 font-sans text-sm text-muted-foreground">
+                <li className="flex gap-2"><span className="text-primary">•</span>{c.step1}</li>
+                <li className="flex gap-2"><span className="text-primary">•</span>{c.step2}</li>
+                <li className="flex gap-2"><span className="text-primary">•</span>{c.step3}</li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendState === "sending" || cooldown > 0 || !booking}
+                className="inline-flex items-center justify-center gap-2 border border-primary text-primary hover:bg-primary/10 disabled:opacity-50 disabled:cursor-not-allowed font-sans text-sm font-semibold px-6 py-3 rounded-md transition-colors"
+              >
+                {resendState === "sending" ? (
+                  <><Loader2 size={14} className="animate-spin" /> {c.sending}</>
+                ) : cooldown > 0 ? (
+                  <><Mail size={14} /> {c.cooldown(cooldown)}</>
+                ) : (
+                  <><Mail size={14} /> {c.resend}</>
+                )}
+              </button>
+              <Link to="/" className="inline-flex items-center justify-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md">
+                <Home size={14} /> {c.home}
+              </Link>
+            </div>
+          </div>
         )}
+
         {status === "failed" && (
-          <>
+          <div className="rounded-lg border border-border bg-card p-8 text-center">
             <XCircle className="mx-auto mb-4 text-destructive" size={48} />
-            <h1 className="font-serif text-2xl text-foreground mb-2">Paiement échoué</h1>
-            <p className="font-sans text-sm text-muted-foreground mb-6">
-              Le paiement n'a pas abouti. Aucun montant n'a été débité. Vous pouvez réessayer.
-            </p>
+            <h1 className="font-serif text-2xl text-foreground mb-2">{c.failedTitle}</h1>
+            <p className="font-sans text-sm text-muted-foreground mb-6">{c.failedDesc}</p>
             <Link to="/booking" className="inline-flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md">
-              Réessayer
+              {c.retry}
             </Link>
-          </>
+          </div>
         )}
+
         {(status === "pending" || status === "unknown") && (
-          <>
+          <div className="rounded-lg border border-border bg-card p-8 text-center">
             <Loader2 className="mx-auto mb-4 text-primary" size={48} />
-            <h1 className="font-serif text-2xl text-foreground mb-2">Paiement en cours de traitement</h1>
-            <p className="font-sans text-sm text-muted-foreground mb-6">
-              Nous vérifions encore le statut auprès de notre prestataire. Vous recevrez un email dès confirmation.
-            </p>
+            <h1 className="font-serif text-2xl text-foreground mb-2">{c.pendingTitle}</h1>
+            <p className="font-sans text-sm text-muted-foreground mb-6">{c.pendingDesc}</p>
             <Link to="/" className="inline-flex items-center gap-2 gradient-gold text-primary-foreground font-sans text-sm font-semibold px-6 py-3 rounded-md">
-              <Home size={14} /> Retour à l'accueil
+              <Home size={14} /> {c.home}
             </Link>
-          </>
+          </div>
         )}
       </div>
     </div>
