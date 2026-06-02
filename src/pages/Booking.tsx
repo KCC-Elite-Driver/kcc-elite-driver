@@ -83,6 +83,7 @@ const Booking = () => {
   const [quoteOnly, setQuoteOnly] = useState(false);
   const [hours, setHours] = useState<number>(4);
   const [sphinxSurcharge, setSphinxSurcharge] = useState<number>(0);
+  const [priceCountry, setPriceCountry] = useState<string | null>(null);
   const [data, setData] = useState<BookingData>({
     service: null,
     pickup: "",
@@ -117,6 +118,11 @@ const Booking = () => {
     const lastname = searchParams.get("lastname");
     const email = searchParams.get("email");
     const phone = searchParams.get("phone");
+    const hoursParam = searchParams.get("hours");
+    if (hoursParam) {
+      const h = Number(hoursParam);
+      if (Number.isFinite(h) && h >= 4 && h <= 13) setHours(h);
+    }
     if (service || pickup || firstname) {
       setData(prev => ({
         ...prev,
@@ -185,6 +191,7 @@ const Booking = () => {
         setDistanceKm(res.distance_km ?? null);
         setDurationMin(res.duration_min ?? null);
         setSphinxSurcharge(res.sphinx_surcharge ?? 0);
+        setPriceCountry(res.country ?? null);
       }
     } catch (err) {
       console.error("Price calc error:", err);
