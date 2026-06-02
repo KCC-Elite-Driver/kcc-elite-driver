@@ -237,6 +237,19 @@ const Booking = () => {
     { key: "van", name: t.fleet_van, desc: t.fleet_van_desc, passengers: 7, luggage: 7, image: mercedesVClass },
   ];
 
+  // SUV is offered only in Egypt. While country is unknown (no pickup yet), show all.
+  const availableVehicles = vehicles.filter(
+    (v) => v.key !== "suv" || priceCountry === null || priceCountry === "EG"
+  );
+
+  // If the user had pre-selected SUV but the resolved country is not EG, clear it.
+  useEffect(() => {
+    if (data.vehicle === "suv" && priceCountry && priceCountry !== "EG") {
+      setData((prev) => ({ ...prev, vehicle: null }));
+      setEstimatedPrice(null);
+    }
+  }, [priceCountry, data.vehicle]);
+
   const isAirportOrStation = useMemo(() => {
     const lower = data.pickup.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     return lower.includes("aeroport") || lower.includes("airport") || lower.includes("gare") || lower.includes("station") || lower.includes("cdg") || lower.includes("orly") || lower.includes("مطار");
