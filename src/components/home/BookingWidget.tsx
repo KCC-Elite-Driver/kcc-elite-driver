@@ -15,6 +15,7 @@ const BookingWidget = () => {
   const [date, setDate] = useState<Date>();
   const [dateLabel, setDateLabel] = useState("");
   const [time, setTime] = useState("");
+  const [hours, setHours] = useState<number>(4);
 
   return (
     <div className="w-full max-w-5xl mx-auto">
@@ -61,6 +62,25 @@ const BookingWidget = () => {
               placeholder={t.hero_dropoff}
               iconColor="text-muted-foreground"
             />
+          )}
+
+          {/* Hours selector (hourly mode) */}
+          {mode === "hourly" && (
+            <div className="relative w-full">
+              <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
+              <select
+                value={hours}
+                onChange={(e) => setHours(Number(e.target.value))}
+                className={cn(
+                  "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                )}
+              >
+                {[4,5,6,7,8,9,10,11,12].map((h) => (
+                  <option key={h} value={h}>{h}h{h === 12 ? " (forfait)" : ""}</option>
+                ))}
+                <option value={13}>12h+ (sur devis)</option>
+              </select>
+            </div>
           )}
 
           {/* Date */}
@@ -115,6 +135,7 @@ const BookingWidget = () => {
                 }
               } else if (mode === "hourly") {
                 params.set("service", "hourly");
+                params.set("hours", String(hours));
                 if (pickup && date && time) {
                   params.set("skipTo", "2");
                 }
