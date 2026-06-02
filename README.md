@@ -2,6 +2,20 @@
 
 ## Project info
 
+## Tests
+
+End-to-end Paymob webhook test (payment → booking paid → both emails enqueued
+→ replay is idempotent) lives in
+`supabase/functions/paymob-webhook/e2e_test.ts`. It hits the deployed
+`paymob-webhook` Edge Function with a forged but HMAC-valid payload.
+
+Required env (loaded from `.env` or process env):
+- `VITE_SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `PAYMOB_HMAC_SECRET`
+
+If any are missing the test logs a skip notice and exits cleanly.
+
 **URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
 ## How can I edit this code?
