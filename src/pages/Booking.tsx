@@ -831,16 +831,12 @@ const Booking = () => {
                           <HelperText>{t.booking_email_helper}</HelperText>
                         </div>
                         <div>
-                          <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_phone} *</label>
-                          <div className="flex gap-2">
-                            <select value={data.phoneCode} onChange={(e) => setData({ ...data, phoneCode: e.target.value })}
-                              className="bg-secondary border border-border rounded-md px-2 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary w-32">
-                              {PHONE_CODES.map((p) => (
-                                <option key={`${p.label}-${p.code}`} value={p.code}>{p.flag} {p.code} {p.label}</option>
-                              ))}
-                            </select>
+                           <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_phone} *</label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-sans select-none">+</span>
                             <input type="tel" value={data.phone} onChange={(e) => setData({ ...data, phone: e.target.value })}
-                              className="flex-1 bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                              placeholder={t.booking_phone_placeholder || "33 6 12 34 56 78"}
+                              className="w-full bg-secondary border border-border rounded-md pl-7 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <HelperText>{t.booking_phone_helper}</HelperText>
                         </div>
