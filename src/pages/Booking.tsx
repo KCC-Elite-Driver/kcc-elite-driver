@@ -464,7 +464,7 @@ const Booking = () => {
           firstname: data.firstname,
           lastname: data.lastname,
           email: data.email,
-          phone: `${data.phoneCode} ${data.phone}`,
+          phone: data.phone,
           passengers: data.passengers,
           luggage: data.luggage,
           notes: data.notes || null,
@@ -507,7 +507,7 @@ const Booking = () => {
               ...sharedTrip,
               lastname: data.lastname,
               email: data.email,
-              phone: `${data.phoneCode} ${data.phone}`,
+              phone: data.phone,
               passengers: data.passengers,
               luggage: data.luggage,
               flightNumber: data.flightNumber || undefined,
@@ -534,7 +534,7 @@ const Booking = () => {
             firstname: data.firstname,
             lastname: data.lastname,
             email: data.email,
-            phone: `${data.phoneCode}${data.phone}`,
+            phone: data.phone,
             passengers: data.passengers,
             luggage: data.luggage,
             notes: data.notes || null,
@@ -953,7 +953,7 @@ const Booking = () => {
                         <SummaryRow label={t.booking_time_label} value={data.time} />
                         <SummaryRow label={t.booking_firstname + " " + t.booking_lastname} value={`${data.firstname} ${data.lastname}`} />
                         <SummaryRow label={t.booking_email} value={data.email} />
-                        <SummaryRow label={t.booking_phone} value={`${data.phoneCode} ${data.phone}`} />
+                        <SummaryRow label={t.booking_phone} value={`+${data.phone}`} />
                         <SummaryRow label={t.booking_passengers_label} value={String(data.passengers)} />
                         <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
                         <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
@@ -1109,7 +1109,7 @@ const Booking = () => {
                         {data.phone && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground"><Phone size={12} className="inline mr-1" />{t.booking_phone}</span>
-                            <span className="text-foreground text-xs">{data.phoneCode} {data.phone}</span>
+                            <span className="text-foreground text-xs">+{data.phone}</span>
                           </div>
                         )}
                         <div className="flex justify-between">
