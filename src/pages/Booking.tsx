@@ -211,8 +211,8 @@ const Booking = () => {
   const steps = [
     t.booking_step_service,
     t.booking_step_details,
-    t.booking_step_passenger,
     t.booking_step_vehicle,
+    t.booking_step_passenger,
     t.booking_step_confirm,
   ];
 
@@ -266,8 +266,8 @@ const Booking = () => {
         }
         return baseOk;
       }
-      case 2: return data.firstname.trim() !== "" && data.lastname.trim() !== "" && data.email.trim() !== "" && data.phone.trim() !== "";
-      case 3: return data.vehicle !== null;
+      case 2: return data.vehicle !== null;
+      case 3: return data.firstname.trim() !== "" && data.lastname.trim() !== "" && data.email.trim() !== "" && data.phone.trim() !== "";
       case 4: return true;
       default: return false;
     }
