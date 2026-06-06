@@ -107,6 +107,8 @@ export type TranslationKeys = {
   contact_privacy_desc: string;
   contact_submit_helper: string;
   contact_success_title: string;
+  contact_error_title: string;
+  contact_error: string;
   contact_email_direct: string;
   contact_email_direct_helper: string;
   contact_whatsapp_helper: string;
@@ -604,6 +606,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     contact_privacy_desc: "Vos données personnelles seront traitées conformément à notre Politique de confidentialité.",
     contact_submit_helper: "Nos équipes répondent généralement sous 2 heures pendant les heures de bureau.",
     contact_success_title: "Merci !",
+    contact_error_title: "Échec de l'envoi",
+    contact_error: "Votre message n'a pas pu être envoyé. Réessayez dans un instant ou contactez-nous directement via WhatsApp.",
     contact_email_direct: "contact@kccelitedriver.com",
     contact_email_direct_helper: "Réponse garantie sous 2 heures.",
     contact_whatsapp_helper: "Chat instantané. Disponible 24h/24, réponse rapide.",
@@ -1088,6 +1092,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     contact_privacy_desc: "Your personal data will be processed in accordance with our Privacy Policy.",
     contact_submit_helper: "Our team typically responds within 2 hours during business hours.",
     contact_success_title: "Thank You!",
+    contact_error_title: "Sending failed",
+    contact_error: "Your message could not be sent. Please try again in a moment, or reach us directly via WhatsApp.",
     contact_email_direct: "contact@kccelitedriver.com",
     contact_email_direct_helper: "Response guaranteed within 2 hours.",
     contact_whatsapp_helper: "Instant chat. Available 24/7, quick response.",
@@ -1569,6 +1575,8 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     contact_privacy_desc: "سيتم معالجة بياناتك الشخصية وفقاً لسياسة الخصوصية الخاصة بنا.",
     contact_submit_helper: "يرد فريقنا عادة خلال ساعتين خلال ساعات العمل.",
     contact_success_title: "شكراً لك!",
+    contact_error_title: "فشل الإرسال",
+    contact_error: "تعذّر إرسال رسالتك. حاول مرة أخرى بعد قليل أو تواصل معنا مباشرة عبر واتساب.",
     contact_email_direct: "contact@kccelitedriver.com",
     contact_email_direct_helper: "رد مضمون خلال ساعتين.",
     contact_whatsapp_helper: "دردشة فورية. متاح 24/7، رد سريع.",
