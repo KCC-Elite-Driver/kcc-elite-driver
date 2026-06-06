@@ -464,7 +464,7 @@ const Booking = () => {
           firstname: data.firstname,
           lastname: data.lastname,
           email: data.email,
-          phone: `${data.phoneCode} ${data.phone}`,
+          phone: data.phone,
           passengers: data.passengers,
           luggage: data.luggage,
           notes: data.notes || null,
@@ -507,7 +507,7 @@ const Booking = () => {
               ...sharedTrip,
               lastname: data.lastname,
               email: data.email,
-              phone: `${data.phoneCode} ${data.phone}`,
+              phone: data.phone,
               passengers: data.passengers,
               luggage: data.luggage,
               flightNumber: data.flightNumber || undefined,
@@ -534,7 +534,7 @@ const Booking = () => {
             firstname: data.firstname,
             lastname: data.lastname,
             email: data.email,
-            phone: `${data.phoneCode}${data.phone}`,
+            phone: data.phone,
             passengers: data.passengers,
             luggage: data.luggage,
             notes: data.notes || null,
@@ -831,16 +831,12 @@ const Booking = () => {
                           <HelperText>{t.booking_email_helper}</HelperText>
                         </div>
                         <div>
-                          <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_phone} *</label>
-                          <div className="flex gap-2">
-                            <select value={data.phoneCode} onChange={(e) => setData({ ...data, phoneCode: e.target.value })}
-                              className="bg-secondary border border-border rounded-md px-2 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary w-32">
-                              {PHONE_CODES.map((p) => (
-                                <option key={`${p.label}-${p.code}`} value={p.code}>{p.flag} {p.code} {p.label}</option>
-                              ))}
-                            </select>
+                           <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_phone} *</label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-sans select-none">+</span>
                             <input type="tel" value={data.phone} onChange={(e) => setData({ ...data, phone: e.target.value })}
-                              className="flex-1 bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                              placeholder="33 6 12 34 56 78"
+                              className="w-full bg-secondary border border-border rounded-md pl-7 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <HelperText>{t.booking_phone_helper}</HelperText>
                         </div>
@@ -957,7 +953,7 @@ const Booking = () => {
                         <SummaryRow label={t.booking_time_label} value={data.time} />
                         <SummaryRow label={t.booking_firstname + " " + t.booking_lastname} value={`${data.firstname} ${data.lastname}`} />
                         <SummaryRow label={t.booking_email} value={data.email} />
-                        <SummaryRow label={t.booking_phone} value={`${data.phoneCode} ${data.phone}`} />
+                        <SummaryRow label={t.booking_phone} value={`+${data.phone}`} />
                         <SummaryRow label={t.booking_passengers_label} value={String(data.passengers)} />
                         <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
                         <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
@@ -1113,7 +1109,7 @@ const Booking = () => {
                         {data.phone && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground"><Phone size={12} className="inline mr-1" />{t.booking_phone}</span>
-                            <span className="text-foreground text-xs">{data.phoneCode} {data.phone}</span>
+                            <span className="text-foreground text-xs">+{data.phone}</span>
                           </div>
                         )}
                         <div className="flex justify-between">
