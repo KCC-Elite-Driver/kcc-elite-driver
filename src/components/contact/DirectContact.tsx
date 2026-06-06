@@ -31,7 +31,7 @@ const DirectContact = () => {
         {/* Call */}
         <div>
           <a
-            href="tel:+33123456789"
+            href="tel:+201507040949"
             className="flex items-center gap-3 w-full border border-primary text-primary font-sans text-sm font-medium px-4 py-3 rounded-md hover:bg-primary hover:text-primary-foreground transition-all duration-200"
           >
             <Phone size={18} />

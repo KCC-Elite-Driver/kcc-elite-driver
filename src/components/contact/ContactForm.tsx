@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Required").max(100),
@@ -52,12 +53,62 @@ const ContactForm = () => {
   });
 
   const onSubmit = async (data: ContactFormValues) => {
-    console.log("Contact form submitted:", { ...data, email: "[redacted]" });
-    toast({
-      title: t.contact_success_title,
-      description: t.contact_success,
-    });
-    form.reset();
+    try {
+      const idempotencyKey = `contact-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const serviceLabelMap: Record<string, string> = {
+        airport: t.contact_service_airport,
+        hourly: t.contact_service_hourly,
+        event: t.contact_service_event,
+        city: t.contact_service_city,
+        tours: t.contact_service_tours,
+        other: t.contact_service_other,
+      };
+      const serviceLabel = serviceLabelMap[data.service_type] || data.service_type;
+
+      // Notify admin
+      const adminInvoke = supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-message",
+          idempotencyKey: `${idempotencyKey}-admin`,
+          templateData: {
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            service: serviceLabel,
+            message: data.message,
+          },
+        },
+      });
+
+      // Confirm to user
+      const userInvoke = supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-confirmation",
+          recipientEmail: data.email,
+          idempotencyKey: `${idempotencyKey}-user`,
+          templateData: {
+            name: data.name,
+            message: data.message,
+          },
+        },
+      });
+
+      const [adminRes, userRes] = await Promise.all([adminInvoke, userInvoke]);
+      if (adminRes.error) throw adminRes.error;
+      if (userRes.error) throw userRes.error;
+
+      toast({
+        title: t.contact_success_title,
+        description: t.contact_success,
+      });
+      form.reset();
+    } catch (err) {
+      toast({
+        title: t.contact_error_title || "Sending failed",
+        description: t.contact_error || "Please try again in a moment, or contact us directly.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

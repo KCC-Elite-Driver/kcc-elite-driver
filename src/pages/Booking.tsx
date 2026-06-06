@@ -9,6 +9,7 @@ import { fr } from "date-fns/locale/fr";
 import { enGB } from "date-fns/locale/en-GB";
 import { ar } from "date-fns/locale/ar";
 import { cn } from "@/lib/utils";
+import { getMeetGreetSurcharge } from "@/lib/pricing";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -456,7 +457,7 @@ const Booking = () => {
         const bookingPayload = {
           id,
           client_id: user?.id || null,
-          service_type: data.service,
+          service_type: mapServiceType(data.service),
           pickup: data.pickup,
           dropoff: data.dropoff || "",
           date: data.date,
@@ -526,7 +527,7 @@ const Booking = () => {
         body: {
           booking: {
             client_id: user?.id || null,
-            service_type: data.service,
+            service_type: mapServiceType(data.service),
             pickup: data.pickup,
             dropoff: data.dropoff || "",
             date: data.date,
@@ -958,10 +959,10 @@ const Booking = () => {
                         <SummaryRow label={t.booking_luggage_label} value={String(data.luggage)} />
                         <SummaryRow label={t.booking_vehicle_label} value={data.vehicle ? getVehicleName(data.vehicle) : ""} />
                         {estimatedPrice !== null && (
-                          <SummaryRow label="Prix estimé" value={formatPrice(estimatedPrice, priceCurrencySymbol)} />
+                          <SummaryRow label={t.booking_estimated_price} value={formatPrice(estimatedPrice, priceCurrencySymbol)} />
                         )}
                         {distanceKm !== null && (
-                          <SummaryRow label="Distance / Durée" value={`${distanceKm} km · ~${durationMin} min`} />
+                          <SummaryRow label={t.booking_distance_duration} value={`${distanceKm} km · ~${durationMin} min`} />
                         )}
                         {data.flightNumber && <SummaryRow label={t.booking_flight_number} value={data.flightNumber} />}
                         {data.notes && <SummaryRow label={t.booking_notes_label} value={data.notes} />}
@@ -983,11 +984,11 @@ const Booking = () => {
                               {t.booking_payment_card}
                             </div>
                             <p className="font-sans text-xs text-muted-foreground">
-                              Paiement sécurisé par carte bancaire (Visa, Mastercard). Vous serez redirigé vers notre prestataire de paiement.
+                              {t.booking_payment_card_redirect}
                             </p>
                             {priceCurrency === "EUR" && estimatedPrice != null && (
                               <p className="font-sans text-xs text-muted-foreground mt-2 italic">
-                                Débité en EGP au taux du jour.
+                                {t.booking_payment_card_egp_note}
                               </p>
                             )}
                           </div>
@@ -1176,13 +1177,13 @@ const Booking = () => {
                         {data.meetGreet && isAirportOrStation && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground flex items-center gap-1"><Shield size={12} className="text-primary" /> VIP Meet & Greet</span>
-                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? formatPrice(1500, "EGP") : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
+                            <span className="text-foreground font-medium">{formatPrice(getMeetGreetSurcharge(priceCurrency), priceCurrencySymbol)}</span>
                           </div>
                         )}
                         <div className="flex justify-between pt-2 mt-2 border-t border-border">
                           <span className="font-semibold text-foreground">TOTAL</span>
                           <span className="font-bold text-primary text-base">
-                            {formatPrice(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 1500 : 30) : 0), priceCurrencySymbol)}
+                            {formatPrice(estimatedPrice + (data.meetGreet && isAirportOrStation ? getMeetGreetSurcharge(priceCurrency) : 0), priceCurrencySymbol)}
                           </span>
                         </div>
                       </div>
@@ -1197,7 +1198,7 @@ const Booking = () => {
 
                     {/* Empty state */}
                     {!data.pickup && !data.date && !data.vehicle && !data.service && !priceLoading && (
-                      <p className="text-xs text-muted-foreground italic">{"Les détails de votre trajet s'afficheront ici au fur et à mesure."}</p>
+                      <p className="text-xs text-muted-foreground italic">{t.booking_summary_empty}</p>
                     )}
                   </div>
                 </div>
