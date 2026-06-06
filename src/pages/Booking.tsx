@@ -620,8 +620,8 @@ const Booking = () => {
                     </div>
                   )}
 
-                  {/* Step 2: Passenger info */}
-                  {step === 2 && (
+                  {/* Step 3: Passenger info */}
+                  {step === 3 && (
                     <div>
                       <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_passenger_title}</h2>
                       <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_passenger_desc}</p>
@@ -716,8 +716,8 @@ const Booking = () => {
                     </div>
                   )}
 
-                  {/* Step 3: Vehicle selection */}
-                  {step === 3 && (
+                  {/* Step 2: Vehicle selection */}
+                  {step === 2 && (
                     <div>
                       <h2 className="font-serif text-2xl font-semibold text-foreground mb-2">{t.booking_vehicle_title}</h2>
                       <p className="font-sans text-sm text-muted-foreground mb-8">{t.booking_vehicle_desc}</p>
