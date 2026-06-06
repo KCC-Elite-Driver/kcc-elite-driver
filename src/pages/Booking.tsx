@@ -778,24 +778,46 @@ const Booking = () => {
                           </div>
                           <div>
                             <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_time_field}</label>
-                            <div className="relative">
-                              <ClockIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                              <select
-                                value={data.time}
-                                onChange={(e) => setData({ ...data, time: e.target.value })}
-                                className={cn(
-                                  "w-full appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans focus:outline-none focus:ring-1 focus:ring-primary",
-                                  data.time ? "text-foreground" : "text-muted-foreground"
-                                )}
-                              >
-                                <option value="">--:--</option>
-                                {Array.from({ length: 96 }, (_, i) => {
-                                  const h = String(Math.floor(i / 4)).padStart(2, "0");
-                                  const m = String((i % 4) * 15).padStart(2, "0");
-                                  const v = `${h}:${m}`;
-                                  return <option key={v} value={v}>{v}</option>;
-                                })}
-                              </select>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="relative">
+                                <ClockIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <select
+                                  value={data.time ? data.time.split(":")[0] : ""}
+                                  onChange={(e) => {
+                                    const h = e.target.value;
+                                    const m = data.time ? data.time.split(":")[1] : "00";
+                                    setData({ ...data, time: h ? `${h}:${m}` : "" });
+                                  }}
+                                  className={cn(
+                                    "w-full appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans focus:outline-none focus:ring-1 focus:ring-primary",
+                                    data.time ? "text-foreground" : "text-muted-foreground"
+                                  )}
+                                >
+                                  <option value="">HH</option>
+                                  {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")).map((h) => (
+                                    <option key={h} value={h}>{h}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="relative">
+                                <select
+                                  value={data.time ? data.time.split(":")[1] : ""}
+                                  onChange={(e) => {
+                                    const m = e.target.value;
+                                    const h = data.time ? data.time.split(":")[0] : "00";
+                                    setData({ ...data, time: m ? `${h}:${m}` : "" });
+                                  }}
+                                  className={cn(
+                                    "w-full appearance-none bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans focus:outline-none focus:ring-1 focus:ring-primary",
+                                    data.time ? "text-foreground" : "text-muted-foreground"
+                                  )}
+                                >
+                                  <option value="">MM</option>
+                                  {["00", "15", "30", "45"].map((m) => (
+                                    <option key={m} value={m}>{m}</option>
+                                  ))}
+                                </select>
+                              </div>
                             </div>
                             <HelperText>{t.booking_time_helper}</HelperText>
                           </div>

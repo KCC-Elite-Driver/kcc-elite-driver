@@ -91,25 +91,47 @@ const BookingWidget = () => {
             language={language}
           />
 
-          {/* Time */}
-          <div className="relative w-full">
-            <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
-            <select
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className={cn(
-                "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary",
-                time ? "text-foreground" : "text-muted-foreground"
-              )}
-            >
-              <option value="">--:--</option>
-              {Array.from({ length: 96 }, (_, i) => {
-                const h = String(Math.floor(i / 4)).padStart(2, "0");
-                const m = String((i % 4) * 15).padStart(2, "0");
-                const v = `${h}:${m}`;
-                return <option key={v} value={v}>{v}</option>;
-              })}
-            </select>
+          {/* Time: Hour + Minute dropdowns */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="relative w-full">
+              <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
+              <select
+                value={time ? time.split(":")[0] : ""}
+                onChange={(e) => {
+                  const h = e.target.value;
+                  const m = time ? time.split(":")[1] : "00";
+                  setTime(h ? `${h}:${m}` : "");
+                }}
+                className={cn(
+                  "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary",
+                  time ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                <option value="">HH</option>
+                {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")).map((h) => (
+                  <option key={h} value={h}>{h}</option>
+                ))}
+              </select>
+            </div>
+            <div className="relative w-full">
+              <select
+                value={time ? time.split(":")[1] : ""}
+                onChange={(e) => {
+                  const m = e.target.value;
+                  const h = time ? time.split(":")[0] : "00";
+                  setTime(m ? `${h}:${m}` : "");
+                }}
+                className={cn(
+                  "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md px-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary",
+                  time ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                <option value="">MM</option>
+                {["00", "15", "30", "45"].map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
