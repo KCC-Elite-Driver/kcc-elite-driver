@@ -94,20 +94,22 @@ const BookingWidget = () => {
           {/* Time */}
           <div className="relative w-full">
             <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10" />
-            <input
-              type="time"
+            <select
               value={time}
               onChange={(e) => setTime(e.target.value)}
               className={cn(
-                "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-0",
-                time ? "text-foreground" : "text-transparent"
+                "w-full min-w-0 block appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3.5 h-[50px] text-base font-sans focus:outline-none focus:ring-1 focus:ring-primary",
+                time ? "text-foreground" : "text-muted-foreground"
               )}
-            />
-            {!time && (
-              <span className="absolute left-10 top-1/2 -translate-y-1/2 text-muted-foreground text-base font-sans pointer-events-none">
-                --:--
-              </span>
-            )}
+            >
+              <option value="">--:--</option>
+              {Array.from({ length: 96 }, (_, i) => {
+                const h = String(Math.floor(i / 4)).padStart(2, "0");
+                const m = String((i % 4) * 15).padStart(2, "0");
+                const v = `${h}:${m}`;
+                return <option key={v} value={v}>{v}</option>;
+              })}
+            </select>
           </div>
         </div>
 
