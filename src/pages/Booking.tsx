@@ -1142,7 +1142,7 @@ const Booking = () => {
                     )}
 
                     {/* Quote-only block (VIP / Intercity / 12h+) */}
-                    {quoteOnly && (
+                    {step >= 2 && quoteOnly && (
                       <div className="pt-2 border-t border-border space-y-2">
                         <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">{t.booking_price_label || "Tarif"}</span>
@@ -1162,7 +1162,7 @@ const Booking = () => {
                     )}
 
                     {/* Price + Extras + Total */}
-                    {!quoteOnly && estimatedPrice != null && (
+                    {step >= 2 && !quoteOnly && estimatedPrice != null && (
                       <div className="pt-2 border-t border-border space-y-1">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">{t.booking_price_label || "Prix trajet"}</span>
