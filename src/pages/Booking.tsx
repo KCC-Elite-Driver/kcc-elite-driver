@@ -818,9 +818,9 @@ const Booking = () => {
                           <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_phone} *</label>
                           <div className="flex gap-2">
                             <select value={data.phoneCode} onChange={(e) => setData({ ...data, phoneCode: e.target.value })}
-                              className="bg-secondary border border-border rounded-md px-2 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary w-28">
+                              className="bg-secondary border border-border rounded-md px-2 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary w-32">
                               {PHONE_CODES.map((p) => (
-                                <option key={p.code} value={p.code}>{p.flag} {p.code}</option>
+                                <option key={`${p.label}-${p.code}`} value={p.code}>{p.flag} {p.code} {p.label}</option>
                               ))}
                             </select>
                             <input type="tel" value={data.phone} onChange={(e) => setData({ ...data, phone: e.target.value })}
