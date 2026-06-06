@@ -1,10 +1,9 @@
-## Objectif
-Remplacer le favicon actuel par le logo KCC sans le carré noir visible — fond transparent pour qu'il s'intègre proprement quel que soit le thème de l'onglet (clair/sombre).
+Use the original uploaded logo `Logo_Webp_fond_noir-2.webp`, remove its black background, and use it as the favicon at a larger visible size.
 
-## Étapes
-1. Générer une version transparente du logo uploadé (`Logo_Webp_fond_noir-2.webp`) via `imagegen--edit_image` avec `transparent_background: true` → sortie `public/favicon.png` (PNG carré, fond supprimé).
-2. Supprimer `public/favicon.ico` (sinon le navigateur le sert en priorité) et `public/favicon.webp` devenu obsolète.
-3. Mettre à jour `index.html` : remplacer les `<link rel="icon">` existants par un seul lien vers `/favicon.png` (type `image/png`), conserver `apple-touch-icon` pointant vers le même fichier.
+## Steps
 
-## Résultat
-Onglet navigateur affichant le logo KCC (avion + K + voiture) sans rectangle noir autour — silhouette propre sur fond clair comme sur fond sombre.
+1. Copy `user-uploads://Logo_Webp_fond_noir-2.webp` to `/tmp/logo-original.webp`.
+2. Use `imagegen--edit_image` with `transparent_background: true` on the original logo to remove the black background, output to `public/favicon.png` (overwrites current generated favicon).
+3. Keep `index.html` as is — it already references `/favicon.png` with `sizes="any"`, so browsers will scale up the transparent PNG naturally on the tab. The transparent background will make the logo appear visually larger (no black box around it eating space).
+
+No new logo will be generated — only background removal on your original file.
