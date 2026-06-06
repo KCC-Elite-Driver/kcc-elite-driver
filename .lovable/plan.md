@@ -1,50 +1,42 @@
-## Objectif
+## 3 corrections cibl\u00e9es
 
-Deux corrections ciblées, sans toucher au reste du code :
+### 1. Num\u00e9ro de t\u00e9l\u00e9phone du footer
+**Fichier :** `src/components/Footer.tsx`
+- Remplacer le `+33 1 23 45 67 89` par le num\u00e9ro WhatsApp `+20 150 704 0949` (m\u00eame num\u00e9ro que celui d\u00e9j\u00e0 utilis\u00e9 sur `https://wa.me/201507040949` partout dans le site).
+- Mettre \u00e0 jour le `href="tel:..."` en cons\u00e9quence.
+- Aucun autre changement dans le footer.
 
-1. Permettre de choisir le nombre d'heures dans le widget de réservation de la page d'accueil (mode "Mise à disposition").
-2. Ne proposer le SUV qu'en Égypte (pas en France) dans le tunnel de réservation.
+### 2. Inverser \u00e9tapes V\u00e9hicule \u2194 Infos passager
+**Fichier :** `src/pages/Booking.tsx`
 
-Plus une passe de vérification rapide avant/après pour s'assurer qu'aucune régression n'est introduite.
+Nouvel ordre :
+```
+0. Service  \u2192  1. Trajet/Date  \u2192  2. V\u00e9hicule  \u2192  3. Infos passager  \u2192  4. R\u00e9cap & Paiement
+```
 
----
+Changements minimaux :
+- Tableau `steps` : intervertir `booking_step_passenger` et `booking_step_vehicle`.
+- Bloc `{step === 2 && ...}` (passager) renomm\u00e9 en `{step === 3 && ...}`.
+- Bloc `{step === 3 && ...}` (v\u00e9hicule) renomm\u00e9 en `{step === 2 && ...}`.
+- `canProceed()` : permuter les cas `case 2` et `case 3`.
+- Aucun changement de logique, de pricing, de paiement ni d'emails. La sidebar r\u00e9cap reste identique.
 
-## 1. Widget d'accueil — sélecteur d'heures (`src/components/home/BookingWidget.tsx`)
+V\u00e9rification post-patch : navigation step 0\u21924 fonctionne, le SUV reste filtr\u00e9 EG uniquement, le param `skipTo` (depuis le widget d'accueil) continue de pointer vers l'\u00e9tape "Trajet" (`skipTo=1`), inchang\u00e9.
 
-- Ajouter un état local `hours` (défaut `4`).
-- Quand `mode === "hourly"`, remplacer le champ "Destination" par un `<select>` `4h → 12h` + option `12h+ (sur devis)`, aligné avec le style des autres champs (mêmes classes Tailwind, icône `Clock`).
-- À la soumission, si `mode === "hourly"`, ajouter `params.set("hours", String(hours))`.
-- Aucun changement de logique `skipTo` ni des autres modes.
+### 3. Indicatifs t\u00e9l\u00e9phoniques internationaux complets
+**Fichier :** `src/pages/Booking.tsx`
 
-## 2. Tunnel de réservation — pré-remplissage `hours` (`src/pages/Booking.tsx`)
+- Remplacer la liste `PHONE_CODES` (4 entr\u00e9es) par une liste compl\u00e8te des indicatifs internationaux (\u2248 240 pays, format `{ code, flag, label, name }`), tri\u00e9e par nom de pays, avec FR / EG / GB / US en t\u00eate pour rester rapides d'acc\u00e8s.
+- Le `<select>` actuel reste tel quel (m\u00eames classes Tailwind), seul son contenu change.
+- Valeur par d\u00e9faut : `+33` (inchang\u00e9).
 
-- Dans le `useEffect` qui lit `searchParams`, lire `hours` et faire `setHours(Number(...))` si présent et valide (4–13).
-- Aucune autre modification.
+### V\u00e9rification
 
-## 3. SUV réservé à l'Égypte (`src/pages/Booking.tsx`)
+- `bunx tsc --noEmit` apr\u00e8s patch.
+- Preview manuel : footer affiche le bon num\u00e9ro, tunnel passe bien Service\u2192Trajet\u2192V\u00e9hicule\u2192Infos\u2192R\u00e9cap, dropdown indicatif affiche tous les pays.
 
-- Ajouter un état `priceCountry` (string | null) alimenté par la réponse de `calculate-distance` (champ `country` déjà renvoyé).
-- Construire `availableVehicles` = `vehicles.filter(v => v.key !== "suv" || priceCountry === "EG" || priceCountry === null)`.
-  - Tant que le pays n'est pas connu (pas encore de `pickupPlaceId`), on n'enlève rien pour éviter un flash.
-- Dans le `useEffect` de calcul de prix, si `priceCountry !== "EG"` et `data.vehicle === "suv"`, réinitialiser `data.vehicle = null` (et le prix), pour éviter qu'un SUV pré-sélectionné reste avec un prix vide en France.
-- L'étape 3 (`vehicles.map`) utilise `availableVehicles` à la place de `vehicles`.
+### Fichiers touch\u00e9s
+- `src/components/Footer.tsx`
+- `src/pages/Booking.tsx`
 
-Aucune autre logique (pricing, paiement, emails) n'est touchée.
-
-## 4. Double-check avant / après
-
-Avant patch :
-- Relire `BookingWidget.tsx` et la portion `step === 1` / `step === 3` de `Booking.tsx` pour repérer les classes et props existantes.
-- Vérifier que `calculate-distance` renvoie déjà `country` (déjà confirmé).
-
-Après patch :
-- `bunx tsc --noEmit` pour s'assurer qu'aucune erreur TypeScript n'est introduite.
-- Vérification manuelle du flux : page d'accueil → hourly → choisir 6h → arrivée step 2 du booking avec `hours=6` pré-rempli.
-- Vérification : pickup à Paris → SUV n'apparaît plus à l'étape véhicule ; pickup au Caire → SUV présent.
-
-## Fichiers touchés
-
-- `src/components/home/BookingWidget.tsx` — ajout sélecteur heures + param URL.
-- `src/pages/Booking.tsx` — lecture de `hours` URL, état `priceCountry`, filtre SUV.
-
-Aucun changement aux edge functions, à la DB, aux emails ou au paiement.
+Aucune autre modification (edge functions, DB, emails, paiement, autres composants).
