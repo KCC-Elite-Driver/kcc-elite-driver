@@ -290,6 +290,11 @@ export type TranslationKeys = {
   booking_quote_whatsapp_prefix: string;
   booking_sphinx_surcharge: string;
   booking_price_label: string;
+  booking_estimated_price: string;
+  booking_distance_duration: string;
+  booking_payment_card_redirect: string;
+  booking_payment_card_egp_note: string;
+  booking_summary_empty: string;
 
   // Booking - service descriptions (step 1)
   booking_service_airport_desc: string;
@@ -722,6 +727,11 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_quote_whatsapp_prefix: "Demande de devis",
     booking_sphinx_surcharge: "Supplément Aéroport du Sphinx",
     booking_price_label: "Prix trajet",
+    booking_estimated_price: "Prix estimé",
+    booking_distance_duration: "Distance / Durée",
+    booking_payment_card_redirect: "Paiement sécurisé par carte bancaire (Visa, Mastercard). Vous serez redirigé vers notre prestataire de paiement.",
+    booking_payment_card_egp_note: "Débité en EGP au taux du jour.",
+    booking_summary_empty: "Les détails de votre trajet s'afficheront ici au fur et à mesure.",
 
     // Booking - service descriptions
     booking_service_airport_desc: "Transferts entre les aéroports et vos destinations.",
@@ -1201,6 +1211,11 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_quote_whatsapp_prefix: "Quote request",
     booking_sphinx_surcharge: "Sphinx Airport surcharge",
     booking_price_label: "Trip price",
+    booking_estimated_price: "Estimated price",
+    booking_distance_duration: "Distance / Duration",
+    booking_payment_card_redirect: "Secure card payment (Visa, Mastercard). You will be redirected to our payment provider.",
+    booking_payment_card_egp_note: "Charged in EGP at today's rate.",
+    booking_summary_empty: "Your trip details will appear here as you fill in the form.",
 
     // Booking - service descriptions
     booking_service_airport_desc: "Transfers between airports and your destinations.",
@@ -1677,6 +1692,11 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_quote_whatsapp_prefix: "طلب عرض سعر",
     booking_sphinx_surcharge: "رسوم إضافية لمطار سفنكس",
     booking_price_label: "سعر الرحلة",
+    booking_estimated_price: "السعر التقديري",
+    booking_distance_duration: "المسافة / المدة",
+    booking_payment_card_redirect: "دفع آمن بالبطاقة (فيزا، ماستركارد). ستُحوَّل إلى مزود الدفع لدينا.",
+    booking_payment_card_egp_note: "يُخصم بالجنيه المصري حسب سعر اليوم.",
+    booking_summary_empty: "ستظهر تفاصيل رحلتك هنا أثناء ملء النموذج.",
 
     // Booking - service descriptions
     booking_service_airport_desc: "تنقلات بين المطارات ووجهاتك.",
