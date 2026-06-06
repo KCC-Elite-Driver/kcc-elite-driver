@@ -9,6 +9,7 @@ import { fr } from "date-fns/locale/fr";
 import { enGB } from "date-fns/locale/en-GB";
 import { ar } from "date-fns/locale/ar";
 import { cn } from "@/lib/utils";
+import { getMeetGreetSurcharge } from "@/lib/pricing";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
