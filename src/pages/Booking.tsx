@@ -835,7 +835,7 @@ const Booking = () => {
                           <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-sans select-none">+</span>
                             <input type="tel" value={data.phone} onChange={(e) => setData({ ...data, phone: e.target.value })}
-                              placeholder={t.booking_phone_placeholder || "33 6 12 34 56 78"}
+                              placeholder="33 6 12 34 56 78"
                               className="w-full bg-secondary border border-border rounded-md pl-7 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
                           </div>
                           <HelperText>{t.booking_phone_helper}</HelperText>
