@@ -780,8 +780,22 @@ const Booking = () => {
                             <label className="font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider block mb-2">{t.booking_time_field}</label>
                             <div className="relative">
                               <ClockIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                              <input type="time" value={data.time} onChange={(e) => setData({ ...data, time: e.target.value })}
-                                className="w-full bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                              <select
+                                value={data.time}
+                                onChange={(e) => setData({ ...data, time: e.target.value })}
+                                className={cn(
+                                  "w-full appearance-none bg-secondary border border-border rounded-md pl-10 pr-3 py-3 text-sm font-sans focus:outline-none focus:ring-1 focus:ring-primary",
+                                  data.time ? "text-foreground" : "text-muted-foreground"
+                                )}
+                              >
+                                <option value="">--:--</option>
+                                {Array.from({ length: 96 }, (_, i) => {
+                                  const h = String(Math.floor(i / 4)).padStart(2, "0");
+                                  const m = String((i % 4) * 15).padStart(2, "0");
+                                  const v = `${h}:${m}`;
+                                  return <option key={v} value={v}>{v}</option>;
+                                })}
+                              </select>
                             </div>
                             <HelperText>{t.booking_time_helper}</HelperText>
                           </div>
