@@ -1178,13 +1178,13 @@ const Booking = () => {
                         {data.meetGreet && isAirportOrStation && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground flex items-center gap-1"><Shield size={12} className="text-primary" /> VIP Meet & Greet</span>
-                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? formatPrice(500, "EGP") : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
+                            <span className="text-foreground font-medium">{priceCurrency === "EGP" ? formatPrice(1500, "EGP") : priceCurrency === "USD" ? "30 $" : "30 €"}</span>
                           </div>
                         )}
                         <div className="flex justify-between pt-2 mt-2 border-t border-border">
                           <span className="font-semibold text-foreground">TOTAL</span>
                           <span className="font-bold text-primary text-base">
-                            {formatPrice(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 500 : 30) : 0), priceCurrencySymbol)}
+                            {formatPrice(estimatedPrice + (data.meetGreet && isAirportOrStation ? (priceCurrency === "EGP" ? 1500 : 30) : 0), priceCurrencySymbol)}
                           </span>
                         </div>
                       </div>
