@@ -739,12 +739,10 @@ const Booking = () => {
                               onChange={(e) => setHours(Number(e.target.value))}
                               className="w-full bg-secondary border border-border rounded-md px-3 py-3 text-sm font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                             >
-                              {[4,5,6,7,8,9,10,11,12].map(h => (
-                                <option key={h} value={h}>{h}h{h === 12 ? " (forfait)" : ""}</option>
-                              ))}
-                              <option value={13}>{t.booking_hours_more || "12h+ (sur devis)"}</option>
+                              <option value={4}>{t.booking_hours_4}</option>
+                              <option value={10}>{t.booking_hours_10}</option>
                             </select>
-                            <HelperText>{t.booking_hours_helper || "Minimum 4 heures"}</HelperText>
+                            <HelperText>{t.booking_hours_helper}</HelperText>
                           </div>
                         )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
