@@ -287,6 +287,8 @@ export type TranslationKeys = {
   booking_hours_label: string;
   booking_hours_helper: string;
   booking_hours_more: string;
+  booking_hours_4: string;
+  booking_hours_10: string;
   booking_quote_only: string;
   booking_quote_whatsapp_cta: string;
   booking_quote_whatsapp_prefix: string;
