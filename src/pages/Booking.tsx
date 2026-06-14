@@ -292,7 +292,8 @@ const Booking = () => {
     const hoursParam = searchParams.get("hours");
     if (hoursParam) {
       const h = Number(hoursParam);
-      if (Number.isFinite(h) && h >= 4 && h <= 13) setHours(h);
+      if (h === 10) setHours(10);
+      else if (Number.isFinite(h)) setHours(4);
     }
     if (service || pickup || firstname) {
       setData(prev => ({
