@@ -231,20 +231,20 @@ Deno.serve(async (req) => {
       // Hourly
       if (serviceType === "hourly") {
         const h = Math.max(4, Number(hours) || 4);
-        if (h > 12) {
-          return new Response(
-            JSON.stringify(localizePayload({
-              quote_only: true,
-              currency: rule.currency,
-              currency_symbol: rule.currency_symbol,
-              country,
-              hours: h,
-            }, rule.currency)),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
+        // For a 10h booking, prefer the fixed day-package (daily12) rule when available.
+        let price: number;
+        if (h === 10) {
+          const dayRule = await fetchRule(supabase, country, "daily12", v);
+          if (dayRule && Number(dayRule.base_price)) {
+            price = Math.round(Number(dayRule.base_price));
+          } else {
+            const hourly = Number(rule.hourly_rate) || 0;
+            price = Math.round(hourly * h);
+          }
+        } else {
+          const hourly = Number(rule.hourly_rate) || 0;
+          price = Math.round(hourly * h);
         }
-        const hourly = Number(rule.hourly_rate) || 0;
-        const price = Math.round(hourly * h);
         return new Response(
           JSON.stringify(localizePayload({
             price,

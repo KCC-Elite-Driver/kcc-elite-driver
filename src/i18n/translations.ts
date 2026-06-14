@@ -287,6 +287,8 @@ export type TranslationKeys = {
   booking_hours_label: string;
   booking_hours_helper: string;
   booking_hours_more: string;
+  booking_hours_4: string;
+  booking_hours_10: string;
   booking_quote_only: string;
   booking_quote_whatsapp_cta: string;
   booking_quote_whatsapp_prefix: string;
@@ -724,8 +726,10 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_payment_cash: "Paiement en espèces",
     booking_payment_method: "Mode de paiement",
     booking_hours_label: "Durée (heures)",
-    booking_hours_helper: "Minimum 4 heures. Forfait à 12 heures. Au-delà, sur devis.",
+    booking_hours_helper: "Forfait 4h ou journée 10h.",
     booking_hours_more: "12h+ (sur devis)",
+    booking_hours_4: "4h — Mise à disposition",
+    booking_hours_10: "Forfait journée — 10h",
     booking_quote_only: "Sur devis",
     booking_quote_whatsapp_cta: "Demander un devis sur WhatsApp",
     booking_quote_whatsapp_prefix: "Demande de devis",
@@ -1210,8 +1214,10 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_payment_cash: "Cash Payment",
     booking_payment_method: "Payment Method",
     booking_hours_label: "Duration (hours)",
-    booking_hours_helper: "Minimum 4 hours. 12-hour package. Beyond that, on request.",
+    booking_hours_helper: "4h package or 10h day package.",
     booking_hours_more: "12h+ (on request)",
+    booking_hours_4: "4h — Standby",
+    booking_hours_10: "Day package — 10h",
     booking_quote_only: "Quote on request",
     booking_quote_whatsapp_cta: "Request a quote on WhatsApp",
     booking_quote_whatsapp_prefix: "Quote request",
@@ -1693,8 +1699,10 @@ export const translations: Record<Language, TranslationKeys> = { // v3
     booking_payment_cash: "الدفع نقداً",
     booking_payment_method: "طريقة الدفع",
     booking_hours_label: "المدة (ساعات)",
-    booking_hours_helper: "٤ ساعات كحد أدنى. باقة ١٢ ساعة. بعد ذلك بعرض سعر.",
+    booking_hours_helper: "باقة ٤ ساعات أو باقة اليوم ١٠ ساعات.",
     booking_hours_more: "أكثر من ١٢ ساعة (بعرض سعر)",
+    booking_hours_4: "٤ ساعات — تحت الطلب",
+    booking_hours_10: "باقة اليوم — ١٠ ساعات",
     booking_quote_only: "بعرض سعر",
     booking_quote_whatsapp_cta: "اطلب عرض سعر عبر واتساب",
     booking_quote_whatsapp_prefix: "طلب عرض سعر",
