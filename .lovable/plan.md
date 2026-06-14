@@ -1,44 +1,38 @@
+## Contexte
 
-# Correction complète des bugs d'audit
+La table `pricing_rules` (EG) contient déjà les bons tarifs en USD :
 
-## 🔴 Critiques
+| Véhicule | Taux horaire | Forfait 10h |
+|---|---|---|
+| Van | 90 $/h | 500 $ |
+| Class S (`first`) | 140 $/h | 650 $ |
+| Class E (`business`) | 80 $/h | 400 $ |
+| SUV | 45 $/h | 250 $ |
 
-### 1. Formulaire de contact non fonctionnel
-Créer une edge function `send-contact-message` qui :
-- Valide l'input (zod)
-- Envoie un email via le système transactionnel existant à `contact@kccelitedriver.com` (et copie au client)
-- Branche `ContactForm.tsx` sur `supabase.functions.invoke('send-contact-message', ...)` avec gestion d'erreur
+Aucune migration de données n'est nécessaire. Le travail est uniquement front-end + edge function pour exposer **seulement 4h ou 10h**, et faire en sorte que 10h utilise le forfait fixe.
 
-### 2. Désync `service_type` (Booking)
-Dans `src/pages/Booking.tsx` (lignes 459 & 529), appliquer `mapServiceType()` avant insertion en BDD pour que `bookings.service_type` matche les valeurs de `pricing_rules` (`airport` / `hourly` / `vip` / `intercity` / `tours`).
+## Changements
 
-## 🟡 Moyennes
+### 1. `src/pages/Booking.tsx` (sélecteur Mise à disposition)
+- Remplacer le `<select>` actuel (4→12 + 12+) par deux options :
+  - `4` → libellé `t.booking_hours_4` (« 4h — minimum »)
+  - `10` → libellé `t.booking_hours_10` (« Forfait journée 10h »)
+- Mettre à jour le helper text : « Forfait 4h ou 10h » (EN/FR/AR).
+- Quand `hours === 10` lors de l'appel à `calculatePrice`, envoyer `serviceType: "daily12"` à l'edge function pour récupérer le forfait fixe ; sinon `"hourly"` pour 4h.
+- L'`INSERT` dans `bookings` continue de stocker `service_type = "hourly"` (catégorie commerciale), mais le `mapServiceType` reste cohérent.
 
-### 3. Numéro de téléphone factice
-Remplacer `+33 1 23 45 67 89` dans `translations.ts` (clés `contact_call_number`, `legal_company`) par le vrai numéro. **Question** : quel numéro utiliser ? Par défaut je mets celui de `DirectContact.tsx` actuel s'il est réel, sinon je laisse un placeholder neutre `+33 (0)1 XX XX XX XX` clairement marqué TODO.
+### 2. `src/components/home/BookingWidget.tsx` (widget d'accueil, mode hourly)
+- Même réduction : remplacer la liste `[4..12]` + option 13 par seulement `4` et `10`.
+- Passer `hours=10` ou `hours=4` dans l'URL — la page Booking gère ensuite la bascule daily12.
 
-### 4. Surcharge Meet & Greet hardcodée
-Lire la valeur depuis `pricing_rules` (ajout d'une colonne ou utilisation de `sphinx_surcharge` selon convention). Simplification : créer une constante centralisée `MEET_GREET_SURCHARGE` dans `src/lib/pricing.ts` partagée client + edge function, jusqu'à migration BDD complète.
+### 3. `supabase/functions/calculate-distance/index.ts`
+Aucun changement requis : la branche `daily12` retourne déjà `rule.base_price` (le forfait). On exploite simplement cette branche pour `hours=10`.
 
-### 5. Textes hardcodés FR dans Booking
-Ajouter clés i18n `booking_estimated_price` et `booking_trip_details_helper` (EN/FR/AR) dans `translations.ts`, et remplacer les littéraux ligne 961 & 1200.
+### 4. `src/i18n/translations.ts`
+Ajouter 3 clés en EN/FR/AR :
+- `booking_hours_4` : « 4h — Mise à disposition »
+- `booking_hours_10` : « Forfait journée — 10h »
+- `booking_hours_helper` (mise à jour) : « Forfait 4h ou 10h »
 
-### 6. Lien Services manquant dans Footer
-Ajouter l'entrée `Services` -> `/services` dans la colonne Navigation de `src/components/Footer.tsx`.
-
-## 🟢 Basses
-
-### 7. BookingReturn — i18n
-Migrer `src/pages/BookingReturn.tsx` vers `useTranslation()` + clés dans `translations.ts` (EN/FR/AR).
-
-### 8. Console.log de debug
-Retirer les `console.log` / `console.error` non essentiels de `ContactForm.tsx:55` et `NotFound.tsx:8`.
-
-## Vérifications finales
-- Build TS
-- Test manuel : envoi formulaire contact → email reçu
-- Test manuel : nouvelle réservation → `service_type` correct en BDD
-- Vérifier RTL/AR sur Booking et BookingReturn
-
-## Question préalable
-**Quel numéro de téléphone réel utiliser pour le site ?** (sinon je laisse un placeholder TODO clair)
+## Hors-scope
+- France/Paris : pas de changement (le sélecteur reste limité à 4h/10h aussi, par cohérence d'UX — à confirmer ou je garde l'ancien sélecteur pour FR uniquement). **Question** : restreindre 4h/10h uniquement pour l'Égypte, ou pour tous les pays ?
